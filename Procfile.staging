@@ -1,0 +1,2 @@
+worker: /usr/local/rvm/bin/rvm 2.3.4 do bundle exec rake jobs:work
+
