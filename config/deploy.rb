@@ -1,4 +1,4 @@
-require 'whenever/capistrano'
+# require 'whenever/capistrano'
 
 # config valid only for current version of Capistrano
 lock '3.7.1'
@@ -12,7 +12,7 @@ set :linked_dirs, %w{log public/system public/assets db/sphinx tmp/cache tmp/pid
 
 set :passenger_restart_with_touch, true
 
-set :whenever_identifier, ->{ "#{fetch(:application)}_#{fetch(:stage)}" }
+# set :whenever_identifier, ->{ "#{fetch(:application)}_#{fetch(:stage)}" }
 
 namespace :deploy do
 
