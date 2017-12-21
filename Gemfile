@@ -171,3 +171,15 @@ gem 'intercom'
 gem 'twitter_cldr'
 gem 'memoist'
 gem 'biz'
+
+# Capistrano
+gem 'foreman', '>= 0.84.0'
+gem 'capistrano', '>= 3.1.0', require: false
+gem 'capistrano-rails', '>= 1.1.1', require: false
+gem 'capistrano-rvm', '>= 0.1.1', require: false
+gem 'capistrano-foreman', '>= 1.0.0', require: false
+gem 'capistrano-passenger', '>= 0.2.0', require: false
+gem 'capistrano-bundler', '>= 1.1.4', require: false
+gem 'capistrano-npm', '>= 1.0.2', require: false
+gem 'whenever', :require => false
+
