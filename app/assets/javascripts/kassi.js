@@ -555,7 +555,9 @@ function initialize_profile_view(profile_id) {
     $('#profile_description_full').hide();
   });
 }
-
+function refreshSearchResults() {
+  $("#homepage-filters").submit(); // reload page with new map instance, ajax handling is compicated 
+}
 function initialize_homepage() {
   // make map/list button change the value in the filter form and submit the form
   // in order to keep all filter values combinable and remembered
@@ -573,6 +575,9 @@ function initialize_homepage() {
       return false;
     }
   );
+  
+  $(document).on("change", "#filters input, #filters select", refreshSearchResults);
+  $(document).on("click", "#filters input:radio, #filters input:checkbox", refreshSearchResults);
 }
 
 function initialize_invitation_form(locale, email_error_message, invitation_limit) {
