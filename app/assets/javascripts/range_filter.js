@@ -13,7 +13,7 @@ window.ST = window.ST || {};
   - `decimals: boolean allow decimals
 */
 
-window.ST.rangeFilter = function(selector, range, start, labels, fields, decimals) {
+window.ST.rangeFilter = function(selector, range, start, labels, fields, decimals, setCallback) {
 
   function decimalPlaces(number) {
     // The ^-?\d*\. strips off any sign, integer portion, and decimal point
@@ -50,6 +50,7 @@ window.ST.rangeFilter = function(selector, range, start, labels, fields, decimal
         [$(fields[0]), updateLabel($(labels[0]))],
         [$(fields[1]), updateLabel($(labels[1]))]
       ]
-    }
+    },
+    set: setCallback
   });
 };
