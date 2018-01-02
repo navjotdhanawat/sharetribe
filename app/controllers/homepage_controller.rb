@@ -166,7 +166,7 @@ class HomepageController < ApplicationController
       price_max: params[:price_max],
       locale: I18n.locale,
       include_closed: false,
-      sort: nil
+      sort: params[:sort_order],
     }
 
     if @view_type != 'map' && location_search_in_use
@@ -232,12 +232,10 @@ class HomepageController < ApplicationController
       {}
     end
 
-    sort = :distance unless combined_search_in_use
 
     {
       distance_unit: distance_unit,
       distance_max: distance_limit,
-      sort: sort
     }
     .merge(center_point)
     .merge(combined_search_params)
