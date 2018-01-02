@@ -78,19 +78,37 @@ module ListingIndexService::Search
           custom_checkbox_field_options: (grouped_by_operator[:and] || []).flat_map { |v| v[:value] },
         }
 
-        models = Listing.search(
-          Riddle::Query.escape(search[:keywords] || ""),
-          sql: {
-            include: included_models
-          },
+        order = check_sort_order(search[:sort])
+
+        input_latitude = search[:latitude]
+        input_longitude = search[:longitude]
+        geo = nil
+
+        if input_latitude.present? && input_longitude.present?
+          multiplier = search[:distance_unit] == :miles ? 1609 : 1000 # meters
+          with[:geodist] = 0..(search[:distance_max] * multiplier).to_i if search[:distance_max].present?
+          geo = [to_radians(input_latitude), to_radians(input_longitude)]
+          order ||= 'geodist ASC'
+        else
+          order = nil if search[:sort] == 'distance_asc'
+        end
+
+        order ||= 'sort_date DESC'
+        
+        final_search_params = {
           page: search[:page],
+          select: "*, weight() as wght",
           per_page: search[:per_page],
           star: true,
           with: with,
           with_all: with_all,
-          order: 'sort_date DESC',
+          order: order,
           max_query_time: 1000 # Timeout and fail after 1s
-        )
+        }
+
+        final_search_params[:geo] = geo if geo
+
+        models = Listing.search(Riddle::Query.escape(search[:keywords] || ""), final_search_params)
 
         begin
           DatabaseSearchHelper.success_result(models.total_entries, models, includes)
@@ -99,6 +117,10 @@ module ListingIndexService::Search
         end
       end
 
+    end
+
+    def to_radians degrees
+      degrees.to_f * Math::PI / 180
     end
 
     def search_out_of_bounds?(per_page, page)
@@ -112,6 +134,10 @@ module ListingIndexService::Search
       else
         groups[:values]
       end
+    end
+
+    def check_sort_order value
+      ListingIndexService::DataTypes::SortingOptions[value]
     end
   end
 end
