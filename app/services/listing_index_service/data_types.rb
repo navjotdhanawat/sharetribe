@@ -21,7 +21,7 @@ module ListingIndexService::DataTypes
     [:distance_max, :to_float, :optional],
     [:scale, :to_float, :optional],
     [:offset, :to_float, :optional],
-    [:sort, :symbol, :optional],
+    [:sort, :string, :optional],
     [:distance_unit, :symbol, :optional],
     [:categories, :array, :optional],
     [:listing_shape_ids, :array, :optional],
@@ -84,6 +84,14 @@ module ListingIndexService::DataTypes
     [:count, :fixnum, :mandatory],
     [:listings, collection: Listing]
   )
+
+  SortingOptions = {
+   'sort_date_desc' => 'sort_date DESC',
+   'distance_asc' => 'geodist ASC',
+   'score_desc' => 'wght DESC',
+   'price_asc' => 'price_cents ASC',
+   'price_desc' => 'price_cents DESC',
+  }
 
   module_function
 
