@@ -1322,6 +1322,15 @@ en:
       all_categories: "All categories"
     errors:
       search_engine_not_responding: "Search is currently unavailable. Try searching again soon."
+    sorting:
+      rating_avg_desc: "Highest Rated"
+      rating_count_desc: "Most Rated"
+      rating_count_asc: "Least Rated"
+      sort_date_desc: "New Listings"
+      distance_asc: "Geographic proximity"
+      score_desc: "Keyword relevance"
+      price_asc: "Price Ascending"
+      price_desc: "Price Descending"
   infos:
     about:
       default_about_text_title: "What is Sharetribe?"
