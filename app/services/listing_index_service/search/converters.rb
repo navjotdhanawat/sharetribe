@@ -15,7 +15,9 @@ module ListingIndexService::Search::Converters
       unit_type: l.unit_type,
       quantity: l.quantity,
       shape_name_tr_key: l.shape_name_tr_key,
-      listing_shape_id: l.listing_shape_id
+      listing_shape_id: l.listing_shape_id,
+      distance: (l.distance / 1609.0 rescue nil),
+      distance_unit: "miles",
     }.merge(meta)
       .merge(location_hash(l, includes))
       .merge(author_hash(l, includes))

@@ -261,3 +261,67 @@ $listing-author-avatar-height: 108;
     }
   }
 }
+
+.order-listings {
+  clear: both;
+  font-size: 14px;
+  line-height: 42px;
+  margin-bottom: 42px;
+  padding: 0;
+  white-space: nowrap;
+  @include media(tiny-mobile) {
+    clear: none;
+    float: right;
+    margin-bottom: 8px;
+    padding-left: 6px;
+  }
+
+  @include media(mobile) {
+    clear: none;
+    float: left;
+    margin-bottom: 8px;
+    padding-left: 0px;
+  }
+  @include media(tablet) {
+    clear: none;
+    float: right;
+    margin-bottom: 8px;
+    padding-left: 6px;
+  }
+  @include media(desktop) {
+    margin-bottom: 0px;
+  }
+
+  .caption {
+    height: 42px;
+    line-height: 42px;
+    min-height: 42px;
+    vertical-align: top;
+    padding-top: 2px;
+  }
+  .order-listings__select {
+    display: inline-block;
+    select {
+      width: auto;
+    }
+  }
+}
+select#sort_order, .order-listings .caption {
+  border-width: 0px;
+  height: 42px;
+  line-height: 42px;
+  min-height: 42px;
+  font-family: 'Source Sans Pro', helvetica, sans-serif;
+  color: #3c3c3c;
+  padding: 0px 8px;
+  vertical-align: top;
+  margin-top: 0px;
+}
+.order-listings .caption {
+  display: none;
+  vertical-align: inherit;
+  @include media(tablet) {
+    display: inline-block;
+  }
+}
+

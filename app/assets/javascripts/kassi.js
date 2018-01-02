@@ -575,8 +575,7 @@ function initialize_homepage() {
       return false;
     }
   );
-  
-  $(document).on("change", "#filters input, #filters select", refreshSearchResults);
+  $(document).on("change", "#filters input, #filters select, #homepage-filters select", refreshSearchResults);
   $(document).on("click", "#filters input:radio, #filters input:checkbox", refreshSearchResults);
 }
 
