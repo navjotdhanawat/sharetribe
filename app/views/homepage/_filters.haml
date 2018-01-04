@@ -1,6 +1,7 @@
 - if show_price_filter || show_custom_fields
   - if show_price_filter
-    = render :partial => "price_filter"
+    .auto-col
+      = render :partial => "price_filter"
 
   - if show_custom_fields
     = render :partial => "custom_filters", locals: { filters: filters }
