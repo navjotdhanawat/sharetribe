@@ -82,8 +82,8 @@ class HomepageController < ApplicationController
       search_result.on_success { |listings|
         @listings = listings # TODO Remove
 
-        if @view_type == "grid" then
-          render partial: "grid_item", collection: @listings, as: :listing, locals: { show_distance: location_in_use }
+        if @view_type == "map"
+          render partial: "grid_item_map", locals: { show_distance: location_in_use, viewport: viewport }
         elsif location_in_use
           render partial: "list_item_with_distance", collection: @listings, as: :listing, locals: { shape_name_map: shape_name_map, show_distance: location_in_use }
         else
