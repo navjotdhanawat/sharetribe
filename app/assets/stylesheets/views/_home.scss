@@ -530,6 +530,7 @@ $home-list-avatar-padding: lines(0.25);
 .pac-item span {
   pointer-events: none;
 }
+
 .home-fluid-thumbnail-grid-details-author-name {
   display: block;
   color: #494750;
@@ -552,3 +553,39 @@ $home-list-avatar-padding: lines(0.25);
   display: inline-block; 
   vertical-align: top;
 }
+
+.auto-col { width: auto; display: inline-block; position: relative; }
+.filter-width { min-width: 200px; padding: 10px; }
+.filter-value { 
+  display: inline-block; 
+  border: 1px solid #d0d0d0; 
+  border-radius: 4px; 
+  background: #f3f3f3; 
+  padding: 4px; 
+  margin: 4px 8px 4px 0px; 
+  font-size: 12px;
+  .removable {
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+    color: black;
+    font-size: 12px;
+    cursor: pointer;
+    margin-left: 4px;
+    &:before {
+      content: 	'⨯';
+    }
+  }
+}
+.options-selected-counter {
+  color: red;
+  font-size: 12px;
+  font-weight: bold;
+  margin-top: -10px;
+  display: inline-block;
+}
+.scrollable-categories {
+    max-height: 180px;
+    overflow-y: scroll;
+}
+

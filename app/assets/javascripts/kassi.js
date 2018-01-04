@@ -576,8 +576,11 @@ function initialize_homepage() {
       return false;
     }
   );
-  $(document).on("change", "#filters input, #filters select, #homepage-filters select", refreshSearchResults);
-  $(document).on("click", "#filters input:radio, #filters input:checkbox", refreshSearchResults);
+  $(document).on("change", "#home-toolbar-filters input, #home-toolbar-filters select", refreshSearchResults);
+  $(document).on("click", "#home-toolbar-filters input:radio, #filters input:checkbox", refreshSearchResults);
+  $(document).on("click", ".filter-value .removable", function(){
+    $("#"+$(this).data("input")).click();
+  });
 }
 
 function initialize_invitation_form(locale, email_error_message, invitation_limit) {
