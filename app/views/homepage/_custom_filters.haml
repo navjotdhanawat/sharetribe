@@ -2,19 +2,37 @@
 
   - field.with_type do |type|
     - if [:dropdown, :checkbox].include?(type)
-      .row
-        .col-12
-          .custom-filter-title
-            = field.name(I18n.locale)
-          - make_scrollable = field.options.size > 10
-          .custom-filter-options{:class => make_scrollable ? "scrollable" : ""}
-            - field.options.sort.each do |option|
-              .custom-filter-checkbox-container
-                %label.custom-filter-checkbox-label
-                  - param_name = type == :dropdown ? CustomFieldSearchParams.dropdown_param_name(option.id) : CustomFieldSearchParams.checkbox_param_name(option.id)
-                  = check_box_tag param_name, "#{option.id}", params[param_name]
-                  %span.custom-filter-checkbox-label-text
-                    = option.title(I18n.locale)
+      - count_selected = 0
+      - field.options.sort.each do |option|
+        - param_name = type == :dropdown ? CustomFieldSearchParams.dropdown_param_name(option.id) : CustomFieldSearchParams.checkbox_param_name(option.id)
+        - if params[param_name]
+          - count_selected += 1
+
+      .auto-col.toggle-container.home-toolbar-toggle-container
+        .toggle.with-borders{data: {toggle: "#home-toolbar-filter-menu-#{field.id}"}}
+          .toggle-header-container
+            .toggle-header
+              = field.name(I18n.locale)
+              - if count_selected > 0
+                %span.options-selected-counter= count_selected
+
+            = icon_tag("dropdown", ["icon-dropdown"])
+
+          .toggle-menu.hidden{id: "home-toolbar-filter-menu-#{field.id}"}
+            .filter-width
+              - field.options.sort.each do |option|
+                .custom-filter-checkbox-container
+                  %label.custom-filter-checkbox-label
+                    - param_name = type == :dropdown ? CustomFieldSearchParams.dropdown_param_name(option.id) : CustomFieldSearchParams.checkbox_param_name(option.id)
+                    = check_box_tag param_name, "#{option.id}", params[param_name]
+                    %span.custom-filter-checkbox-label-text
+                      = option.title(I18n.locale)
+                  - if params[param_name].present?
+                    - content_for :selected_filters do
+                      %span.filter-value
+                        = option.title(I18n.locale)
+                        %span.removable{data: {input: param_name}}
+
 
   - field.with(:numeric) do
     - min_param = CustomFieldSearchParams.numeric_min_param_name(field.id)
