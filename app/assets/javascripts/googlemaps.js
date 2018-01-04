@@ -610,11 +610,13 @@ function addListingMarkers(listings, viewport) {
 }
 
 function setBounds(coords) {
+  if(coords && coords.sw && coords.sw[0]) {
   var bounds = new google.maps.LatLngBounds(
     new google.maps.LatLng(coords.sw[0], coords.sw[1]),
     new google.maps.LatLng(coords.ne[0], coords.ne[1])
   );
   map.fitBounds(bounds);
+  }
 }
 
 function clearMarkers() {
