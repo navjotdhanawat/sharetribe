@@ -553,10 +553,10 @@ function addListingMarkers(listings, viewport, keep_bounds, init_drag) {
         var label = new Label({
                        map: map
                   });
-                  label.set('zIndex', 1234);
-                  label.bindTo('position', marker, 'position');
-                  label.set('text', " ");
-                  label.set('color', "#FFF");
+        label.set('zIndex', 1234);
+        label.bindTo('position', marker, 'position');
+        label.set('text'," ");
+        label.set('color', "#FFF");
         marker.set("label", label);
         marker.set("listingId", entry.id);
         markers.push(marker);
@@ -650,8 +650,10 @@ function addListingMarkers(listings, viewport, keep_bounds, init_drag) {
     });
   }
   if(init_drag) {
-    map.addListener('dragend', dragZoomSearch);
-    map.addListener('zoom_changed', dragZoomSearch);
+    google.maps.event.addListenerOnce(map,'bounds_changed', function() {
+      map.addListener('dragend', dragZoomSearch);
+      map.addListener('zoom_changed', dragZoomSearch);
+    });
   }
 
   markerCluster = new MarkerClusterer(map, markers, markerContents, infowindow, showingMarker, locale, {});
