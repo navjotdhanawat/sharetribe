@@ -155,7 +155,7 @@ class HomepageController < ApplicationController
       sort: params[:sort_order],
     }
 
-    if @view_type != 'map' && location_search_in_use
+    if location_search_in_use
       search.merge!(location_search_params(params, keyword_search_in_use))
     end
 
