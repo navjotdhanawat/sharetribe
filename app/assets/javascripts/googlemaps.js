@@ -463,7 +463,7 @@ function addCommunityMarkers() {
   });
 }
 
-function initialize_listing_map(listings, community_location_lat, community_location_lon, viewport, locale_to_use, use_community_location_as_default, keep_bounds) {
+function initialize_listing_map(listings, community_location_lat, community_location_lon, viewport, locale_to_use, use_community_location_as_default, keep_bounds, init_drag) {
   locale = locale_to_use;
   // infowindow = new google.maps.InfoWindow();
   infowindow = new InfoBubble({
@@ -496,9 +496,11 @@ function initialize_listing_map(listings, community_location_lat, community_loca
   };
   if (!map) {
     map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
+  } else {
+    init_drag = false;
   }
   var prefer_param_loc = (use_community_location_as_default === 'true');
-  addListingMarkers(listings, viewport, keep_bounds);
+  addListingMarkers(listings, viewport, keep_bounds, init_drag);
 }
 
 function setMapCenter(communityLat, communityLng, preferCommunityLocation) {
@@ -526,14 +528,10 @@ function setMapCenter(communityLat, communityLng, preferCommunityLocation) {
   }
 }
 
-function addListingMarkers(listings, viewport, keep_bounds) {
+function addListingMarkers(listings, viewport, keep_bounds, init_drag) {
   // Test requesting location data
   // Now the request_path needs to also have a query string with the wanted parameters
-  if (markers && markers.length > 0) {
-    for(var i = 0; i < markers.length; i++) {
-      markers[i].setMap(null); 
-    }
-  }
+  clearMarkers();
   markerContents = [];
   markers = [];
 
@@ -620,7 +618,11 @@ function addListingMarkers(listings, viewport, keep_bounds) {
   var latitudes = _(listings).pluck("latitude").filter().map(Number).value();
   var longitudes = _(listings).pluck("longitude").filter().map(Number).value();
 
-  if (keep_bounds) return;
+  if (keep_bounds) {
+    markerCluster = new MarkerClusterer(map, markers, markerContents, infowindow, showingMarker, locale, {});
+    return;
+  }
+
   if (viewport && viewport.boundingbox) {
     var boundingbox = viewport.boundingbox;
     setBounds(boundingbox);
@@ -634,7 +636,19 @@ function addListingMarkers(listings, viewport, keep_bounds) {
     setBounds(listingsBounds);
   }
 
-  //markerCluster = new MarkerClusterer(map, markers, markerContents, infowindow, showingMarker, locale, {});
+  var dragZoomSearch = function(e) {
+    $("#boundingbox").val(map.getBounds().toUrlValue());
+    $("#lc").val(map.center.toUrlValue());
+    $.ajax({
+      type: "GET", url: "/s?"+$("#homepage-filters").serialize(), success: function(resp) { eval(resp) }
+    });
+  }
+  if(init_drag) {
+    map.addListener('dragend', dragZoomSearch);
+    map.addListener('zoom_changed', dragZoomSearch);
+  }
+
+  markerCluster = new MarkerClusterer(map, markers, markerContents, infowindow, showingMarker, locale, {});
 }
 
 function setBounds(coords) {
