@@ -588,4 +588,13 @@ $home-list-avatar-padding: lines(0.25);
     max-height: 180px;
     overflow-y: scroll;
 }
-
+.home-fluid-thumbnail-grid-item:hover ,
+.home-fluid-thumbnail-grid-item.highlighted {
+   .fluid-thumbnail-grid-image-title {
+    font-weight: bold;
+    color:red;
+   }
+   .fluid-thumbnail-grid-image-overlay {
+    background: none;
+   }
+}
