@@ -463,7 +463,7 @@ function addCommunityMarkers() {
   });
 }
 
-function initialize_listing_map(listings, community_location_lat, community_location_lon, viewport, locale_to_use, use_community_location_as_default) {
+function initialize_listing_map(listings, community_location_lat, community_location_lon, viewport, locale_to_use, use_community_location_as_default, keep_bounds) {
   locale = locale_to_use;
   // infowindow = new google.maps.InfoWindow();
   infowindow = new InfoBubble({
@@ -494,9 +494,11 @@ function initialize_listing_map(listings, community_location_lat, community_loca
     maxZoom: 17,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   };
-  map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
+  if (!map) {
+    map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
+  }
   var prefer_param_loc = (use_community_location_as_default === 'true');
-  addListingMarkers(listings, viewport);
+  addListingMarkers(listings, viewport, keep_bounds);
 }
 
 function setMapCenter(communityLat, communityLng, preferCommunityLocation) {
@@ -524,10 +526,14 @@ function setMapCenter(communityLat, communityLng, preferCommunityLocation) {
   }
 }
 
-function addListingMarkers(listings, viewport) {
+function addListingMarkers(listings, viewport, keep_bounds) {
   // Test requesting location data
   // Now the request_path needs to also have a query string with the wanted parameters
-
+  if (markers && markers.length > 0) {
+    for(var i = 0; i < markers.length; i++) {
+      markers[i].setMap(null); 
+    }
+  }
   markerContents = [];
   markers = [];
 
@@ -541,7 +547,8 @@ function addListingMarkers(listings, viewport) {
 
         var marker = new google.maps.Marker({
           position: location,
-          title: entry["title"]
+          title: entry["title"],
+          map: map
         });
 
         // Marker icon based on category
@@ -550,10 +557,10 @@ function addListingMarkers(listings, viewport) {
                   });
                   label.set('zIndex', 1234);
                   label.bindTo('position', marker, 'position');
-                  label.set('text', "");
+                  label.set('text', " ");
                   label.set('color', "#FFF");
         marker.set("label", label);
-
+        marker.set("listingId", entry.id);
         markers.push(marker);
         markerContents.push(entry["id"]);
         markersArr.push(marker);
@@ -563,14 +570,35 @@ function addListingMarkers(listings, viewport) {
           infowindow.close();
           showingMarker = "";
         });
+        var icon1 = "https://maps.gstatic.com/mapfiles/api-3/images/spotlight-poi.png";
+        var icon2 = "/assets/map_icons/waypoint.png";
 
+        google.maps.event.addListener(marker, 'mouseover', function() {
+          //console.log('mouse over: ' + marker.listingId);
+          marker.setIcon(icon2);
+          $('#listing_'+marker.listingId).addClass('highlighted');
+        });
+
+        var title = marker.getTitle()
+        google.maps.event.addListener(marker, 'mouseout', function() {
+          marker.setIcon(icon1);
+          $('#listing_'+marker.listingId).removeClass('highlighted');
+        });
+
+        $('#listing_'+marker.listingId).hover(function(){
+          marker.setIcon(icon2);
+        }, function(){
+          marker.setIcon(icon1);
+        });
         google.maps.event.addListener(marker, 'click', function() {
           infowindow.close();
           directionsDisplay.setMap(null);
           flagMarker.setOptions({map:null});
           if (showingMarker==marker.getTitle()) {
             showingMarker = "";
+            $('#listing_'+marker.listingId).removeClass('highlighted');
           } else {
+            $('#listing_'+marker.listingId).addClass('highlighted');
             showingMarker = marker.getTitle();
             infowindow.setContent("<div id='map_bubble'><img class='bubble-loader-gif' src='https://s3.amazonaws.com/sharetribe/assets/ajax-loader-grey.gif'></div>");
             infowindow.setMaxHeight(150);
@@ -592,7 +620,7 @@ function addListingMarkers(listings, viewport) {
   var latitudes = _(listings).pluck("latitude").filter().map(Number).value();
   var longitudes = _(listings).pluck("longitude").filter().map(Number).value();
 
-
+  if (keep_bounds) return;
   if (viewport && viewport.boundingbox) {
     var boundingbox = viewport.boundingbox;
     setBounds(boundingbox);
@@ -606,7 +634,7 @@ function addListingMarkers(listings, viewport) {
     setBounds(listingsBounds);
   }
 
-  markerCluster = new MarkerClusterer(map, markers, markerContents, infowindow, showingMarker, locale, {});
+  //markerCluster = new MarkerClusterer(map, markers, markerContents, infowindow, showingMarker, locale, {});
 }
 
 function setBounds(coords) {
