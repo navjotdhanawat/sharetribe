@@ -66,7 +66,6 @@ class HomepageController < ApplicationController
                                   location_search_in_use: location_in_use,
                                   keyword_search_in_use: keyword_in_use,
                                   relevant_search_fields: relevant_search_fields)
-
     if @view_type == 'map'
       viewport = viewport_geometry(params[:boundingbox], params[:lc], @current_community.location)
     end
@@ -186,7 +185,7 @@ class HomepageController < ApplicationController
             per_page: search[:per_page]
           )
         )
-      }
+        }
     end
   end
 
@@ -206,6 +205,8 @@ class HomepageController < ApplicationController
       search_coordinates(params[:lc])
     end
 
+    bounds = params[:boundingbox].present? ? { bounds:  params[:boundingbox].split(',').map { |n| LocationUtils.to_radians(n) } } : {}
+
     scale_multiplier = APP_CONFIG[:external_search_scale_multiplier].to_f
     offset_multiplier = APP_CONFIG[:external_search_offset_multiplier].to_f
     combined_search_in_use = keyword_search_in_use && scale_multiplier && offset_multiplier
@@ -224,6 +225,7 @@ class HomepageController < ApplicationController
       distance_max: distance_limit,
     }
     .merge(center_point)
+    .merge(bounds)
     .merge(combined_search_params)
     .compact
   end
