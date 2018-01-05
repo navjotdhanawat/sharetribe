@@ -637,6 +637,12 @@ function addListingMarkers(listings, viewport, keep_bounds, init_drag) {
   }
 
   var dragZoomSearch = function(e) {
+    if($("#boundingbox").size() == 0) {
+      $("#homepage-filters").append("<input type=hidden name=boundingbox id=boundingbox />");
+    }
+    if($("#lc").size() == 0) {
+      $("#homepage-filters").append("<input type=hidden name=lc id=lc />");
+    }
     $("#boundingbox").val(map.getBounds().toUrlValue());
     $("#lc").val(map.center.toUrlValue());
     $.ajax({
