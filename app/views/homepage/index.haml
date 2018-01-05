@@ -72,6 +72,7 @@
                 - shapes.each do |shape|
                   = link_to search_path(search_params.merge({transaction_type: shape[:name]})), class:  "toggle-menu-subitem" do
                     = t(shape[:name_tr_key])
+        
 
         - if @show_categories
           .auto-col.toggle-container.home-toolbar-toggle-container
@@ -93,6 +94,8 @@
                     - is_selected = selected_category == child
                     = link_to child.display_name(I18n.locale), search_path(search_params.merge({category: child})), :class => "toggle-menu-subitem"
           = render :partial => "filters", :locals => { show_price_filter: show_price_filter, show_custom_fields: @show_custom_fields, filters: filters }
+        .auto-col.toggle-container.home-toolbar-toggle-container
+          = select_tag :sort_order, sorting_options(params[:sort_order])
       .row
         = yield :selected_filters
 .row.fixed-homepage
