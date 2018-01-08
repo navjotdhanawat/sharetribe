@@ -59,6 +59,12 @@
       .home-toolbar-show-filters-button-container
         .home-toolbar-show-filters-button#home-toolbar-show-filters
           = t(".filter")
+    
+    - if @view_type != 'map'
+      .order-listings
+        %span.caption= t("homepage.sorting.caption")
+        .order-listings__select#js-order-listings
+          = select_tag :sort_order, sorting_options(params[:sort_order])
 
     .home-toolbar-button-group{:class => listing_shape_menu_enabled || @category_menu_enabled ? "filters-enabled" : ""}
       - ["grid", "list", "map"].each do |view_type|
