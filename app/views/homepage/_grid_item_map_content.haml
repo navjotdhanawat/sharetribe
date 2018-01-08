@@ -1,8 +1,8 @@
 %div{class: @category_menu_enabled ? "home-fluid-thumbnail-grid-narrow" : "home-fluid-thumbnail-grid-wide"}
   .row 
     = page_entries_info @listings, model: "Listing"
-  .row
-    = will_paginate(@listings, inner_window: 1, outer_window: 1, renderer: RemoteLinkPaginationHelper::LinkRenderer, params: {controller: 'homepage', action: 'index'} )
   .home-fluid-thumbnail-grid.home-listings
     = render partial: "grid_item", collection: @listings, as: :listing, locals: { show_distance: show_distance }
     -# pageless(@listings.total_pages, '.home-listings', current_search_path_without_page, t('.loading_more_content'), current_page, '.listings-column')
+  .row
+    = will_paginate(@listings, inner_window: 1, outer_window: 1, renderer: RemoteLinkPaginationHelper::LinkRenderer, params: {controller: 'homepage', action: 'index'} )

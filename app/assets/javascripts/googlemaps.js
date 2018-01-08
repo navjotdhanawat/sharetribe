@@ -468,6 +468,7 @@ function initialize_listing_map(listings, community_location_lat, community_loca
   // infowindow = new google.maps.InfoWindow();
   infowindow = new InfoBubble({
     disableAutoPan: true,
+    disableAnimation: true,
     shadowStyle: 0,
     borderRadius: 5,
     borderWidth: 1,
@@ -575,7 +576,7 @@ function addListingMarkers(listings, viewport, keep_bounds, init_drag) {
         google.maps.event.addListener(marker, 'mouseover', function() {
           //console.log('mouse over: ' + marker.listingId);
           marker.setIcon(icon2);
-          $('#listing_'+marker.listingId).addClass('highlighted');
+          new google.maps.event.trigger( marker, 'click' );
         });
 
         var title = marker.getTitle()
@@ -586,6 +587,7 @@ function addListingMarkers(listings, viewport, keep_bounds, init_drag) {
 
         $('#listing_'+marker.listingId).hover(function(){
           marker.setIcon(icon2);
+          new google.maps.event.trigger( marker, 'click' );
         }, function(){
           marker.setIcon(icon1);
         });
@@ -595,8 +597,10 @@ function addListingMarkers(listings, viewport, keep_bounds, init_drag) {
           flagMarker.setOptions({map:null});
           if (showingMarker==marker.getTitle()) {
             showingMarker = "";
-            $('#listing_'+marker.listingId).removeClass('highlighted');
+            $(".highlighted").removeClass("highlighted");
+            $('#listing_'+marker.listingId).addClass('highlighted');
           } else {
+            $(".highlighted").removeClass("highlighted");
             $('#listing_'+marker.listingId).addClass('highlighted');
             showingMarker = marker.getTitle();
             $("#map_bubble").remove();
@@ -639,6 +643,9 @@ function addListingMarkers(listings, viewport, keep_bounds, init_drag) {
   }
 
   var dragZoomSearch = function(e) {
+    if(infowindow) {
+      infowindow.close();
+    }
     if($("#boundingbox").size() == 0) {
       $("#homepage-filters").append("<input type=hidden name=boundingbox id=boundingbox />");
     }
