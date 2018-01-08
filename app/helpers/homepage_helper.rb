@@ -24,10 +24,10 @@ module HomepageHelper
     (distance < 0.1) ? "< #{number_with_delimiter(0.1, locale: locale)}" : number_with_precision(distance, precision: precision, significant: true, locale: locale)
   end
 
-  DEFAULT_SORT_ORDER = 'distance_asc'
+  DEFAULT_SORT_ORDER = 'sort_date_desc'
 
   def sorting_options selected_value
-    sort_data = ListingIndexService::DataTypes::SortingOptions.map{|value| [t("homepage.sorting.#{value}"), value]}
+    sort_data = ListingIndexService::DataTypes::SortingOptions.map{|value, sql| [t("homepage.sorting.#{value}"), value]}
     options_for_select(sort_data, selected_value.present? ? selected_value : DEFAULT_SORT_ORDER)
   end
 

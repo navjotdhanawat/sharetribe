@@ -1327,10 +1327,11 @@ en:
       rating_count_desc: "Most Rated"
       rating_count_asc: "Least Rated"
       sort_date_desc: "New Listings"
-      distance_asc: "Geographic proximity"
+      distance_asc: "Distance"
       score_desc: "Keyword relevance"
-      price_asc: "Price Ascending"
-      price_desc: "Price Descending"
+      price_asc: "Price: Low to High"
+      price_desc: "Price: High to Low"
+      caption: "Sort By:"
   infos:
     about:
       default_about_text_title: "What is Sharetribe?"
