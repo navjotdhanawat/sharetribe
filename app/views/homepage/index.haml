@@ -103,9 +103,11 @@
     .home-map
       = render :partial => "map", locals: { viewport: viewport }
   .listings-column
-    = render partial: 'grid_item_map_content', locals: {show_distance: location_search_in_use}
+    .row
+      = render partial: 'grid_item_map_content', locals: {show_distance: location_search_in_use}
 
 :css
   .fixed-homepage { position: fixed; top: 200px; left: 0px; bottom: 0px; right: 0px}
   .map-column     { position: fixed; top: 200px; left: 0px; bottom: 0px; right: 50%; }
-  .listings-column{ position: fixed; top: 200px; left: 50%; bottom: 0px; right: 0px; overflow-y: auto; overflow-x: hidden; }
+  .home-map       { position: relative; height: 100%; width: 100%; }
+  .listings-column{ position: fixed; top: 200px; left: 50%; bottom: 0px; right: 0px; overflow-y: auto; overflow-x: hidden; margin: 10px; }
