@@ -7,7 +7,7 @@
 .home-toolbar {
   @include pie-clearfix;
   margin-bottom: lines(0.5);
-  border-bottom: 1px solid $border;
+  //border-bottom: 1px solid $border;
 
   @include media(tablet) {
     margin-bottom: lines(1);
@@ -561,14 +561,13 @@ $home-list-avatar-padding: lines(0.25);
   display: inline-block;
 }
 .scrollable-categories {
-    max-height: 180px;
+    max-height: 280px;
     overflow-y: scroll;
 }
 .home-fluid-thumbnail-grid-item:hover ,
 .home-fluid-thumbnail-grid-item.highlighted {
    .fluid-thumbnail-grid-image-title {
     font-weight: bold;
-    color:red;
    }
    .fluid-thumbnail-grid-image-overlay {
     background: none;
