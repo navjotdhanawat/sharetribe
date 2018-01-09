@@ -44,7 +44,7 @@
   @include ellipsis;
 
   // Notice: hard-coded for three buttons
-  width: 33.3%;
+  width: 50%;
 
   @include media(tablet) {
     width: auto;
@@ -587,4 +587,27 @@ $home-list-avatar-padding: lines(0.25);
 }
 .view-toggle { 
   min-width: 2em !important;
+}
+.listing-search-info {
+  padding: 14px;
+  text-align: center;
+  font-size: 14px;
+}
+@media (min-width: 768px) {
+  .fixed-homepage { position: fixed; top: 200px; left: 0px; bottom: 0px; right: 0px}
+  .map-column     { position: fixed; top: 200px; left: 0px; bottom: 0px; right: 50%; }
+  .home-map       { position: relative; height: 100%; width: 100%; }
+  .listings-column{ position: fixed; top: 200px; left: 50%; bottom: 0px; right: 0px; overflow-y: auto; overflow-x: hidden; margin: 10px; }
+  .filter-button  { display: none; }
+  
+}
+@media (max-width: 767px) {
+  .fixed-homepage { clear: both; }
+  .map-column     { height: 30em; }
+  .home-map       { position: relative; height: 100%; width: 100%; }
+  .auto-col       { display: none; }
+  .auto-col.mob-visible { display: inline-block; }
+  .filter-button  { display: inline-block; width: auto; cursor: pointer; }
+  .home-toolbar-button-group.filters-enabled { position: absolute; top: 10px; right: 0px; width: 120px; margin-right: 0px; display: block }
+  .home-toolbar-filters#home-toolbar-filters { position: relative; }
 }
