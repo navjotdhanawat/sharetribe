@@ -127,7 +127,7 @@ default: &default_settings
   # Paypal environment to use. Either :sandbox or :live
   paypal_endpoint: sandbox
   # after authorization there is 3 day period before expiration
-  paypal_expiration_period: 3
+  paypal_expiration_period: 1
   # The domain that we want Paypal to send IPN notifications to
   # Note! You must also add the hook url for your production deployment
   # manually to your production paypal account profile.
@@ -445,7 +445,7 @@ default: &default_settings
   # Default 24 hours
   sitemap_cache_time: 86400
 
-  stripe_expiration_period: 3
+  stripe_expiration_period: 1
   # Funds captured from charge are not available immediately, only after 7 days
   stripe_payout_delay: 7.5
 
