@@ -82,7 +82,7 @@ class HomepageController < ApplicationController
         @listings = listings # TODO Remove
 
         if @view_type == "map"
-          render partial: "grid_item_map", locals: { show_distance: location_in_use, viewport: viewport }
+          render partial: "grid_item_map", locals: { show_distance: location_in_use, viewport: viewport, shape_name_map: shape_name_map }
         elsif location_in_use
           render partial: "list_item_with_distance", collection: @listings, as: :listing, locals: { shape_name_map: shape_name_map, show_distance: location_in_use }
         else

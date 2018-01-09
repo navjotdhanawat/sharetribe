@@ -602,11 +602,11 @@ function addListingMarkers(listings, viewport, keep_bounds, init_drag) {
           if (showingMarker==marker.getTitle()) {
             showingMarker = "";
             $(".highlighted").removeClass("highlighted");
-            $('#listing_'+marker.listingId).addClass('highlighted');
+            $('#listing_'+marker.listingId+", #listing_list_"+marker.listingId).addClass('highlighted');
           } else {
             infowindow.close();
             $(".highlighted").removeClass("highlighted");
-            $('#listing_'+marker.listingId).addClass('highlighted');
+            $('#listing_'+marker.listingId+", #listing_list_"+marker.listingId).addClass('highlighted');
             showingMarker = marker.listingId;
             $("#map_bubble").remove();
             infowindow.setContent("<div id='map_bubble'><img class='bubble-loader-gif' src='https://s3.amazonaws.com/sharetribe/assets/ajax-loader-grey.gif'></div>");
@@ -632,10 +632,10 @@ function addListingMarkers(listings, viewport, keep_bounds, init_drag) {
         var title = marker.getTitle()
         google.maps.event.addListener(marker, 'mouseout', function() {
           marker.setIcon(icon1);
-          $('#listing_'+marker.listingId).removeClass('highlighted');
+          $('#listing_'+marker.listingId+", #listing_list_"+marker.listingId).removeClass('highlighted');
         });
 
-        $('#listing_'+marker.listingId).hover(function(){
+        $('#listing_'+marker.listingId+", #listing_list_"+marker.listingId).hover(function(){
           marker.setIcon(icon2);
           icounter+=1;
           marker.setZIndex(google.maps.Marker.MAX_ZINDEX + icounter);
