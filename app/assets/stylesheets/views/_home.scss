@@ -573,3 +573,18 @@ $home-list-avatar-padding: lines(0.25);
     background: none;
    }
 }
+.grid-mode .home-listings {
+  display: block;
+}
+.list-mode .home-listings {
+  display: none;
+}
+.grid-mode .home-listings-list {
+  display: none;
+}
+.list-mode .home-listings-list {
+  display: block;
+}
+.view-toggle { 
+  min-width: 2em !important;
+}

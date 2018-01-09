@@ -1,8 +1,9 @@
-%div{class: @category_menu_enabled ? "home-fluid-thumbnail-grid-narrow" : "home-fluid-thumbnail-grid-wide"}
+%div.home-fluid-thumbnail-grid-narrow
   .row 
     = page_entries_info @listings, model: "Listing"
-  .home-fluid-thumbnail-grid.home-listings
+  .home-fluid-thumbnail-grid.home-listings{style: 'margin: 0 !important'}
     = render partial: "grid_item", collection: @listings, as: :listing, locals: { show_distance: show_distance }
-    -# pageless(@listings.total_pages, '.home-listings', current_search_path_without_page, t('.loading_more_content'), current_page, '.listings-column')
+  .home-listings-list
+    = render partial: "list_item_with_distance", collection: @listings, as: :listing, locals: { show_distance: show_distance, shape_name_map: shape_name_map}
   .row
     = will_paginate(@listings, inner_window: 1, outer_window: 1, renderer: RemoteLinkPaginationHelper::LinkRenderer, params: {controller: 'homepage', action: 'index'} )

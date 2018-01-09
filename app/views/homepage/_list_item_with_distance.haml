@@ -1,5 +1,5 @@
 - frontpage_fragment_cache("list_item_with_distance", listing) do
-  .browsing-list-item
+  .browsing-list-item{id: "listing_list_#{listing.id}"}
     .browsing-list-item-image-container
       - if listing.listing_images.size > 0
         = link_to listing_path(listing.url), class: "browsing-list-item-image-desktop" do
