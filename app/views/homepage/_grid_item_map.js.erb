@@ -1,4 +1,4 @@
-$(".listings-column").html("<%= escape_javascript(render :partial => 'grid_item_map_content', :locals => {show_distance: show_distance }) %>")
+$("#search-results").html("<%= escape_javascript(render :partial => 'grid_item_map_content', :locals => {show_distance: show_distance, shape_name_map: shape_name_map }) %>")
 <% community_location_lat = @current_community.location ? @current_community.location.latitude : nil %>
 <% community_location_lon = @current_community.location ? @current_community.location.longitude : nil %>
 initialize_listing_map(
@@ -8,3 +8,4 @@ initialize_listing_map(
   <%= raw viewport.to_json %>,
   "<%= I18n.locale %>",
   "<%= @current_community.use_community_location_as_default %>", true);
+$(".listings-column").scrollTop(0)

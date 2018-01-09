@@ -96,6 +96,12 @@
           = render :partial => "filters", :locals => { show_price_filter: show_price_filter, show_custom_fields: @show_custom_fields, filters: filters }
         .auto-col.toggle-container.home-toolbar-toggle-container
           = select_tag :sort_order, sorting_options(params[:sort_order])
+        .auto-col.filters-enabled.home-toolbar-button-group
+          %a.home-toolbar-button-group-button.selected.view-toggle{data: {mode: 'grid-mode'}, href: '#'}
+            %i.ss-thumbnails
+          %a.home-toolbar-button-group-button.view-toggle{data: {mode: 'list-mode'}, href: '#'}
+            %i.ss-list
+
       .row
         = yield :selected_filters
 .row.fixed-homepage
@@ -103,11 +109,19 @@
     .home-map
       = render :partial => "map", locals: { viewport: viewport }
   .listings-column
-    .row
-      = render partial: 'grid_item_map_content', locals: {show_distance: location_search_in_use}
+    .row.grid-mode#search-results
+      = render partial: 'grid_item_map_content', locals: {show_distance: location_search_in_use, shape_name_map: shape_name_map}
 
 :css
   .fixed-homepage { position: fixed; top: 200px; left: 0px; bottom: 0px; right: 0px}
   .map-column     { position: fixed; top: 200px; left: 0px; bottom: 0px; right: 50%; }
   .home-map       { position: relative; height: 100%; width: 100%; }
   .listings-column{ position: fixed; top: 200px; left: 50%; bottom: 0px; right: 0px; overflow-y: auto; overflow-x: hidden; margin: 10px; }
+- content_for :extra_javascript do
+  :javascript
+    $(".view-toggle").click(function(){
+      $(".view-toggle").removeClass("selected");
+      $(this).addClass("selected");
+      $("#search-results").removeClass("grid-mode").removeClass("list-mode").addClass($(this).data("mode"));
+      return false;
+    });
