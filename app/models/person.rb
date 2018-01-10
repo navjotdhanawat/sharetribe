@@ -42,6 +42,8 @@
 #  min_days_between_community_updates :integer          default(1)
 #  deleted                            :boolean          default(FALSE)
 #  cloned_from                        :string(22)
+#  rating_average                     :float(24)        default(0.0)
+#  rating_count                       :integer          default(0)
 #
 # Indexes
 #
@@ -115,6 +117,8 @@ class Person < ApplicationRecord
   deprecate communities: "Use accepted_community instead.",
             community_memberships: "Use community_membership instead.",
             deprecator: MethodDeprecator.new
+
+  after_save :reindex_listings
 
   def to_param
     username
@@ -622,6 +626,12 @@ class Person < ApplicationRecord
     super
   end
 
+  def rebuild_rating
+    self.rating_average = received_testimonials.average(:grade).to_f * 4 + 1
+    self.rating_count = received_testimonials.count
+    save
+  end
+
   private
 
   def digest(password, salt)
@@ -638,4 +648,12 @@ class Person < ApplicationRecord
   def logger_metadata
     { person_uuid: uuid }
   end
+
+  def reindex_listings
+    listings.each do |listing|
+      listing.delta = true
+      listing.save
+    end
+  end
+
 end
