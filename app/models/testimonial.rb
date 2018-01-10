@@ -29,9 +29,17 @@ class Testimonial < ApplicationRecord
 
   scope :positive, -> { where("grade >= 0.5") }
 
+  after_create :update_author_rating
+
   # Formats grade so that it can be displayed in the UI
   def displayed_grade
     (grade * 4 + 1).to_i
+  end
+
+  def update_author_rating
+    if author == tx.starter
+      tx.author.rebuild_rating
+    end
   end
 
 end

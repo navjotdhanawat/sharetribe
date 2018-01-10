@@ -28,7 +28,10 @@ module ListingIndexViewUtils
     :display_name,
     :avatar,
     :is_deleted,
-    :num_of_reviews)
+    :num_of_reviews,
+    :rating_average,
+    :rating_count
+  )
 
   ListingImage = Struct.new(
     :thumb,
@@ -50,7 +53,9 @@ module ListingIndexViewUtils
               l[:author][:avatar][:thumb]
             ),
             l[:author][:is_deleted],
-            l[:author][:num_of_reviews]
+            l[:author][:num_of_reviews],
+            l[:author][:rating_average],
+            l[:author][:rating_count]
           )
         end
 
