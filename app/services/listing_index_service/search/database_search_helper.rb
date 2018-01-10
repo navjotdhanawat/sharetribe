@@ -19,7 +19,7 @@ module ListingIndexService::Search::DatabaseSearchHelper
     query = Listing
             .where(where_opts)
             .includes(included_models)
-            .order("listings.sort_date DESC")
+            .order("people.is_confirmed DESC, listings.sort_date DESC")
             .paginate(per_page: search[:per_page], page: search[:page])
 
     listings =
