@@ -59,5 +59,4 @@
         .home-list-author-reviews
           = stars_rating_tag listing.author.rating_average, disable_after_rate: true, readonly: true
           - if listing.author.num_of_reviews > 0
-            = icon_tag("testimonial")
             = pluralize(listing.author.num_of_reviews, t(".review"), t(".reviews"))

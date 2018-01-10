@@ -8,7 +8,7 @@ module RatyHelper
     show_quantity= options[:show_quantity]|| false
     star         = options[:star]         || 5
     enable_half  = options[:enable_half]  || false
-    half_show    = options[:half_show]    || true
+    half_show    = options[:half_show]    || false
     star_path    = options[:star_path]    || "/assets"
     star_on      = options[:star_on]      || "star-db.png"
     star_off     = options[:star_off]     || "star-c3.png"
