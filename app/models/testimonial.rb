@@ -25,21 +25,16 @@ class Testimonial < ApplicationRecord
   belongs_to :receiver, :class_name => "Person"
   belongs_to :tx, class_name: "Transaction", foreign_key: "transaction_id"
 
-  validates_inclusion_of :grade, :in => 0..1, :allow_nil => false
+  validates_inclusion_of :grade, :in => 0..5, :allow_nil => false
 
-  scope :positive, -> { where("grade >= 0.5") }
-
-  after_create :update_author_rating
+  after_create :update_receiver_rating
 
   # Formats grade so that it can be displayed in the UI
   def displayed_grade
-    (grade * 4 + 1).to_i
+    grade
   end
 
-  def update_author_rating
-    if author == tx.starter
-      tx.author.rebuild_rating
-    end
+  def update_receiver_rating
+    receiver.rebuild_rating
   end
-
 end

@@ -1,7 +1,7 @@
 module RatyHelper
   def stars_rating_tag(average, options={})
     dimension    = "quality"
-    read_only    = options[:readonly]     || true
+    read_only    = !!options[:readonly] 
     show_quantity= options[:show_quantity]|| false
     star         = options[:star]         || 5
     enable_half  = options[:enable_half]  || false
