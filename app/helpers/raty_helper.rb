@@ -24,6 +24,7 @@ module RatyHelper
     targetType   = options[:targetType]   || 'hint'
     targetFormat = options[:targetFormat] || '{score}'
     targetScore  = options[:targetScore]  || '#non-existing'
+    scoreName    = options[:scoreName]    || 'DETACHED'
     averageAsDefault = options[:averageAsDefault].nil? ? true : !!options[:averageAsDefault]
 
     disable_after_rate = options[:disable_after_rate] && true
@@ -64,6 +65,7 @@ module RatyHelper
                 "data-target-type" => targetType,
                 "data-target-format" => targetFormat,
                 "data-target-score" => targetScore,
+                "data-score-name" => scoreName,
                 "data-url-transaction" => '/',
                 "data-quantity" => total_quantity
   end

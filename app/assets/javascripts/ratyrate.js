@@ -39,6 +39,7 @@ var initRatings = function() {
       targetType:   $(this).attr('data-target-type'),
       targetFormat: $(this).attr('data-target-format'),
       targetScore:  $(this).attr('data-target-score'),
+      scoreName:    $(this).attr('data-score-name'),
       readOnly: $readonly,
       //click: function(score, evt) {
       //  var _this = this;

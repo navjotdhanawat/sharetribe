@@ -284,7 +284,11 @@
     },
 
     _buildScoreField: function() {
-      return $('<input />', { name: this.opt.scoreName, type: 'hidden' }).appendTo(this);
+      if(this.opt.scoreName == 'DETACHED') {
+        return $('<input />', { name: this.opt.scoreName, type: 'hidden' });
+      } else {
+        return $('<input />', { name: this.opt.scoreName, type: 'hidden' }).appendTo(this);
+      }
     },
 
     _createCancel: function() {
