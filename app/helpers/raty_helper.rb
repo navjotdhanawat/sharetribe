@@ -1,5 +1,8 @@
 module RatyHelper
   def stars_rating_tag(average, options={})
+    if average < 1 && options[:readonly]
+      return
+    end
     dimension    = "quality"
     read_only    = !!options[:readonly] 
     show_quantity= options[:show_quantity]|| false
@@ -7,9 +10,9 @@ module RatyHelper
     enable_half  = options[:enable_half]  || false
     half_show    = options[:half_show]    || true
     star_path    = options[:star_path]    || "/assets"
-    star_on      = options[:star_on]      || "star-on.png"
-    star_off     = options[:star_off]     || "star-off.png"
-    star_half    = options[:star_half]    || "star-half.png"
+    star_on      = options[:star_on]      || "star-db.png"
+    star_off     = options[:star_off]     || "star-c3.png"
+    star_half    = options[:star_half]    || "star-half-db-c3.png"
     cancel       = options[:cancel]       || false
     cancel_place = options[:cancel_place] || "left"
     cancel_hint  = options[:cancel_hint]  || "Cancel current rating!"
