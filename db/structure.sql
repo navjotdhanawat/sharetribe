@@ -1164,6 +1164,7 @@ CREATE TABLE `people` (
   `cloned_from` varchar(22) DEFAULT NULL,
   `rating_average` float DEFAULT 0,
   `rating_count` int(11) DEFAULT 0,
+  `is_confirmed` int(11) DEFAULT 0,
   UNIQUE KEY `index_people_on_username_and_community_id` (`username`,`community_id`) USING BTREE,
   UNIQUE KEY `index_people_on_uuid` (`uuid`),
   UNIQUE KEY `index_people_on_email` (`email`) USING BTREE,
@@ -2248,6 +2249,9 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20171207073027'),
 ('20171207075640'),
 ('20180102065427'),
-('20180110065515');
+('20180110065515'),
+('20180110121729'),
+('20180110122849'),
+('20180110122905');
 
 

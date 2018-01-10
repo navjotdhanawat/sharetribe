@@ -32,6 +32,7 @@ if APP_CONFIG.use_thinking_sphinx_indexing.to_s.casecmp("true") == 0
     has 'RADIANS(locations.longitude)', as: :longitude, type: :float
     has author.rating_count, as: :rating_count, type: :float
     has author.rating_average, as: :rating_average, type: :float
+    has author.is_confirmed, :as => :author_confirmed, type: :integer
 
     set_property :enable_star => true
 
