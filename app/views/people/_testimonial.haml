@@ -3,6 +3,7 @@
   .testimonial-avatar
     = small_avatar_thumb(testimonial.author)
   .testimonial-details
+    = stars_rating_tag testimonial.grade, readonly: true
     .testimonial-message
       - text_with_line_breaks do
         #{testimonial.text}
@@ -11,8 +12,3 @@
       = t("testimonials.testimonial.about_listing")
       = link_to listing.title, listing
       = time_ago(testimonial.created_at) + "."
-  .testimonial-icon{:class => testimonial.grade > 0.25 ? 'positive' : 'negative'}
-    - if testimonial.grade > 0.25
-      = icon_tag("like", ["positive"])
-    - else
-      = icon_tag("dislike", ["negative"])

@@ -57,14 +57,6 @@ class ListingPresenter < MemoisticPresenter
     TestimonialViewUtils.received_testimonials_in_community(@listing.author, @current_community)
   end
 
-  def received_positive_testimonials
-    TestimonialViewUtils.received_positive_testimonials_in_community(@listing.author, @current_community)
-  end
-
-  def feedback_positive_percentage
-    @listing.author.feedback_positive_percentage_in_community(@current_community)
-  end
-
   def youtube_link_ids
     ListingViewUtils.youtube_video_ids(@listing.description)
   end
