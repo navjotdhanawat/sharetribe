@@ -530,3 +530,22 @@ $home-list-avatar-padding: lines(0.25);
 .pac-item span {
   pointer-events: none;
 }
+.home-fluid-thumbnail-grid-details-author-name {
+  display: block;
+  color: #494750;
+  height: inherit;
+  float: none;
+  line-height: 1.5;
+}
+
+.home-fluid-thumbnail-grid-details-author-rating {
+  line-height: 1;
+}
+
+.home-fluid-thumbnail-grid-details-distance {
+    float: none;
+    position: absolute;
+    top: 0px;
+    right: 6px;
+}
+

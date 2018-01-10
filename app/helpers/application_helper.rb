@@ -106,7 +106,9 @@ module ApplicationHelper
     end
   end
 
-  def pageless(total_pages, target_id, url=nil, loader_message='Loading more results', current_page = 1)
+
+
+  def pageless(total_pages, target_id, url=nil, loader_message='Loading more results', current_page = 1, complete_callback = nil)
 
     opts = {
       :currentPage => current_page,
@@ -117,7 +119,11 @@ module ApplicationHelper
     }
 
     content_for :extra_javascript do
-      javascript_tag("$('#{target_id}').pageless(#{opts.to_json});")
+      if complete_callback
+        javascript_tag("var _pageless_opts = #{opts.to_json}; _pageless_opts.complete = #{complete_callback}; $('#{target_id}').pageless(_pageless_opts);")
+      else
+        javascript_tag("$('#{target_id}').pageless(#{opts.to_json});")
+      end
     end
   end
 
