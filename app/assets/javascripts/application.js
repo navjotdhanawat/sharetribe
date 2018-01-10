@@ -38,6 +38,7 @@
 //= require jquery.fileupload-image
 //= require autosize
 //= require jquery.raty
+//= require ratyrate
 
 //= require selectize-standalone.js
 //= require datepicker/bootstrap-datepicker.js

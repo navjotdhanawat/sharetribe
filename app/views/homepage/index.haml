@@ -14,6 +14,8 @@
     = javascript_include_tag "//maps.googleapis.com/maps/api/js?libraries=places#{key_param}"
   - if(@view_type.eql?("map"))
     = javascript_include_tag "markerclusterer.js"
+  :javascript
+    initRatings()
 
 - content_for :title_header do
   - is_homepage = params[:controller] == "homepage" && params[:action] == "index"
@@ -159,7 +161,7 @@
           .home-loading-more
             = will_paginate(@listings)
             - item_container = if @view_type.eql?("grid") then '.home-fluid-thumbnail-grid' else '.home-listings' end
-            = pageless(@listings.total_pages, item_container, current_search_path_without_page, t('.loading_more_content'), current_page)
+            = pageless(@listings.total_pages, item_container, current_search_path_without_page, t('.loading_more_content'), current_page, 'initRatings')
       - else
         .home-no-listings
           - if params[:q] || params[:category] || params[:share_type] # Some filter in use

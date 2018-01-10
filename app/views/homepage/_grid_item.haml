@@ -15,11 +15,13 @@
         - if(!show_distance || distance.blank?)
           = link_to(person_path(username: listing.author.username), :class => "home-fluid-thumbnail-grid-author-name", title: name) do
             = name
+          = stars_rating_tag listing.author.rating_average, disable_after_rate: true, readonly: true, class: 'home-fluid-thumbnail-grid-details-author-rating'
         - else
           .home-fluid-thumbnail-grid-details
             = link_to(person_path(username: listing.author.username), class: "home-fluid-thumbnail-grid-details-author-name", title: name) do
               = name
+            = stars_rating_tag listing.author.rating_average, disable_after_rate: true, readonly: true, class: 'home-fluid-thumbnail-grid-details-author-rating'
             - dist = format_distance(distance)
             - dist_string = "#{dist} #{listing.distance_unit}"
-            .home-fluid-thumbnail-grid-details-distance{title: dist_string}
-              = dist_string
+          .home-fluid-thumbnail-grid-details-distance{title: dist_string}
+            = dist_string
