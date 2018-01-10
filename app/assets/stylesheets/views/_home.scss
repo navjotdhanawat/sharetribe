@@ -548,4 +548,7 @@ $home-list-avatar-padding: lines(0.25);
     top: 0px;
     right: 6px;
 }
-
+.home-list-author-reviews .star, .browsing-list-item-author-reviews .star {
+  display: inline-block; 
+  vertical-align: top;
+}

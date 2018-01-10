@@ -50,7 +50,6 @@
             .browsing-list-item-author-reviews
               = stars_rating_tag listing.author.rating_average, disable_after_rate: true, readonly: true
               - if listing.author.num_of_reviews > 0
-                = icon_tag("testimonial")
                 = pluralize(listing.author.num_of_reviews, t("homepage.list_item.review"), t("homepage.list_item.reviews"))
 
         .browsing-list-item-price-mobile{ class: (listing.listing_images.size > 0 ? "browsing-list-item-price-mobile-with-listing-image" : "browsing-list-item-price-mobile-without-listing-image")}
