@@ -1,15 +1,3 @@
-- if FeatureFlagHelper.feature_enabled?(:topbar_v1)
-  - if(search_mode != :keyword || @view_type.eql?("map"))
-    - maps_key = MarketplaceHelper.google_maps_key(@current_community.id)
-    - key_param = maps_key ? "&key=#{maps_key}" : ""
-    = javascript_include_tag "//maps.googleapis.com/maps/api/js?libraries=places#{key_param}"
-  - if(@view_type.eql?("map"))
-    = javascript_include_tag "markerclusterer.js"
-  - props = topbar_props
-  - props[:search] = nil
-  - cache props do
-    = react_component("TopbarApp", props: props, prerender: true, id: 'topbar-container')
-
 %section#hero__hero__0.hero__section--light
   .hero__content
     .hero__content-container
