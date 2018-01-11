@@ -9,12 +9,14 @@
           - count_selected += 1
 
       .auto-col.toggle-container.home-toolbar-toggle-container
-        .toggle.with-borders{data: {toggle: "#home-toolbar-filter-menu-#{field.id}"}}
+        .toggle.with-borders{data: {toggle: "#home-toolbar-filter-menu-#{field.id}"}, class: count_selected > 0 ? 'inverted' : ''}
           .toggle-header-container
             .toggle-header
               = field.name(I18n.locale)
               - if count_selected > 0
-                %span.options-selected-counter= count_selected
+                %strong
+                  &middot;
+                  = count_selected
 
             = icon_tag("dropdown", ["icon-dropdown"])
 
