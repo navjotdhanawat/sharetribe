@@ -15,7 +15,7 @@ module PathHelpers
     non_default_locale = ->(locale) { locale.present? && locale != default_locale.to_s}
     not_present = ->(x) { !x.present? }
 
-    case [CustomLandingPage::LandingPageStore.enabled?(community_id),
+    case [true,
           logged_in,
           locale_param]
     when matches([true, false, non_default_locale])
@@ -30,7 +30,7 @@ module PathHelpers
   end
 
   def search_url(community_id:, opts: {})
-    case [CustomLandingPage::LandingPageStore.enabled?(community_id),
+    case [true,
           opts[:locale].present?]
     when matches([true, true])
       paths.search_with_locale_url(opts)

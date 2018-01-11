@@ -61,10 +61,12 @@
   %meta{ :property => "fb:app_id", :content => "#{@current_community.facebook_connect_id}" }
 
 / CSS
-= stylesheet_link_tag "application"
+= stylesheet_link_tag "application" unless @skip_app_styles
 
-- if @current_community.has_customizations?
+- if @current_community.has_customizations? && !@skip_app_styles
   = render partial: "layouts/style_overrides", locals: MarketplaceHelper.style_customizations_map(@current_community)
+- if @skip_app_styles
+  = stylesheet_link_tag 'landing'
 
 = stylesheet_link_tag "app-bundle"
 
