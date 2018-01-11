@@ -13,16 +13,18 @@
   src: asset-url("raty.woff") format("woff");
 }
 
-.cancel-on-png, .cancel-off-png, .star-on-png, .star-off-png, .star-half-png {
+.cancel-on-png, .cancel-off-png, .star-on-png, .star-off-png, .star-half-png, .star-c3-png, .star-db-png, .star-66-png, .star-3c-png {
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
-  font-family: "raty";
+  font-family: "SSPika";
   font-style: normal;
   font-variant: normal;
   font-weight: normal;
   line-height: 1;
   speak: none;
   text-transform: none;
+  padding-right: 3px;
+
 }
 
 .cancel-on-png:before {
@@ -33,14 +35,25 @@
   content: "\e601";
 }
 
-.star-on-png:before {
-  content: "\f005";
+.star-on-png:before, .star-db-png:before {
+  content: "⋆";
+  color: #db1414;
+}
+.star-3c-png:before {
+  content: "⋆";
+  color: #3c3c3c;
+}
+.star-66-png:before {
+  content: "⋆";
+  color: #660909;
 }
 
-.star-off-png:before {
-  content: "\f006";
+.star-off-png:before, .star-c3-png:before {
+  content: "⋆";
+  color: #c3c3c3;
 }
 
 .star-half-png:before {
-  content: "\f123";
+  content: "";
+  color: #db1414;
 }

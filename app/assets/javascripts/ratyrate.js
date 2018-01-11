@@ -23,6 +23,7 @@ var initRatings = function() {
       halfShow:     $halfShow,
       single:       $single,
       path:         $(this).attr('data-star-path'),
+      starType:     'i',
       starOn:       $(this).attr('data-star-on'),
       starOff:      $(this).attr('data-star-off'),
       starHalf:     $(this).attr('data-star-half'),
