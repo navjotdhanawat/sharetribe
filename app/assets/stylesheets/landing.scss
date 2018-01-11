@@ -1,5 +1,8 @@
  
 //=require landing_page/styles
+//=require owl.carousel.min.css
+//=require owl.theme.default.min.css
+
 
  @font-face {
    /* 'ProximaNovaSoft-Regular' */
@@ -176,4 +179,8 @@
       color: rgb(186,17,17);
     }
 
-    
+.listings__listing-title {   
+    height: 2.5em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

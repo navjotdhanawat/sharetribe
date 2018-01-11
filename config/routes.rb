@@ -328,6 +328,7 @@ Rails.application.routes.draw do
       member do
         post :follow
         delete :unfollow
+        put :featured
       end
       collection do
         get :new_form_content
