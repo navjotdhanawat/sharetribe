@@ -52,45 +52,23 @@
     %h1.listings__title Featured Listings - Water Sports!
     .listings__paragraph--markdown
       %p Find your favorite activity on the water! From Kayaks and Paddleboards, Diving and Snorkeling gear and tours, to Parasailing and Waverunners, we are continuously adding listings so you can find your type of Fun!
-    .listings__listings
-      .listings__listing
-        %a{:href => "/listings/207120"}
-          .listings__listing-image{:style => "background-image: url(https://user-assets.sharetribe.com/images/listing_images/images/409669/big/paddle-boards.jpg?1478776447)"}
-        %h3.listings__listing-title Paddleboards - 1hr ($20), 4hrs ($45), daily ($59), wk ($180)
-        .listings__listing-info
-          .listings__listings__3__listings__price-container.listings__price-container
-            %span.listings__price-amount $20
-            %span.listings__price-unit / hour
-          %a.listings__listings__3__listings__author-link.listings__author-link{:href => "/seagrapesurfshop"}
-            .listings__author-container
-              .listings__author-avatar-container
-                .listings__author-avatar{:style => "background-image: url(https://user-assets.sharetribe.com/images/people/images/bWDoLo1aKr5yaa-dPlzTtY/thumb/G0011403_%281%29.jpg?1455593051)"}
-              %span.listings__author-name Seagrape Surf Shop
-      .listings__listing
-        %a{:href => "/listings/244148"}
-          .listings__listing-image{:style => "background-image: url(https://user-assets.sharetribe.com/images/listing_images/images/517154/big/fun-baj.jpg?1478778948)"}
-        %h3.listings__listing-title La Paz, Mexico Dive Trip - Deposit for Reservation
-        .listings__listing-info
-          .listings__listings__3__listings__price-container.listings__price-container
-            %span.listings__price-amount $2,250
-            %span.listings__price-unit / person
-          %a.listings__listings__3__listings__author-link.listings__author-link{:href => "/diversdiscount"}
-            .listings__author-container
-              .listings__author-avatar-container
-                .listings__author-avatar{:style => "background-image: url(https://user-assets.sharetribe.com/images/people/images/TtBoHInqJ1dquqe3tCqP6Q/thumb/headerLogo.png?1463275953)"}
-              %span.listings__author-name Divers Discount Florida
-      .listings__listing
-        %a{:href => "/listings/253968"}
-          .listings__listing-image{:style => "background-image: url(https://user-assets.sharetribe.com/images/listing_images/images/548844/big/parasailing-takeoff-400x225.jpg?1478779580)"}
-        %h3.listings__listing-title Sanibel Captiva South Seas Parasailing
-        .listings__listing-info
-          .listings__listings__3__listings__price-container.listings__price-container
-            %span.listings__price-shape-name Call For Price
-          %a.listings__listings__3__listings__author-link.listings__author-link{:href => "/bestboatclub"}
-            .listings__author-container
-              .listings__author-avatar-container
-                .listings__author-avatar{:style => "background-image: url(https://user-assets.sharetribe.com/images/people/images/v1CgWY_7Qn6L9ZETU1Fgtw/thumb/best-boat-club-and-rentals.jpg?1465270040)"}
-              %span.listings__author-name Best Boat Club &amp; Rentals
+    .listings__listings.owl-carousel.owl-theme
+      - @featured_listings.each do |listing|
+        .listings__wrapper
+          .listings__listing
+            %a{:href => listing_path(listing)}
+              - image = listing.listing_images.first
+              .listings__listing-image.owl-lazy{"data-src" => (image ? image.image.url(:big) : nil)}
+              %h3.listings__listing-title= listing.title
+            .listings__listing-info
+              .listings__listings__3__listings__price-container.listings__price-container
+                %span.listings__price-amount= humanized_money_with_symbol(listing.price)
+                %span.listings__price-unit= " / " + (ListingViewUtils.translate_quantity(listing.unit_type, listing.unit_selector_tr_key) rescue "item")
+              %a.listings__listings__3__listings__author-link.listings__author-link{:href => person_path(listing.author)}
+                .listings__author-container
+                  .listings__author-avatar-container
+                    .listings__author-avatar{:style => "background-image: url(#{listing.author.image.present? ? listing.author.image.url(:thumb) : missing_avatar(:thumb)})"}
+                  %span.listings__author-name= PersonViewUtils::person_entity_display_name(listing.author, @current_community.name_display_type)
 %footer#footer__footer__4.footer__container--light
   .footer__content
     .footer__links-container--center
@@ -104,6 +82,7 @@
     %hr.footer__separator/
     .footer__copyrights--markdown
       %p 
+        &copy;
         = Date.today.year 
         OwnOutdoors Marketplace. All rights reserved.
 
@@ -117,4 +96,29 @@
     boundingbox: '#hero__hero__0__search-form [name=boundingbox]',
     maxDistance: '#hero__hero__0__search-form [name=distance_max]'
   })
+- content_for :extra_javascript do
+  :javascript
+    $(document).ready(function($) {
+      $('.owl-carousel').owlCarousel({
+        items: 3,
+        mouseDrag: false,
+        dots: true,
+        nav: false,
+        lazyLoad: true,
+        responsive: {
+            0 : {
+              items: 1,
+              slideBy: 1
+            },
+            480 : {
+              items: 3,
+              slideBy: 3
+            },
+            768 : {
+              items: 3,
+              slideBy: 3
+            }
+        }
+      });
+    });
 
