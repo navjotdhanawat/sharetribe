@@ -1809,6 +1809,9 @@ en:
       month: month
     verification_required:
       verification_required: "Verification required"
+    featured:
+      add_featured: "Add to Featured"
+      remove_featured: "Remove from Featured"
   listing_conversations:
     preauthorize:
       dates_not_available: "Selected dates are not available"
