@@ -1,5 +1,5 @@
 set :stage, :staging
-set :branch, :master
+set :branch, :edge
 
 set :deploy_to, "/home/rails/#{fetch(:stage)}"
 set :user, 'rails'
