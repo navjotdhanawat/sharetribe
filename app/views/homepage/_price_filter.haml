@@ -1,5 +1,5 @@
 .auto-col.toggle-container.home-toolbar-toggle-container
-  .toggle.with-borders{data: {toggle: "#home-toolbar-filter-menu-price"}}
+  .toggle.with-borders{data: {toggle: "#home-toolbar-filter-menu-price"}, class: (params[:price_min].present? ? 'inverted' : '')}
     .toggle-header-container
       .toggle-header
         = t("listings.form.price.price")
