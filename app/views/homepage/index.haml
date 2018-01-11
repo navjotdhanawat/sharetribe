@@ -62,7 +62,7 @@
         %div
         - if listing_shape_menu_enabled
           .auto-col.toggle-container.home-toolbar-toggle-container
-            .toggle.with-borders#home_toolbar-select-share-type{data: {toggle: '.home-toolbar-share-type-menu'}}
+            .toggle.with-borders#home_toolbar-select-share-type{data: {toggle: '.home-toolbar-share-type-menu'}, class: (selected_shape.present? ? 'inverted' : '') }
               .toggle-header-container
                 .toggle-header
                   - if selected_shape
@@ -81,7 +81,7 @@
 
         - if @show_categories
           .auto-col.toggle-container.home-toolbar-toggle-container
-            .toggle.with-borders{data: {toggle: '#home-toolbar-categories-menu'}}
+            .toggle.with-borders{data: {toggle: '#home-toolbar-categories-menu'}, class: (selected_category.present? ?  'inverted' : '') }
               .toggle-header-container
                 .toggle-header
                   - if selected_category
@@ -108,7 +108,7 @@
             %i.ss-list
 
       .row
-        = yield :selected_filters
+        -# yield :selected_filters
 
 .row.fixed-homepage
   .map-column
