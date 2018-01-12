@@ -2,6 +2,7 @@ $(function() {
   var toggles = [];
 
   function closeAll() {
+    $(".filter-overlay").hide();
     toggles.forEach(function(toggle) {
       toggle.close();
     });
@@ -31,6 +32,7 @@ $(function() {
     function open() {
       // Opens the menu toggle menu
       closeAll();
+      $(".filter-overlay").show();
 
       if (togglePosition === "absolute") {
         absolutePosition();
@@ -45,6 +47,7 @@ $(function() {
       // Closes the target toggle menu
       $menu.addClass('hidden');
       el.removeClass('toggled');
+      $(".filter-overlay").hide();
       toggleFn = open;
     }
 
