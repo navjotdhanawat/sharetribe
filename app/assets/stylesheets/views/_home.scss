@@ -584,10 +584,7 @@ $home-list-avatar-padding: lines(0.25);
   margin-top: -10px;
   display: inline-block;
 }
-.scrollable-categories {
-    max-height: 280px;
-    overflow-y: scroll;
-}
+
 .home-fluid-thumbnail-grid-item:hover ,
 .home-fluid-thumbnail-grid-item.highlighted {
    .fluid-thumbnail-grid-image-title {
@@ -623,7 +620,33 @@ $home-list-avatar-padding: lines(0.25);
   .home-map       { position: relative; height: 100%; width: 100%; }
   .listings-column{ position: fixed; top: 131px; left: 0%; bottom: 0px; right: 35%; overflow-y: auto; overflow-x: hidden; margin: 10px 0px 10px 10px; }
   .filter-button  { display: none; }
-  
+  .filter-overlay {
+    position: fixed !important;
+    height: 100vh !important;
+    width: 100% !important;
+    top: 131px !important;
+    left: 0px;
+    z-index: 100 !important;
+    background: rgba(255, 255, 255, 0.85) !important;
+    display: none;
+  }
+  .scrollable-categories {
+    position: fixed !important;
+    width: 65%;
+    height: 100%;
+    top: 131px !important;
+    left: 0px;
+    z-index: 102;
+    &.toggle-menu {
+      overflow-y: scroll;
+      a {
+        padding: 0.25em 0.75em;
+      }
+      a.toggle-menu-subitem {
+         padding-left: 1.5em;
+      }
+    }
+  }
 }
 .toggle.inverted {
   color: white;
@@ -638,6 +661,10 @@ $home-list-avatar-padding: lines(0.25);
   .filter-button  { display: inline-block; width: auto; cursor: pointer; }
   .home-toolbar-button-group.filters-enabled { position: absolute; top: 10px; right: 0px; width: 120px; margin-right: 0px; display: block }
   .home-toolbar-filters#home-toolbar-filters { position: relative; }
+  .scrollable-categories {
+    max-height: 280px;
+    overflow-y: scroll;
+  }
 }
 .star {
   margin-top: 5px;
@@ -651,4 +678,7 @@ $home-list-avatar-padding: lines(0.25);
     padding: 0 0.75em;
     height: 35px;
     line-height: 33px;
+}
+.home-toolbar-button-group-button {
+  padding-top: 0.25em;
 }
