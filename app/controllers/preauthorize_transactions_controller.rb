@@ -570,7 +570,7 @@ class PreauthorizeTransactionsController < ApplicationController
 
   # Ensure that only users with appropriate visibility settings can reply to the listing
   def ensure_authorized_to_reply
-    unless listing.visible_to?(@current_user, @current_community)
+    unless listing.visible_to?(@current_user, @current_community, session[:admin_pretending])
       flash[:error] = t("layouts.notifications.you_are_not_authorized_to_view_this_content")
       redirect_to search_path
     end

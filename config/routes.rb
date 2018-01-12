@@ -260,6 +260,7 @@ Rails.application.routes.draw do
           member do
             put :ban
             put :unban
+            post :pretend
           end
           collection do
             post :promote_admin
@@ -309,6 +310,7 @@ Rails.application.routes.draw do
         end
       end
       resource :plan, only: [:show]
+      resources :redprofile_users, only: :create
     end
 
     resources :invitations, only: [:new, :create ] do

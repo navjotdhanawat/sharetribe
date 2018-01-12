@@ -157,7 +157,7 @@ class Listing < ApplicationRecord
     end
   end
 
-  def visible_to?(current_user, current_community)
+  def visible_to?(current_user, current_community, pretending = false)
     # DEPRECATED
     #
     # Consider removing the `visible_to?` method.
@@ -165,7 +165,7 @@ class Listing < ApplicationRecord
     # Reason: Authorization logic should be in the controller layer (filters etc.),
     # not in the model layer.
     #
-    ListingVisibilityGuard.new(self, current_community, current_user).visible?
+    ListingVisibilityGuard.new(self, current_community, current_user, pretending).visible?
   end
 
   # sets the time to midnight
