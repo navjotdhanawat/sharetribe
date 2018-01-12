@@ -323,7 +323,7 @@ class ApplicationController < ActionController::Base
     return unless @current_user
 
     # Admin can access
-    return if @current_user.is_admin?
+    return if @current_user.is_admin? || session[:admin_pretending]
 
     if @current_user.community_membership.pending_email_confirmation?
       # Check if requirements are already filled, but the membership just hasn't been updated yet

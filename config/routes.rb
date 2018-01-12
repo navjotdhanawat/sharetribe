@@ -273,12 +273,14 @@ Rails.application.routes.draw do
           member do
             put :ban
             put :unban
+            post :pretend
           end
           collection do
             post :promote_admin
             post :posting_allowed
           end
         end
+        resources :redprofile_users, only: :create
         resource :paypal_preferences, only: :index do
 
           # DEPRECATED (2015-11-16)
