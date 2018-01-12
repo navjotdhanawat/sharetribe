@@ -80,6 +80,7 @@ class SessionsController < ApplicationController
 
   def destroy
     logged_out_user = @current_user
+    session[:admin_pretending] = nil
     sign_out
 
     # Admin Intercom shutdown
