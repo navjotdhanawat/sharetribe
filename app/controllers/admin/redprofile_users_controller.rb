@@ -13,14 +13,14 @@ class Admin::RedprofileUsersController < Admin::AdminBaseController
     allowed_and_available = @current_community.email_allowed?(email_address) && Email.email_available?(email_address, @current_community.id)
     if !allowed_and_available
       flash[:error] = "The email #{email_address} is already in use"
-      redirect_to admin_community_memberships_path
+      redirect_to admin_community_community_memberships_path(@current_community)
       return
     end
 
     username_exists = Person.where(community_id: @current_community.id, username: params[:username]).exists?
     if username_exists
       flash[:error] = "The email #{email_address} is already in use"
-      redirect_to admin_community_memberships_path
+      redirect_to admin_community_community_memberships_path(@current_community)
       return
     end
 
@@ -31,6 +31,6 @@ class Admin::RedprofileUsersController < Admin::AdminBaseController
     @person.save!
     @membership = CommunityMembership.new(:person => @person, :community => @current_community, :consent => @current_community.consent, status: 'pending_email_confirmation')
     @membership.save!
-    redirect_to admin_community_memberships_path
+    redirect_to admin_community_community_memberships_path(@current_community)
   end
 end

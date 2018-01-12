@@ -629,6 +629,7 @@ class Person < ApplicationRecord
   end
 
   def reindex_listings
+    return unless is_confirmed_changed?
     listings.each do |listing|
       listing.delta = true
       listing.save

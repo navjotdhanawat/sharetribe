@@ -203,8 +203,9 @@ class ApplicationController < ActionController::Base
   # community are all expired.
   def ensure_user_belongs_to_community
     return unless @current_user
+    return if @current_user.has_admin_rights?(@current_community) || session[:admin_pretending]
 
-    if !@current_user.has_admin_rights?(@current_community) && @current_user.accepted_community != @current_community
+    if @current_user.accepted_community != @current_community
 
       logger.info(
         "Automatically logged out user that doesn't belong to community",

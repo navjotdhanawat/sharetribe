@@ -41,7 +41,7 @@ class CommentsController < ApplicationController
       community_id: @current_community.id
     )
 
-    unless @comment.listing.visible_to?(@current_user, @current_community)
+    unless @comment.listing.visible_to?(@current_user, @current_community, session[:admin_pretending])
       flash[:error] = t("layouts.notifications.you_are_not_authorized_to_view_this_content")
       redirect_to search_path and return
     end
