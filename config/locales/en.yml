@@ -262,13 +262,14 @@ en:
         reset_search: "Show all"
         for_search_terms: "for: %{terms}"
         is_confirmed: "Confirmed"
-        login_as: "sign in"
+        login_as: "Login as"
       redprofile_users:
         email: Email
         password: Password
         create: "Create new user"
         given_name: "Given name"
         family_name: "Family name"
+        username: "Username"
 
       new_layout:
         new_layout: "New layout"

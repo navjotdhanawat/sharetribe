@@ -76,7 +76,7 @@
     = AdminCommunityMembershipsViewUtils.community_members_entries_info(@current_community.id, @memberships).html_safe
     - if params[:q].present?
       = t("admin.communities.manage_members.for_search_terms", terms: "<strong>#{h params[:q]}</strong>".html_safe).html_safe
-
+  = form_tag admin_community_community_memberships_path, method: :post, id: "pretend-form"
   %form
     %table#admin_members_list
       %thead
@@ -90,7 +90,7 @@
           %th= t("admin.communities.manage_members.is_confirmed")
           %th= t("admin.communities.manage_members.admin")
           %th= t("admin.communities.manage_members.ban_user")
-          %th
+          %th= t("admin.communities.manage_members.login_as")
       %tbody
         - @memberships.each do |membership|
           - member = membership.person
@@ -107,15 +107,18 @@
               - if @current_community.require_verification_to_post_listings
                 %td{:style => "text-align: center"}= check_box_tag "posting-allowed[#{member.id}]", member.id, membership.can_post_listings, :class => "admin-members-can-post-listings"
               %td
-                = member.is_confirmed?
+                - if member.is_confirmed?
+                  %i.ss-check
+                - else
+                  %i.ss-ban
               %td{:style => "text-align: center"}
                 = check_box_tag "is_admin[#{member.id}]", member.id, member.is_marketplace_admin?(@current_community), :class => "admin-members-is-admin", :disabled => member.eql?(@current_user) || membership.status == 'banned'
 
               %td{:style => "text-align: center"}
                 = check_box_tag "is_banned[#{member.id}]", member.id, membership.status == 'banned', data: {ban_url: ban_admin_community_community_membership_path(@current_community.id, membership.id), unban_url: unban_admin_community_community_membership_path(@current_community.id, membership.id), confirm_ban: t("admin.communities.manage_members.ban_user_confirmation"), confirm_unban: t("admin.communities.manage_members.unban_user_confirmation")}, class: "admin-members-ban-toggle"
               %td
-                = form_tag action: :pretend, id: member.username do
-                  = button_tag t("admin.communities.manage_members.login_as")
+                %a.pretend-user{data: {username: member.username}, href: '#'}
+                  %i.ss-login{title: t("admin.communities.manage_members.login_as")}
 
   .row
     .col-12
@@ -140,4 +143,11 @@
           this.checked = true;
         }
       }
+    });
+    $(document).on("click", "a.pretend-user", function(){
+      var e = $("#pretend-form")
+      var u = $(this).data("username");
+      e.attr('action', "#{admin_community_community_memberships_path(@current_community)}/"+u+"/pretend");
+      e.submit();
+      return false;
     });

@@ -280,7 +280,6 @@ Rails.application.routes.draw do
             post :posting_allowed
           end
         end
-        resources :redprofile_users, only: :create
         resource :paypal_preferences, only: :index do
 
           # DEPRECATED (2015-11-16)
@@ -324,6 +323,7 @@ Rails.application.routes.draw do
         end
       end
       resource :plan, only: [:show]
+      resources :redprofile_users, only: :create
     end
 
     resources :invitations, only: [:new, :create ] do

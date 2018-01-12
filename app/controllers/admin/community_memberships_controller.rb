@@ -93,10 +93,12 @@ class Admin::CommunityMembershipsController < Admin::AdminBaseController
   end
 
   def pretend
-    session[:admin_pretending] = params[:username]
-    target_user = Person.where(community_id: @current_community.id, username: params[:username]).first
+    target_user = Person.where(community_id: @current_community.id, username: params[:id]).first
     if target_user
-      sign_in target_user, :bypass => true
+      sign_out
+      IntercomHelper::ShutdownHelper.intercom_shutdown(session, cookies, request.host_with_port)
+      sign_in target_user
+      session[:admin_pretending] = params[:id]
       redirect_to homepage_without_locale_path
     else
       redirect_to action: :index
