@@ -132,6 +132,8 @@
           .text-part= t("listings.edit_links.close_listing")
 
       - if @listing_presenter.is_marketplace_admin
+        .listing-view-admin-link#toggle-featured
+          = render partial: 'featured'
         .listing-view-admin-link
           = link_to move_to_top_person_listing_path(@current_user, @listing), data: { method: "put" } do
             .icon-with-text-container

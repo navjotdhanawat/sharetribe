@@ -576,7 +576,6 @@ function initialize_homepage() {
       return false;
     }
   );
-  
   $(document).on("change", "#home-toolbar-filters input, #home-toolbar-filters select", refreshSearchResults);
   $(document).on("click", "#home-toolbar-filters input:radio, #filters input:checkbox", refreshSearchResults);
   $(document).on("click", ".filter-value .removable", function(){

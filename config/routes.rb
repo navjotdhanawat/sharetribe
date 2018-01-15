@@ -74,31 +74,18 @@ Rails.application.routes.draw do
   locale_matcher = Regexp.new(locale_regex_string)
   locale_matcher_anchored = Regexp.new("^(#{locale_regex_string})$")
 
-  # Conditional routes for custom landing pages
-  get '/:locale/' => 'landing_page#index', as: :landing_page_with_locale, constraints: ->(request) {
-    locale_matcher_anchored.match(request.params["locale"]) &&
-      CustomLandingPage::LandingPageStore.enabled?(request.env[:current_marketplace]&.id)
+  get '/:locale/' => 'landing#index', as: :landing_page_with_locale, constraints: ->(request) {
+    locale_matcher_anchored.match(request.params["locale"]) 
   }
-  get '/' => 'landing_page#index', as: :landing_page_without_locale, constraints: ->(request) {
-    CustomLandingPage::LandingPageStore.enabled?(request.env[:current_marketplace]&.id)
-  }
+  get '/' => 'landing#index', as: :landing_page_without_locale
 
-  # Conditional routes for search view if landing page is enabled
   get '/:locale/s' => 'homepage#index', as: :search_with_locale, constraints: ->(request) {
-    locale_matcher_anchored.match(request.params["locale"]) &&
-      CustomLandingPage::LandingPageStore.enabled?(request.env[:current_marketplace]&.id)
+    locale_matcher_anchored.match(request.params["locale"]) 
   }
-  get '/s' => 'homepage#index', as: :search_without_locale, constraints: ->(request) {
-    CustomLandingPage::LandingPageStore.enabled?(request.env[:current_marketplace]&.id)
-  }
+  get '/s' => 'homepage#index', as: :search_without_locale
+  get '/:locale/' => 'landing#index', :constraints => { :locale => locale_matcher }, as: :homepage_with_locale
+  get '/' => 'landing#index', as: :homepage_without_locale
 
-  # Default routes for homepage, these are matched if custom landing page is not in use
-  # Inside this constraits are the routes that are used when request has subdomain other than www
-  get '/:locale/' => 'homepage#index', :constraints => { :locale => locale_matcher }, as: :homepage_with_locale
-  get '/' => 'homepage#index', as: :homepage_without_locale
-  get '/:locale/s' => 'homepage#index', :constraints => { :locale => locale_matcher }
-  get '/s' => 'homepage#index'
- 
   # error handling: 3$: http://blog.plataformatec.com.br/2012/01/my-five-favorite-hidden-features-in-rails-3-2/
   get '/500' => 'errors#server_error'
   get '/404' => 'errors#not_found', :as => :error_not_found
@@ -343,6 +330,7 @@ Rails.application.routes.draw do
       member do
         post :follow
         delete :unfollow
+        put :featured
       end
       collection do
         get :new_form_content
