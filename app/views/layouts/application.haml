@@ -26,6 +26,8 @@
       - if(@view_type.eql?("map"))
         = javascript_include_tag "markerclusterer.js"
       - props = topbar_props
+      - if @no_top_search
+        - props[:search] = nil
       - cache props do
         = react_component("TopbarApp", props: props, prerender: true, id: 'topbar-container')
     - else
@@ -38,21 +40,22 @@
         = render partial: "layouts/expiration_notice", locals: {contact_owner_link: new_user_feedback_path}
 
     - content_for(:page_content) do
-      %section.marketplace-lander
-        - if @big_cover_photo
-          .coverimage
-            %figure.marketplace-cover.fluidratio
-              .lander-content.marketplace-lander-content
-                = yield :title_header
-        - elsif !(is_homepage && FeatureFlagHelper.feature_enabled?(:topbar_v1))
-          .coverimage
-            %figure.marketplace-cover-small.fluidratio
-            .coverimage-fade{:class => yield(:coverfade_class)}
-              %figure.marketplace-cover-small-fade.fluidratio
-          .title-container
-            .title-header-wrapper
-              .marketplace-title-header
-                = yield :title_header
+      - unless @no_top_search
+        %section.marketplace-lander
+          - if @big_cover_photo
+            .coverimage
+              %figure.marketplace-cover.fluidratio
+                .lander-content.marketplace-lander-content
+                  = yield :title_header
+          - elsif !(is_homepage && FeatureFlagHelper.feature_enabled?(:topbar_v1))
+            .coverimage
+              %figure.marketplace-cover-small.fluidratio
+              .coverimage-fade{:class => yield(:coverfade_class)}
+                %figure.marketplace-cover-small-fade.fluidratio
+            .title-container
+              .title-header-wrapper
+                .marketplace-title-header
+                  = yield :title_header
 
       %article.page-content{class: is_homepage && !@big_cover_photo ? 'no-cover-photo' : ''}
         .wrapper{style: is_homepage ? 'max-width: 98%' : ''}

@@ -12,8 +12,7 @@
   - needs_maps = !FeatureFlagHelper.feature_enabled?(:topbar_v1) && (main_search != :keyword || @view_type.eql?("map"))
   - if(needs_maps)
     = javascript_include_tag "//maps.googleapis.com/maps/api/js?libraries=places#{key_param}"
-  - if(@view_type.eql?("map"))
-    = javascript_include_tag "markerclusterer.js"
+  = javascript_include_tag "markerclusterer.js"
   :javascript
     initRatings()
 
@@ -79,7 +78,6 @@
                 - shapes.each do |shape|
                   = link_to search_path(search_params.merge({transaction_type: shape[:name]})), class:  "toggle-menu-subitem" do
                     = t(shape[:name_tr_key])
-        
 
         - if @show_categories
           .auto-col.toggle-container.home-toolbar-toggle-container
@@ -101,7 +99,7 @@
                     - is_selected = selected_category == child
                     = link_to child.display_name(I18n.locale), search_path(search_params.merge({category: child})), :class => "toggle-menu-subitem"
           = render :partial => "filters", :locals => { show_price_filter: show_price_filter, show_custom_fields: @show_custom_fields, filters: filters }
-        .auto-col.toggle-container.home-toolbar-toggle-container
+        .auto-col.toggle-container.home-toolbar-toggle-container{style: 'vertical-align: top'}
           = select_tag :sort_order, sorting_options(params[:sort_order])
         .auto-col.filters-enabled.home-toolbar-button-group.mob-visible
           %a.home-toolbar-button-group-button.selected.view-toggle{data: {mode: 'grid-mode'}, href: '#'}
@@ -111,6 +109,7 @@
 
       .row
         = yield :selected_filters
+
 .row.fixed-homepage
   .map-column
     .home-map
@@ -119,57 +118,15 @@
     .row.grid-mode#search-results
       = render partial: 'grid_item_map_content', locals: {show_distance: location_search_in_use, shape_name_map: shape_name_map}
 
-        / Filters
-        .hidden-tablet
-          - # Filters will be relocated to #desktop-filters when in desktop
-          #filters
-            = render :partial => "filters", :locals => { show_price_filter: show_price_filter, show_custom_fields: @show_custom_fields, filters: filters }
-
-  .row
-    - if @category_menu_enabled
-      .col-3.visible-tablet
-        - if @show_categories
-          .row
-            .col-12
-              = link_to t("homepage.filters.all_categories"), search_path(search_params.merge({category: "all"})), :class => "home-categories-main #{if selected_category.nil? then 'selected' end}"
-              - @main_categories.each do |category|
-                - show_subcategories = show_subcategory_list(category, Maybe(selected_category).id.to_i.or_else(nil))
-                = link_to category.display_name(I18n.locale), search_path(search_params.merge({category: category})), :class => "home-categories-main #{if show_subcategories then 'selected' end} #{if category.has_subcategories? then 'has-subcategories' end}", :data => {category: category.id}
-                - if category.children
-                  - if show_subcategories
-                    - category.children.each do |child|
-                      - is_selected = selected_category == child
-                      = link_to child.display_name(I18n.locale), search_path(search_params.merge({category: child})), :class => "home-categories-sub #{if is_selected then 'selected' end}", :data => {:"sub-category" =>child.id}
-
-        #desktop-filters
-          - # Filters will be relocated here when in desktop
-
-    - main_container_class = if @category_menu_enabled then "col-9" else "col-12" end
-    %div{:class => main_container_class}
-      - if @listings.total_entries > 0
-        - if @view_type.eql?("map")
-          .home-map
-            = render :partial => "map", locals: { viewport: viewport }
-        - else
-          - if @view_type.eql?("grid")
-            %div{class: @category_menu_enabled ? "home-fluid-thumbnail-grid-narrow" : "home-fluid-thumbnail-grid-wide"}
-              .home-fluid-thumbnail-grid
-                = render partial: "grid_item", collection: @listings, as: :listing, locals: { show_distance: location_search_in_use }
-          - else
-            .home-listings
-              - if (location_search_in_use)
-                = render partial: "list_item_with_distance", collection: @listings, as: :listing, locals: { shape_name_map: shape_name_map, show_distance: location_search_in_use }
-              - else
-                = render partial: "list_item", collection: @listings, as: :listing, locals: { shape_name_map: shape_name_map }
-          .home-loading-more
-            = will_paginate(@listings)
-            - item_container = if @view_type.eql?("grid") then '.home-fluid-thumbnail-grid' else '.home-listings' end
-            = pageless(@listings.total_pages, item_container, current_search_path_without_page, t('.loading_more_content'), current_page, 'initRatings')
-      - else
-        .home-no-listings
-          - if params[:q] || params[:category] || params[:share_type] # Some filter in use
-            = t(".no_listings_with_your_search_criteria")
-          - else
-            = t(".no_listings_notification",
-                  add_listing_link: link_to(t(".add_listing_link_text"),
-                  new_listing_path(ref: "add_listing_link"))).html_safe
+- content_for :extra_javascript do
+  :javascript
+    $(".view-toggle").click(function(){
+      $(".view-toggle").removeClass("selected");
+      $(this).addClass("selected");
+      $("#search-results").removeClass("grid-mode").removeClass("list-mode").addClass($(this).data("mode"));
+      return false;
+    });
+    $(".home-toolbar-filters#home-toolbar-filters .filter-button").click(function(){
+      $(".home-toolbar-filters#home-toolbar-filters .auto-col:not(.mob-visible)").toggle();
+      return false;
+    });

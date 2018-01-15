@@ -48,17 +48,7 @@ class HomepageController < ApplicationController
 
     per_page = @view_type == "map" ? APP_CONFIG.map_listings_limit : APP_CONFIG.grid_listings_limit
 
-    includes =
-      case @view_type
-      when "grid"
-        [:author, :listing_images]
-      when "list"
-        [:author, :listing_images, :num_of_reviews]
-      when "map"
-        [:author, :location]
-      else
-        raise ArgumentError.new("Unknown view_type #{@view_type}")
-      end
+    includes = [:author, :listing_images, :num_of_reviews, :location]
 
     main_search = search_mode
     enabled_search_modes = search_modes_in_use(params[:q], params[:lc], main_search)

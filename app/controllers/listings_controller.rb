@@ -2,9 +2,9 @@ class ListingsController < ApplicationController
   class ListingDeleted < StandardError; end
 
   # Skip auth token check as current jQuery doesn't provide it automatically
-  skip_before_action :verify_authenticity_token, :only => [:close, :update, :follow, :unfollow]
+  skip_before_action :verify_authenticity_token, :only => [:close, :update, :follow, :unfollow, :featured]
 
-  before_action :only => [ :edit, :edit_form_content, :update, :close, :follow, :unfollow ] do |controller|
+  before_action :only => [ :edit, :edit_form_content, :update, :close, :follow, :unfollow, :featured ] do |controller|
     controller.ensure_logged_in t("layouts.notifications.you_must_log_in_to_view_this_content")
   end
 
@@ -13,7 +13,7 @@ class ListingsController < ApplicationController
   end
 
   before_action :save_current_path, :only => :show
-  before_action :ensure_authorized_to_view, :only => [ :show, :follow, :unfollow ]
+  before_action :ensure_authorized_to_view, :only => [ :show, :follow, :unfollow, :featured]
 
   before_action :only => [ :close ] do |controller|
     controller.ensure_current_user_is_listing_author t("layouts.notifications.only_listing_author_can_close_a_listing")
@@ -23,7 +23,7 @@ class ListingsController < ApplicationController
     controller.ensure_current_user_is_listing_author t("layouts.notifications.only_listing_author_can_edit_a_listing")
   end
 
-  before_action :ensure_is_admin, :only => [ :move_to_top, :show_in_updates_email ]
+  before_action :ensure_is_admin, :only => [ :move_to_top, :show_in_updates_email, :featured ]
 
   before_action :is_authorized_to_post, :only => [ :new, :create ]
 
@@ -266,6 +266,12 @@ class ListingsController < ApplicationController
     return if current_user?(@listing.author) || @current_user.has_admin_rights?(@current_community)
     flash[:error] = error_message
     redirect_to @listing and return
+  end
+
+  def featured
+    @listing = Listing.find(params[:id])
+    @listing.toggle!(:featured)
+    render :layout => false
   end
 
   private
