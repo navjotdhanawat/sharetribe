@@ -84,9 +84,15 @@ module ListingIndexService::Search
         input_longitude = search[:longitude]
         geo = nil
 
+        if search[:bounds].present?
+          bounds = search[:bounds]
+          with[:latitude] = bounds[0]..bounds[2]
+          with[:longitude] = bounds[1]..bounds[3]
+        end
+
         if input_latitude.present? && input_longitude.present?
           multiplier = search[:distance_unit] == :miles ? 1609 : 1000 # meters
-          with[:geodist] = 0..(search[:distance_max] * multiplier).to_i if search[:distance_max].present?
+          with[:geodist] = 0..(search[:distance_max] * multiplier).to_i if search[:distance_max].present? && !search[:bounds].present?
           geo = [to_radians(input_latitude), to_radians(input_longitude)]
           order ||= 'geodist ASC'
         else
@@ -111,7 +117,7 @@ module ListingIndexService::Search
         models = Listing.search(Riddle::Query.escape(search[:keywords] || ""), final_search_params)
 
         begin
-          DatabaseSearchHelper.success_result(models.total_entries, models, includes)
+          DatabaseSearchHelper.success_result([models.total_entries, SPHINX_MAX_MATCHES].min, models, includes)
         rescue ThinkingSphinx::SphinxError => e
           Result::Error.new(e)
         end
