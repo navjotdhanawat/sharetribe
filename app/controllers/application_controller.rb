@@ -243,7 +243,7 @@ class ApplicationController < ActionController::Base
   end
 
   def logged_in?
-    @current_user.present?
+    @current_user.present? && !@current_user.guest?
   end
 
   def current_user?(person)
@@ -560,7 +560,7 @@ class ApplicationController < ActionController::Base
     }
 
     common = {
-      logged_in: @current_user.present?,
+      logged_in: @current_user.present? && !@current_user.guest?,
       homepage_path: @homepage_path,
       current_locale_name: get_full_locale_name(I18n.locale),
       sign_up_path: sign_up_path,
