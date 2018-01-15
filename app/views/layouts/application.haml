@@ -57,8 +57,8 @@
                 .marketplace-title-header
                   = yield :title_header
 
-      %article.page-content{class: is_homepage && !@big_cover_photo ? 'no-cover-photo' : ''}
-        .wrapper{style: is_homepage ? 'max-width: 98%' : ''}
+      %article.page-content{class: is_homepage && !@big_cover_photo ? 'no-cover-photo homepage' : ''}
+        .wrapper
           = render :partial => "layouts/notifications"
           = yield
           - if display_branding_info?
