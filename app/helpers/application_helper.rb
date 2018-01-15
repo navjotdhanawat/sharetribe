@@ -106,13 +106,9 @@ module ApplicationHelper
     end
   end
 
-<<<<<<< HEAD
-  def pageless(total_pages, target_id, url=nil, loader_message='Loading more results', current_page = 1, container = nil)
-=======
 
 
   def pageless(total_pages, target_id, url=nil, loader_message='Loading more results', current_page = 1, complete_callback = nil)
->>>>>>> origin/xXjFxXBq-12-5-star-rating
 
     opts = {
       :container => container,

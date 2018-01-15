@@ -4,10 +4,11 @@
 #
 class ListingVisibilityGuard
 
-  def initialize(listing, community, user)
+  def initialize(listing, community, user, pretending = false)
     @listing = listing
     @community = community
     @user = user
+    @pretending = pretending
   end
 
   def visible?
@@ -39,7 +40,7 @@ class ListingVisibilityGuard
   end
 
   def user_member_of_community?
-    @user.accepted_community == @community
+    @user.accepted_community == @community || @pretending && @community == @user.community
   end
 
   def public_community?

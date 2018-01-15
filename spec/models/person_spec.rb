@@ -44,6 +44,7 @@
 #  cloned_from                        :string(22)
 #  rating_average                     :float(24)        default(0.0)
 #  rating_count                       :integer          default(0)
+#  is_confirmed                       :integer          default(0)
 #
 # Indexes
 #

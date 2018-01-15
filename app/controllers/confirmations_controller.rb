@@ -48,7 +48,9 @@ class ConfirmationsController < Devise::ConfirmationsController
         Delayed::Job.enqueue(SendWelcomeEmail.new(person.id, @current_community.id), priority: 5)
       end
       flash[:notice] = t("layouts.notifications.additional_email_confirmed")
-
+      person.is_confirmed = 1
+      person.save
+ 
       record_event(flash, "AccountConfirmed")
 
       if @current_user && @current_user.has_admin_rights?(@current_community)

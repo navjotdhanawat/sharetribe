@@ -109,6 +109,7 @@ module ListingIndexService::Search
           with: with,
           with_all: with_all,
           order: order,
+          sort_mode: :extended,
           max_query_time: 1000 # Timeout and fail after 1s
         }
 
