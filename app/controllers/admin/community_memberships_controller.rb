@@ -8,7 +8,7 @@ class Admin::CommunityMembershipsController < Admin::AdminBaseController
 
     respond_to do |format|
       format.html do
-        @memberships = CommunityMembership.where(community_id: @current_community.id, status: ["accepted", "banned"])
+        @memberships = CommunityMembership.where(community_id: @current_community.id, status: ["accepted", "banned", "pending_email_confirmation"])
                                            .includes(person: :emails)
                                            .paginate(page: params[:page], per_page: 50)
                                            .order("#{sort_column} #{sort_direction}")
@@ -90,6 +90,19 @@ class Admin::CommunityMembershipsController < Admin::AdminBaseController
     @current_community.community_memberships.where(person_id: params[:disallowed_to_post]).update_all("can_post_listings = 0")
 
     render body: nil, status: 200
+  end
+
+  def pretend
+    target_user = Person.where(community_id: @current_community.id, username: params[:id]).first
+    if target_user
+      sign_out
+      IntercomHelper::ShutdownHelper.intercom_shutdown(session, cookies, request.host_with_port)
+      sign_in target_user
+      session[:admin_pretending] = params[:id]
+      redirect_to homepage_without_locale_path
+    else
+      redirect_to action: :index
+    end
   end
 
   private

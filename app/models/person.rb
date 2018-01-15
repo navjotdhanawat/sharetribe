@@ -44,6 +44,7 @@
 #  cloned_from                        :string(22)
 #  rating_average                     :float(24)        default(0.0)
 #  rating_count                       :integer          default(0)
+#  is_confirmed                       :integer          default(0)
 #
 # Indexes
 #
@@ -628,6 +629,7 @@ class Person < ApplicationRecord
   end
 
   def reindex_listings
+    return unless is_confirmed_changed?
     listings.each do |listing|
       listing.delta = true
       listing.save
