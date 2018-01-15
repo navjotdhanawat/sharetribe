@@ -83,7 +83,7 @@ module IntercomHelper
   end
 
   def email(user_model)
-    (user_model.primary_email || user_model.emails.first).address
+    (user_model.primary_email || user_model.emails.first)&.address
   end
 
   def identity_information(user_model)
