@@ -64,7 +64,7 @@
         %div
         - if listing_shape_menu_enabled
           .auto-col.toggle-container.home-toolbar-toggle-container
-            .toggle.with-borders#home_toolbar-select-share-type{data: {toggle: '.home-toolbar-share-type-menu'}, class: (selected_shape.present? ? 'inverted' : '') }
+            .toggle.with-borders#home_toolbar-select-share-type{data: {toggle: '#toolbar-share-type-filter'}, class: (selected_shape.present? ? 'inverted' : '') }
               .toggle-header-container
                 .toggle-header
                   - if selected_shape
@@ -74,7 +74,7 @@
 
                 = icon_tag("dropdown", ["icon-dropdown"])
 
-            .home-toolbar-share-type-menu.toggle-menu.hidden
+            .home-toolbar-share-type-menu.toggle-menu.hidden#toolbar-share-type-filter
               .filter-width
                 = link_to t("homepage.filters.all_listing_types"), search_path(search_params.merge({transaction_type: "all"}))
                 - shapes.each do |shape|
