@@ -726,6 +726,7 @@ class PreauthorizeTransactionsController < ApplicationController
     @current_user.locale = I18n.locale
     @current_user.password = Devise.friendly_token[0,20].tr('-','X')
     @current_user.phone_number = params[:user][:phone]
+    @current_user.consent = @current_community.consent
     @current_user.save!
     session[:guest_user] = @current_user.id.to_s
     @current_user
