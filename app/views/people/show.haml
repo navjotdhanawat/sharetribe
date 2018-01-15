@@ -55,7 +55,7 @@
         %h2.people-header
           - if received_testimonials.size > 0
             = pluralize(received_testimonials.size, t(".review"), t(".reviews"))
-            = "(#{feedback_positive_percentage.to_s}% #{t("people.show.positive")}, #{received_positive_testimonials.size}/#{received_testimonials.size})"
+            = "(#{t(".average_rating", average_rating: @person.rating_average.to_f.round(1))})"
           - else
             = t(".no_reviews")
         - if received_testimonials.size > 0
@@ -74,3 +74,4 @@
 - content_for :extra_javascript do
   :javascript
     window.ST.initializeFollowButtons();
+    initRatings();

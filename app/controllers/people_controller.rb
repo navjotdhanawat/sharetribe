@@ -61,14 +61,10 @@ class PeopleController < Devise::RegistrationsController
     }.data
 
     received_testimonials = TestimonialViewUtils.received_testimonials_in_community(@person, @current_community)
-    received_positive_testimonials = TestimonialViewUtils.received_positive_testimonials_in_community(@person, @current_community)
-    feedback_positive_percentage = @person.feedback_positive_percentage_in_community(@current_community)
 
     render locals: { listings: listings,
                      followed_people: @person.followed_people,
-                     received_testimonials: received_testimonials,
-                     received_positive_testimonials: received_positive_testimonials,
-                     feedback_positive_percentage: feedback_positive_percentage
+                     received_testimonials: received_testimonials
                    }
   end
 

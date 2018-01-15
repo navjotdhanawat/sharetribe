@@ -51,7 +51,9 @@ module ListingIndexService::DataTypes
     [:display_name, :string, :optional],
     [:avatar, entity: AvatarImage],
     [:is_deleted, :bool, default: false],
-    [:num_of_reviews, :fixnum, default: 0]
+    [:num_of_reviews, :fixnum, default: 0],
+    [:rating_average, default: 0],
+    [:rating_count, :fixnum, default: 0]
   )
 
   Listing = EntityUtils.define_builder(
@@ -92,6 +94,9 @@ module ListingIndexService::DataTypes
    'score_desc' => 'wght DESC',
    'price_asc' => 'price_cents ASC',
    'price_desc' => 'price_cents DESC',
+   'rating_avg_desc' => 'rating_average DESC',
+   'rating_count_desc' => 'rating_count DESC',
+   'rating_count_asc' => 'rating_count ASC'
   }
 
   module_function

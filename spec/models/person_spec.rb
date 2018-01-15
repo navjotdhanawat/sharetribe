@@ -42,6 +42,8 @@
 #  min_days_between_community_updates :integer          default(1)
 #  deleted                            :boolean          default(FALSE)
 #  cloned_from                        :string(22)
+#  rating_average                     :float(24)        default(0.0)
+#  rating_count                       :integer          default(0)
 #
 # Indexes
 #

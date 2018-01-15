@@ -42,6 +42,8 @@
 #  min_days_between_community_updates :integer          default(1)
 #  deleted                            :boolean          default(FALSE)
 #  cloned_from                        :string(22)
+#  rating_average                     :float(24)        default(0.0)
+#  rating_count                       :integer          default(0)
 #
 # Indexes
 #
@@ -94,8 +96,6 @@ class Person < ApplicationRecord
   has_many :conversations, :through => :participations, :dependent => :destroy
   has_many :authored_testimonials, :class_name => "Testimonial", :foreign_key => "author_id", :dependent => :destroy
   has_many :received_testimonials, -> { order("id DESC")}, :class_name => "Testimonial", :foreign_key => "receiver_id", :dependent => :destroy
-  has_many :received_positive_testimonials, -> { where("grade IN (0.5,0.75,1)").order("id DESC") }, :class_name => "Testimonial", :foreign_key => "receiver_id"
-  has_many :received_negative_testimonials, -> { where("grade IN (0.0,0.25)").order("id DESC") }, :class_name => "Testimonial", :foreign_key => "receiver_id"
   has_many :messages, :foreign_key => "sender_id"
   has_many :authored_comments, :class_name => "Comment", :foreign_key => "author_id", :dependent => :destroy
   belongs_to :community
@@ -115,6 +115,8 @@ class Person < ApplicationRecord
   deprecate communities: "Use accepted_community instead.",
             community_memberships: "Use community_membership instead.",
             deprecator: MethodDeprecator.new
+
+  after_save :reindex_listings
 
   def to_param
     username
@@ -344,26 +346,6 @@ class Person < ApplicationRecord
 
   def requests
     listings.requests
-  end
-
-  # The percentage of received testimonials with positive grades
-  # (grades between 3 and 5 are positive, 1 and 2 are negative)
-  def feedback_positive_percentage_in_community(community)
-    # NOTE the filtering with communinity can be removed when
-    # user accounts are no more shared among communities
-    received_testimonials = TestimonialViewUtils.received_testimonials_in_community(self, community)
-    positive_testimonials = TestimonialViewUtils.received_positive_testimonials_in_community(self, community)
-    negative_testimonials = TestimonialViewUtils.received_negative_testimonials_in_community(self, community)
-
-    if positive_testimonials.size > 0
-      if negative_testimonials.size > 0
-        (positive_testimonials.size.to_f/received_testimonials.size.to_f*100).round
-      else
-        return 100
-      end
-    elsif negative_testimonials.size > 0
-      return 0
-    end
   end
 
   def set_default_preferences
@@ -622,6 +604,12 @@ class Person < ApplicationRecord
     super
   end
 
+  def rebuild_rating
+    self.rating_average = received_testimonials.average(:grade).to_f
+    self.rating_count = received_testimonials.count
+    save
+  end
+
   private
 
   def digest(password, salt)
@@ -638,4 +626,12 @@ class Person < ApplicationRecord
   def logger_metadata
     { person_uuid: uuid }
   end
+
+  def reindex_listings
+    listings.each do |listing|
+      listing.delta = true
+      listing.save
+    end
+  end
+
 end
