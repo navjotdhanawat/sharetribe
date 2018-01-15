@@ -47,12 +47,17 @@ module TimeUtils
 
     raise ArgumentError.new("to_time cannot be less than from_time") if diff < 0
 
-    multiplies.inject([:seconds, diff]) { |result, (unit, multiplier)|
+    out = multiplies.inject([:seconds, diff]) { |result, (unit, multiplier)|
       if diff >= multiplier
         {unit: unit, count: (diff / multiplier)}
       else
         result
       end
     }
+    if out[:unit] == :days && out[:count] <= 3
+      out[:unit] = :hours
+      out[:count] = diff / (60*60)
+    end
+    out
   end
 end
