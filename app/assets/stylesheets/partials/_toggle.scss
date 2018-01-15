@@ -80,7 +80,7 @@
     }
   }
 
-  @include media(tablet) {
+  @media (min-width: 1201px) {
     position: absolute;
   }
 
@@ -90,7 +90,7 @@
   display: block;
   cursor: pointer;
 
-  @include media(tablet) {
+  @media (min-width: 1201px) {
     display: inline-block;
     width: auto;
   }
