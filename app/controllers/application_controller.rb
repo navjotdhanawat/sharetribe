@@ -615,4 +615,5 @@ class ApplicationController < ActionController::Base
   def admin_controller?
     self.class.name =~ /^Admin/
   end
+
 end

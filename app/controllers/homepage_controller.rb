@@ -23,24 +23,20 @@ class HomepageController < ApplicationController
     selected_category = m_selected_category.or_nil
     relevant_filters = select_relevant_filters(m_selected_category.own_and_subcategory_ids.or_nil)
 
-    if FeatureFlagHelper.feature_enabled?(:searchpage_v1)
-      @view_type = "grid"
-    else
-      @view_type = SearchPageHelper.selected_view_type(params[:view], @current_community.default_browse_view, APP_DEFAULT_VIEW_TYPE, VIEW_TYPES)
-      @big_cover_photo = !(@current_user || CustomLandingPage::LandingPageStore.enabled?(@current_community.id)) || params[:big_cover_photo]
+    @view_type = "map"
+    @big_cover_photo = !(@current_user || CustomLandingPage::LandingPageStore.enabled?(@current_community.id)) || params[:big_cover_photo]
 
-      @categories = @current_community.categories.includes(:children)
-      @main_categories = @categories.select { |c| c.parent_id == nil }
+    @categories = @current_community.categories.includes(:children)
+    @main_categories = @categories.select { |c| c.parent_id == nil }
 
-      # This assumes that we don't never ever have communities with only 1 main share type and
-      # only 1 sub share type, as that would make the listing type menu visible and it would look bit silly
-      listing_shape_menu_enabled = all_shapes.size > 1
-      @show_categories = @categories.size > 1
-      show_price_filter = @current_community.show_price_filter && all_shapes.any? { |s| s[:price_enabled] }
+    # This assumes that we don't never ever have communities with only 1 main share type and
+    # only 1 sub share type, as that would make the listing type menu visible and it would look bit silly
+    listing_shape_menu_enabled = all_shapes.size > 1
+    @show_categories = @categories.size > 1
+    show_price_filter = @current_community.show_price_filter && all_shapes.any? { |s| s[:price_enabled] }
 
-      @show_custom_fields = relevant_filters.present? || show_price_filter
-      @category_menu_enabled = @show_categories || @show_custom_fields
-    end
+    @show_custom_fields = relevant_filters.present? || show_price_filter
+    @category_menu_enabled = @show_categories || @show_custom_fields
 
     listing_shape_param = params[:transaction_type]
 
@@ -52,17 +48,7 @@ class HomepageController < ApplicationController
 
     per_page = @view_type == "map" ? APP_CONFIG.map_listings_limit : APP_CONFIG.grid_listings_limit
 
-    includes =
-      case @view_type
-      when "grid"
-        [:author, :listing_images]
-      when "list"
-        [:author, :listing_images, :num_of_reviews]
-      when "map"
-        [:location]
-      else
-        raise ArgumentError.new("Unknown view_type #{@view_type}")
-      end
+    includes = [:author, :listing_images, :num_of_reviews, :location]
 
     main_search = search_mode
     enabled_search_modes = search_modes_in_use(params[:q], params[:lc], main_search)
@@ -80,7 +66,6 @@ class HomepageController < ApplicationController
                                   location_search_in_use: location_in_use,
                                   keyword_search_in_use: keyword_in_use,
                                   relevant_search_fields: relevant_search_fields)
-
     if @view_type == 'map'
       viewport = viewport_geometry(params[:boundingbox], params[:lc], @current_community.location)
     end
@@ -96,8 +81,8 @@ class HomepageController < ApplicationController
       search_result.on_success { |listings|
         @listings = listings # TODO Remove
 
-        if @view_type == "grid" then
-          render partial: "grid_item", collection: @listings, as: :listing, locals: { show_distance: location_in_use }
+        if @view_type == "map"
+          render partial: "grid_item_map", locals: { show_distance: location_in_use, viewport: viewport, shape_name_map: shape_name_map }
         elsif location_in_use
           render partial: "list_item_with_distance", collection: @listings, as: :listing, locals: { shape_name_map: shape_name_map, show_distance: location_in_use }
         else
@@ -169,7 +154,7 @@ class HomepageController < ApplicationController
       sort: params[:sort_order],
     }
 
-    if @view_type != 'map' && location_search_in_use
+    if location_search_in_use
       search.merge!(location_search_params(params, keyword_search_in_use))
     end
 
@@ -200,7 +185,7 @@ class HomepageController < ApplicationController
             per_page: search[:per_page]
           )
         )
-      }
+        }
     end
   end
 
@@ -220,6 +205,8 @@ class HomepageController < ApplicationController
       search_coordinates(params[:lc])
     end
 
+    bounds = params[:boundingbox].present? ? { bounds:  params[:boundingbox].split(',').map { |n| LocationUtils.to_radians(n) } } : {}
+
     scale_multiplier = APP_CONFIG[:external_search_scale_multiplier].to_f
     offset_multiplier = APP_CONFIG[:external_search_offset_multiplier].to_f
     combined_search_in_use = keyword_search_in_use && scale_multiplier && offset_multiplier
@@ -238,6 +225,7 @@ class HomepageController < ApplicationController
       distance_max: distance_limit,
     }
     .merge(center_point)
+    .merge(bounds)
     .merge(combined_search_params)
     .compact
   end
