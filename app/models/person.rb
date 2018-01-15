@@ -45,6 +45,7 @@
 #  rating_average                     :float(24)        default(0.0)
 #  rating_count                       :integer          default(0)
 #  is_confirmed                       :integer          default(0)
+#  guest                              :boolean          default(FALSE)
 #
 # Indexes
 #
@@ -466,7 +467,11 @@ class Person < ApplicationRecord
   # Returns Email record
   #
   def primary_email
-    EmailService.emails_to_send_message(emails).first
+    if guest?
+      Email.new(address: email.to_s.split("/", 2).last)
+    else
+      EmailService.emails_to_send_message(emails).first
+    end
   end
 
   # Notice: If no confirmed notification emails is found, this
@@ -609,6 +614,16 @@ class Person < ApplicationRecord
     self.rating_average = received_testimonials.average(:grade).to_f
     self.rating_count = received_testimonials.count
     save
+  end
+
+  def self.build_guest(community)
+    guest = Person.new
+    guest.given_name = 'Guest'
+    guest.family_name = 'Guest'
+    guest.community = community
+    guest.guest = true
+    guest.community_membership = CommunityMembership.new(person: guest, community: community)
+    guest
   end
 
   private

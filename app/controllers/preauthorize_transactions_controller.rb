@@ -2,13 +2,14 @@
 class PreauthorizeTransactionsController < ApplicationController
 
   before_action do |controller|
-   controller.ensure_logged_in t("layouts.notifications.you_must_log_in_to_do_a_transaction")
+    # controller.ensure_logged_in t("layouts.notifications.you_must_log_in_to_do_a_transaction")
   end
 
   before_action :ensure_listing_is_open
   before_action :ensure_listing_author_is_not_current_user
   before_action :ensure_authorized_to_reply
   before_action :ensure_can_receive_payment
+  before_action :ensure_logged_in_or_guest
 
   IS_POSITIVE = ->(v) {
     return if v.nil?
@@ -135,14 +136,32 @@ class PreauthorizeTransactionsController < ApplicationController
                                   quantity_selector:,
                                   shipping_enabled:,
                                   pickup_enabled:,
-                                  transaction_agreement_in_use:)
+                                  transaction_agreement_in_use:,
+                                  user:,
+                                  user_params:)
 
       validate_delivery_method(tx_params: tx_params, shipping_enabled: shipping_enabled, pickup_enabled: pickup_enabled)
         .and_then { validate_booking(tx_params: tx_params, quantity_selector: quantity_selector) }
         .and_then {
           validate_transaction_agreement(tx_params: tx_params,
                                          transaction_agreement_in_use: transaction_agreement_in_use)
-        }
+        }.and_then { validate_guest_or_user(user, tx_params, user_params) }
+    end
+
+    def validate_guest_or_user(user, tx_params, user_params)
+      if user.guest?
+        if user_params.blank?
+          Result::Error.new(nil, code: :user_data_missing, tx_params: tx_params)
+        elsif user_params[:email].blank?
+          Result::Error.new(nil, code: :user_data_missing, tx_params: tx_params)
+        elsif user_params[:last_name].blank?
+          Result::Error.new(nil, code: :user_data_missing, tx_params: tx_params)
+        elsif user_params[:first_name].blank?
+          Result::Error.new(nil, code: :user_data_missing, tx_params: tx_params)
+        else
+          Result::Success.new(tx_params)
+        end
+      end
     end
 
     def validate_delivery_method(tx_params:, shipping_enabled:, pickup_enabled:)
@@ -352,6 +371,8 @@ class PreauthorizeTransactionsController < ApplicationController
           t("listing_conversations.preauthorize.dates_not_available")
         elsif data[:code] == :harmony_api_error
           t("listing_conversations.preauthorize.error_in_checking_availability")
+        elsif data[:code] == :user_data_missing
+          t("listing_conversations.preauthorize.user_data_missing")
         else
           raise NotImplementedError.new("No error handler for: #{msg}, #{data.inspect}")
         end
@@ -376,7 +397,9 @@ class PreauthorizeTransactionsController < ApplicationController
                                           quantity_selector: listing.quantity_selector&.to_sym,
                                           shipping_enabled: listing.require_shipping_address,
                                           pickup_enabled: listing.pickup_enabled,
-                                          transaction_agreement_in_use: @current_community.transaction_agreement_in_use?)
+                                          transaction_agreement_in_use: @current_community.transaction_agreement_in_use?,
+                                          user: @current_user,
+                                          user_params: params[:user])
     }
 
     validation_result.on_success { |tx_params|
@@ -384,7 +407,9 @@ class PreauthorizeTransactionsController < ApplicationController
 
       quantity = calculate_quantity(tx_params: tx_params, is_booking: is_booking, unit: listing.unit_type)
       shipping_total = calculate_shipping_from_model(tx_params: tx_params, listing_model: listing, quantity: quantity)
-
+      if @current_user.guest?
+        create_guest_record
+      end
       tx_response = create_preauth_transaction(
         payment_type: params[:payment_type].to_sym,
         community: @current_community,
@@ -419,6 +444,9 @@ class PreauthorizeTransactionsController < ApplicationController
         elsif data[:code] == :agreement_missing
           # User error, no logging here
           [t("error_messages.transaction_agreement.required_error"), error_path(data[:tx_params])]
+        elsif data[:code] == :user_data_missing
+          # User error, no logging here
+          [t("listing_conversations.preauthorize.user_data_missing"), error_path(data[:tx_params])]
         else
           raise NotImplementedError.new("No error handler for: #{msg}, #{data.inspect}")
         end
@@ -682,5 +710,25 @@ class PreauthorizeTransactionsController < ApplicationController
 
   def availability_per_hour_enabled
     FeatureFlagHelper.feature_enabled?(:availability_per_hour)
+  end
+
+  def ensure_logged_in_or_guest
+    @current_user ||= Person.build_guest(@current_community)
+  end
+
+  def create_guest_record
+    username = Devise.friendly_token[0,20].tr('-','X')
+    @current_user.given_name = params[:user][:first_name]
+    @current_user.family_name = params[:user][:last_name]
+    @current_user.display_name = [params[:user][:first_name], params[:user][:last_name]].join(", ")
+    @current_user.email = username + "/" + params[:user][:email]
+    @current_user.username = username
+    @current_user.locale = I18n.locale
+    @current_user.password = Devise.friendly_token[0,20].tr('-','X')
+    @current_user.phone_number = params[:user][:phone]
+    @current_user.save!
+    session[:guest_user] = @current_user.id
+    logger.error("GUEST : #{session[:guest_user]}")
+    @current_user
   end
 end
