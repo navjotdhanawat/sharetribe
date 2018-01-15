@@ -24,8 +24,6 @@ class TransactionsController < ApplicationController
     #controller.ensure_logged_in t("layouts.notifications.you_must_log_in_to_do_a_transaction")
   end
 
-  before_action :ensure_logged_in_or_guest
-
   MessageForm = Form::Message
 
   TransactionForm = EntityUtils.define_builder(
@@ -548,7 +546,6 @@ class TransactionsController < ApplicationController
   end
 
   def ensure_logged_in_or_guest
-    raise session.inspect
     if @current_user.present?
       return
     elsif params[:action] == 'show'
@@ -556,7 +553,6 @@ class TransactionsController < ApplicationController
         @current_user = Person.find(session[:guest_user])
       else
         ensure_logged_in t("layouts.notifications.you_must_log_in_to_view_your_inbox")
-
       end
     else
       @current_user = Person.build_guest(@current_community)

@@ -103,7 +103,7 @@
                 = member.display_name
               %td
                 - confirmed_mail = member.confirmed_notification_email_addresses.first
-                = confirmed_mail || member.emails.map(&:address).join(", ")
+                = member.guest? ? member.primary_email.address : confirmed_mail || member.emails.map(&:address).join(", ")
               %td
                 - if member.is_confirmed?
                   %i.ss-check

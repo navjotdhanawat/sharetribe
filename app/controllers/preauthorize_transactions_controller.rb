@@ -727,8 +727,7 @@ class PreauthorizeTransactionsController < ApplicationController
     @current_user.password = Devise.friendly_token[0,20].tr('-','X')
     @current_user.phone_number = params[:user][:phone]
     @current_user.save!
-    session[:guest_user] = @current_user.id
-    logger.error("GUEST : #{session[:guest_user]}")
+    session[:guest_user] = @current_user.id.to_s
     @current_user
   end
 end
