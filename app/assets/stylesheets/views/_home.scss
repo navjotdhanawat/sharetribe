@@ -611,3 +611,28 @@ $home-list-avatar-padding: lines(0.25);
   .home-toolbar-button-group.filters-enabled { position: absolute; top: 10px; right: 0px; width: 120px; margin-right: 0px; display: block }
   .home-toolbar-filters#home-toolbar-filters { position: relative; }
 }
+.home-fluid-thumbnail-grid-details-author-name {
+  display: block;
+  color: #494750;
+  height: inherit;
+  float: none;
+  line-height: 1.5;
+}
+
+.home-fluid-thumbnail-grid-details-author-rating {
+  line-height: 1;
+}
+
+.home-fluid-thumbnail-grid-details-distance {
+    float: none;
+    position: absolute;
+    top: 0px;
+    right: 6px;
+}
+.home-list-author-reviews .star, .browsing-list-item-author-reviews .star {
+  display: inline-block; 
+  vertical-align: top;
+}
+.star {
+  margin-top: 5px;
+}

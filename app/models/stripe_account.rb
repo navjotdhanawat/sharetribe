@@ -10,6 +10,9 @@
 #  stripe_customer_id :string(255)
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
+#  account_type       :string(255)
+#  access_token       :string(255)
+#  refresh_token      :string(255)
 #
 
 class StripeAccount < ApplicationRecord

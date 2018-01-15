@@ -50,6 +50,8 @@ module ListingIndexService::Search::Converters
               thumb: l.author.image.present? ? l.author.image.url(:thumb) : nil
             },
             is_deleted: l.author.deleted?,
+            rating_average: l.author.rating_average,
+            rating_count: l.author.rating_count
           }.merge(num_of_reviews_hash(l, includes))
         }
       else

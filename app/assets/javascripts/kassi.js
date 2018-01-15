@@ -540,6 +540,7 @@ function initialize_profile_view(profile_id) {
     request_path = profile_id + "/testimonials";
     $.get(request_path, {per_page: 200, page: 1}, function(data) {
       $('#profile-testimonials-list').html(data);
+      initRatings();
     });
     return false;
   });

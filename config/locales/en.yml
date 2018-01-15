@@ -2015,6 +2015,7 @@ en:
       show_all_listings: "Show all listings"
       show_all_open_listings: "Show all open listings"
       show_all_reviews: "Show all reviews"
+      average_rating: "Average rating: %{average_rating}"
     followed_people:
       you_follow_plural: "You follow %{count} people"
       you_follow_singular: "You follow %{count} person"
@@ -2165,7 +2166,7 @@ en:
       as_expected: "As expected"
       exceeded_expectations: "Much better than expected"
       give_feedback_to: "Give feedback to %{person}"
-      grade: "What is your overall feeling?"
+      grade: "What is your overall feeling, rate by giving 5 stars for excellent service?"
       less_than_expected: "Worse than expected"
       send_feedback: "Send feedback"
       slightly_better_than_expected: "Slightly better than expected"

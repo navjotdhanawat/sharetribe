@@ -9,10 +9,5 @@ module TestimonialViewUtils
   def received_testimonials_in_community(person, community)
     person.received_testimonials.includes(:tx).select{|t|t.tx.community_id == community.id }
   end
-  def received_positive_testimonials_in_community(person, community)
-    person.received_positive_testimonials.includes(:tx).select{|t|t.tx.community_id == community.id }
-  end
-  def received_negative_testimonials_in_community(person, community)
-    person.received_negative_testimonials.includes(:tx).select{|t|t.tx.community_id == community.id }
-  end
+
 end

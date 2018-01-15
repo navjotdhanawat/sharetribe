@@ -3,10 +3,8 @@
 
 - content_for :extra_javascript do
   :javascript
-    ST.initializeRadioButtons({
-      buttons: [".js-positive-radio-button", ".js-negative-radio-button"],
-      input: ".js-testimonial-grade"
-    });
+    initRatings();
+    
 .centered-section.testimonial-form
   %h2= t(".give_feedback_to", :person => transaction.other_party(@current_user).name(@current_community))
   %p= t(".this_will_be_shown_in_profile", :person => PersonViewUtils.person_display_name_for_type(transaction.other_party(@current_user), "first_name_only"))
@@ -15,17 +13,9 @@
     = form.label :text, t('.textual_feedback')
     = form.text_area :text, :placeholder => t(".default_textual_feedback")
     = form.label :grade, t(".grade")
-
-    %input.js-testimonial-grade{type: :hidden, name: "testimonial[grade]"}
-
-    %a#positive-grade-link.radio-button.radio-button-positive.js-positive-radio-button{ data: { :"radio-button-value" => 1 } }
-      .radio-button-icon
-        = icon_tag("like", ["link-icon"])
-      .radio-button-label= t(".positive")
-    %a#negative-grade-link.radio-button.radio-button-negative.js-negative-radio-button{ data: { :"radio-button-value" => 0 } }
-      .radio-button-icon
-        = icon_tag("dislike", ["link-icon"])
-      .radio-button-label= t(".negative")
-    #testimonial-grade-error
-
+    .row
+      .col-12
+        = stars_rating_tag 0, disable_after_rate: false, readonly: false, averageAsDefault: false, cancel: false, targetScore: "#testimonial_grade", scoreName: "testimonial[grade]", star_off: 'star-3c.png', star_on: 'star-66.png'
+        = form.hidden_field :grade
+        #testimonial-grade-error
     = form.button t(".send_feedback"), :class => "send_button", :id => "send_testimonial_button"
