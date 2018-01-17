@@ -470,6 +470,11 @@ default: &default_settings
   # Used to encrypt Stripe api keys
   app_encryption_key:
 
+  # Twilio integration config
+  twilio_sid: "TwilioAccountSid"
+  twilio_token: "TwilioAuthToken"
+  twilio_from: "+15005550006"
+
 production: &production_settings
   <<: *default_settings
 

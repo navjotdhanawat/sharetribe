@@ -1836,6 +1836,7 @@ en:
       night: night
       nights: nights
       invalid_parameters: "Invalid values for new transaction"
+      user_data_missing: "Please provide your information for guest checkout"
     transaction_agreement_checkbox:
       read_more: View.
     stripe_payment:
@@ -1849,6 +1850,15 @@ en:
       address_street1: "Street address line 1 *"
       address_street2: "Street address line 2"
       address_postal_code: "ZIP / Postal code *"
+    guest:
+      title: "Guest Checkout"
+      last_name: "Last Name *"
+      first_name: "First Name *"
+      email: "Email *"
+      phone: "Phone (optional)"
+      login: "Already have account? %{login} or %{signup}, or continue as Guest"
+      login_title: "Log in"
+      signup_title: "Sign up"
   mapview:
     index:
       all_categories: "All categories"
@@ -2493,3 +2503,7 @@ en:
     wrong_setup: "There is something wrong with the payment system setup in this marketplace: the platform has not been registered. Please contact the team to let them know that they should register their platform at Stripe."
     invalid_bank_account_number: "Please check that your bank account is entered correctly and matches your country."
     invalid_postal_code: "Invalid postal code for %{country}"
+  twilio:
+    transaction_rejected: "%{rejecter_name} rejected your request, TXN ID: %{transaction_id} https://ownoutdoors.com"
+    transaction_canceled: "Canceled TXN ID: %{transaction_id} https://ownoutdoors.com"
+    transaction_paid: "%{amount} was charged for TXN ID: %{transaction_id} https://ownoutdoors.com"
