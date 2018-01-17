@@ -717,18 +717,7 @@ class PreauthorizeTransactionsController < ApplicationController
   end
 
   def create_guest_record
-    username = Devise.friendly_token[0,20].tr('-','X')
-    @current_user.given_name = params[:user][:first_name]
-    @current_user.family_name = params[:user][:last_name]
-    @current_user.display_name = [params[:user][:first_name], params[:user][:last_name]].join(", ")
-    @current_user.email = username + "/" + params[:user][:email]
-    @current_user.username = username
-    @current_user.locale = I18n.locale
-    @current_user.password = Devise.friendly_token[0,20].tr('-','X')
-    @current_user.phone_number = params[:user][:phone]
-    @current_user.consent = @current_community.consent
-    @current_user.save!
+    @current_user.store_guest_info(params)
     session[:guest_user] = @current_user.id.to_s
-    @current_user
   end
 end
