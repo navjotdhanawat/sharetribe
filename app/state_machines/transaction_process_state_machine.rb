@@ -45,6 +45,8 @@ class TransactionProcessStateMachine
   after_transition(to: :confirmed) do |conversation|
     confirmation = ConfirmConversation.new(conversation, conversation.starter, conversation.community)
     confirmation.confirm!
+    tx = TransactionService::Transaction.query transaction_id
+    StripeService::API::Api.payments.cancel_deposit(tx)
   end
 
   after_transition(from: :paid, to: :canceled) do |conversation|

@@ -755,6 +755,7 @@ CREATE TABLE `listings` (
   `shipping_price_additional_cents` int(11) DEFAULT NULL,
   `availability` varchar(32) DEFAULT 'none',
   `featured` tinyint(1) DEFAULT 0,
+  `deposit_cents` int(11) DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_listings_on_uuid` (`uuid`),
   KEY `index_listings_on_new_category_id` (`category_id`) USING BTREE,
@@ -1166,6 +1167,7 @@ CREATE TABLE `people` (
   `rating_average` float DEFAULT 0,
   `rating_count` int(11) DEFAULT 0,
   `is_confirmed` int(11) DEFAULT 0,
+  `guest` tinyint(1) DEFAULT 0,
   UNIQUE KEY `index_people_on_username_and_community_id` (`username`,`community_id`) USING BTREE,
   UNIQUE KEY `index_people_on_uuid` (`uuid`),
   UNIQUE KEY `index_people_on_email` (`email`) USING BTREE,
@@ -1273,6 +1275,7 @@ CREATE TABLE `stripe_payments` (
   `available_on` datetime DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
+  `is_deposit` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -1383,6 +1386,7 @@ CREATE TABLE `transactions` (
   `availability` varchar(32) DEFAULT 'none',
   `booking_uuid` binary(16) DEFAULT NULL,
   `deleted` tinyint(1) DEFAULT 0,
+  `deposit_cents` int(11) DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `index_transactions_on_listing_id` (`listing_id`) USING BTREE,
   KEY `index_transactions_on_conversation_id` (`conversation_id`) USING BTREE,
@@ -2254,6 +2258,8 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20180110121729'),
 ('20180110122849'),
 ('20180110122905'),
-('20180111131251');
+('20180111131251'),
+('20180115100148'),
+('20180117123316');
 
 
