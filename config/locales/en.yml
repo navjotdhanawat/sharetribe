@@ -1852,6 +1852,7 @@ en:
       address_postal_code: "ZIP / Postal code *"
     guest:
       title: "Guest Checkout"
+      free_title: "Guest Request"
       last_name: "Last Name *"
       first_name: "First Name *"
       email: "Email *"
