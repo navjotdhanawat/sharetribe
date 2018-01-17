@@ -29,7 +29,9 @@ module TransactionService::Store::Transaction
     [:content, :string],
     [:starting_page, :string],
     [:booking_uuid, :string, transform_with: UUIDUtils::RAW], # :string type for raw bytes
-    [:booking_fields, :hash])
+    [:booking_fields, :hash],
+    [:deposit, :money]
+  )
 
   Transaction = EntityUtils.define_builder(
     [:id, :fixnum, :mandatory],
@@ -59,7 +61,9 @@ module TransactionService::Store::Transaction
     [:current_state, :to_symbol],
     [:shipping_address, :hash],
     [:booking_uuid, :uuid, transform_with: UUIDUtils::PARSE_RAW],
-    [:booking, :hash])
+    [:booking, :hash],
+    [:deposit, :money]
+  )
 
   ShippingAddress = EntityUtils.define_builder(
     [:status, :string],

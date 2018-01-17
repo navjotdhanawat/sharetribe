@@ -36,6 +36,7 @@
 #  availability                      :string(32)       default("none")
 #  booking_uuid                      :binary(16)
 #  deleted                           :boolean          default(FALSE)
+#  deposit_cents                     :integer          default(0)
 #
 # Indexes
 #
@@ -71,6 +72,7 @@ class Transaction < ApplicationRecord
   monetize :minimum_commission_cents, with_model_currency: :minimum_commission_currency
   monetize :unit_price_cents, with_model_currency: :unit_price_currency
   monetize :shipping_price_cents, allow_nil: true, with_model_currency: :unit_price_currency
+  monetize :deposit_cents, allow_nil: true, with_model_currency: :currency
 
   scope :for_person, -> (person){
     joins(:listing)
