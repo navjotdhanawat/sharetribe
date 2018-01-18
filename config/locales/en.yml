@@ -1336,7 +1336,7 @@ en:
       rating_avg_desc: "Highest Rated"
       rating_count_desc: "Most Rated"
       rating_count_asc: "Least Rated"
-      sort_date_desc: "New Listings"
+      sort_date_desc: "New Listings first"
       distance_asc: "Sort by distance"
       score_desc: "Sort by relevance"
       price_asc: "Price: Low to High"
