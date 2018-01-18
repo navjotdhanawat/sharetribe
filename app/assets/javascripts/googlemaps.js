@@ -25,6 +25,7 @@ var markersArr = [];   // Array for keeping track of markers on map
 var showingMarker = "";
 var markerCluster = null;
 var icounter = 0;
+var oms = null;
 
 $.validator.
 addMethod("address_validator",
@@ -503,6 +504,7 @@ function initialize_listing_map(listings, community_location_lat, community_loca
   };
   if (!map) {
     map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
+    oms = new OverlappingMarkerSpiderfier(map);
   } else {
     init_drag = false;
   }
@@ -644,7 +646,11 @@ function addListingMarkers(listings, viewport, keep_bounds, init_drag) {
           marker.setIcon(icon1);
         });
 
-        google.maps.event.addListener(marker, 'click', showMarkerBubble);
+        if(oms) {
+          oms.trackMarker(marker, showMarkerBubble);
+        } else {
+          google.maps.event.addListener(marker, 'click', showMarkerBubble);
+        }
       }
     })();
   }
@@ -707,6 +713,9 @@ function setBounds(coords) {
 }
 
 function clearMarkers() {
+    if (oms) {
+      oms.removeAllMarkers();
+    }
     if (markersArr) {
         for (i in markersArr) {
             markersArr[i].setMap(null);
