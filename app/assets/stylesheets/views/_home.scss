@@ -530,7 +530,6 @@ $home-list-avatar-padding: lines(0.25);
 .pac-item span {
   pointer-events: none;
 }
-
 .home-fluid-thumbnail-grid-details-author-name {
   display: block;
   color: #494750;
@@ -732,6 +731,10 @@ $home-list-avatar-padding: lines(0.25);
 
     .listings-column {
       margin: 25px 0 10px;
+
+      .flash-notifications {
+        padding-right: 25px;
+      }
     }
   }
 }

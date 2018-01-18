@@ -128,6 +128,7 @@
     .home-map
       = render :partial => "map", locals: { viewport: viewport }
   .listings-column
+    = render :partial => "layouts/notifications"
     .row.grid-mode#search-results
       = render partial: 'grid_item_map_content', locals: {show_distance: location_search_in_use, shape_name_map: shape_name_map}
 
