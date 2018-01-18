@@ -731,6 +731,10 @@ $home-list-avatar-padding: lines(0.25);
 
     .listings-column {
       margin: 25px 0 10px;
+
+      .flash-notifications {
+        padding-right: 25px;
+      }
     }
   }
 }

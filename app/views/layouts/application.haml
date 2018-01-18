@@ -59,7 +59,8 @@
 
       %article.page-content{class: is_homepage && !@big_cover_photo ? 'no-cover-photo homepage' : ''}
         .wrapper
-          = render :partial => "layouts/notifications"
+          - unless is_homepage
+            = render :partial => "layouts/notifications"
           = yield
           - if display_branding_info?
             = render partial: "layouts/non_whitelabel_branding", locals: {link_to_sharetribe: "https://www.sharetribe.com/?utm_source=#{@current_community.ident}.sharetribe.com&utm_medium=referral&utm_campaign=nowl-footer"}
