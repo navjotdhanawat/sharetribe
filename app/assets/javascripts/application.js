@@ -39,6 +39,7 @@
 //= require autosize
 //= require jquery.raty
 //= require ratyrate
+//= require oms
 
 //= require selectize-standalone.js
 //= require datepicker/bootstrap-datepicker.js
