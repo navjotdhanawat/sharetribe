@@ -161,6 +161,7 @@ class AcceptPreauthorizedConversationsController < ApplicationController
       shipping_price: transaction[:shipping_price],
       shipping_address: transaction[:shipping_address],
       seller_gets: transaction[:checkout_total] - transaction[:commission_total],
+      deposit: transaction[:deposit],
       form: @listing_conversation, # TODO FIX ME, DONT USE MODEL
       form_action: acceptance_preauthorized_person_message_path(
         person_id: @current_user.id,

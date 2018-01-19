@@ -8,7 +8,7 @@ module StripeService::API
       def create_preauth_payment(tx, gateway_fields)
         seller_account = accounts_api.get(community_id: tx[:community_id], person_id: tx[:listing_author_id]).data
         if !seller_account || !seller_account[:stripe_seller_id].present?
-          return SyncCompletion.new(Result::Error.new("No Seller Account"))
+          return Result::Error.new("No Seller Account")
         end
 
         seller_id  = seller_account[:stripe_seller_id]
@@ -190,18 +190,21 @@ module StripeService::API
         TransactionService::Transaction.calculate_commission(tx[:unit_price] * tx[:listing_quantity], tx[:commission_from_seller], tx[:minimum_commission])
       end
 
-      def cancel_deposit(tx, reason)
+      def cancel_deposit(tx, reason, amount = nil)
         payment = PaymentStore.get(tx[:community_id], tx[:id], true)
         return if payment.nil?
+
         seller_account = accounts_api.get(community_id: tx[:community_id], person_id: tx[:listing_author_id]).data
-        stripe_api.cancel_charge(
+        refund = stripe_api.cancel_charge(
           community: tx[:community_id],
           charge_id: payment[:stripe_charge_id],
           account_id: seller_account[:stripe_seller_id],
           reason: reason,
-          metadata: {sharetribe_transaction_id: tx[:id]}
+          metadata: {sharetribe_transaction_id: tx[:id]},
+          amount: amount
         )
-        payment = PaymentStore.update(transaction_id: tx[:id], community_id: tx[:community_id], data: {status: 'canceled'})
+        payment = PaymentStore.update(transaction_id: tx[:id], community_id: tx[:community_id], is_deposit: true,
+                                      data: {status: 'refunded', is_refunded: true, refund_id: refund.id, refund_amount_cents: refund.amount})
         Result::Success.new(payment)
       rescue => e
         Result::Error.new(e.message)
@@ -213,7 +216,7 @@ module StripeService::API
         seller_account = accounts_api.get(community_id: tx[:community_id], person_id: tx[:listing_author_id]).data
         charge = stripe_api.capture_charge(community: tx[:community_id], charge_id: payment[:stripe_charge_id], seller_id: seller_account[:stripe_seller_id])
         balance_txn = stripe_api.get_balance_txn(community: tx[:community_id], balance_txn_id: charge.balance_transaction, account_id: seller_account[:stripe_seller_id])
-        payment = PaymentStore.update(transaction_id: tx[:id], community_id: tx[:community_id],
+        payment = PaymentStore.update(transaction_id: tx[:id], community_id: tx[:community_id], is_deposit: true,
                                       data: {
                                         status: 'paid',
                                         real_fee_cents: balance_txn.fee,
@@ -227,10 +230,10 @@ module StripeService::API
       def create_preauth_deposit(tx, gateway_fields)
         seller_account = accounts_api.get(community_id: tx[:community_id], person_id: tx[:listing_author_id]).data
         if !seller_account || !seller_account[:stripe_seller_id].present?
-          return SyncCompletion.new(Result::Error.new("No Seller Account"))
+          return Result::Error.new("No Seller Account")
         end
         unless tx[:deposit].present? && tx[:deposit] > 0
-          return SyncCompletion.new(Result::Success.new("No deposit"))
+          return Result::Success.new("No deposit")
         end
 
         seller_id  = seller_account[:stripe_seller_id]
@@ -259,7 +262,6 @@ module StripeService::API
           metadata: metadata)
 
         payment = PaymentStore.create(tx[:community_id], tx[:id], {
-          is_deposit: true,
           payer_id: tx[:starter_id],
           receiver_id: tx[:listing_author_id],
           currency: tx[:unit_price].currency.iso_code,
@@ -268,7 +270,7 @@ module StripeService::API
           fee_cents: fee.cents,
           subtotal_cents: subtotal.cents,
           stripe_charge_id: stripe_charge.id
-        })
+        }, true)
 
         Result::Success.new(payment)
       rescue => e

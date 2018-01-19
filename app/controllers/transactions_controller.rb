@@ -146,7 +146,7 @@ class TransactionsController < ApplicationController
     tx = transaction_service.get(community_id: @current_community.id, transaction_id: params[:id])
          .maybe()
          .or_else(nil)
-
+    
     unless tx.present? && transaction_conversation.present?
       flash[:error] = t("layouts.notifications.you_are_not_authorized_to_view_this_content")
       return redirect_to search_path
@@ -155,6 +155,7 @@ class TransactionsController < ApplicationController
     tx_model = Transaction.where(id: tx[:id]).first
     conversation = transaction_conversation[:conversation]
     listing = Listing.where(id: tx[:listing_id]).first
+    transaction_conversation[:deposit] = tx[:deposit]
 
     messages_and_actions = TransactionViewUtils.merge_messages_and_transitions(
       TransactionViewUtils.conversation_messages(conversation[:messages], @current_community.name_display_type),
@@ -278,6 +279,24 @@ class TransactionsController < ApplicationController
 
   def paypal_process
     PaypalService::API::Api.process
+  end
+
+  def refund
+    tx_model = Transaction.where(community_id: @current_community.id, listing_author_id: @current_user.id, id: params[:id]).first
+    amount = (params[:amount].to_f * 100).to_i # cents
+    if tx_model.can_refund? && tx_model.deposit_cents >= amount
+      result = StripeService::API::Api.payments.cancel_deposit(tx_model, nil, amount) 
+      logger.error result
+      if result.success
+        message = Message.new(
+          conversation_id: tx_model.conversation_id, 
+          sender_id: @current_user.id,
+          content: "Refunded security deposit of " + MoneyViewUtils.to_humanized(result.data[:refund_amount]))
+        message.save
+        Delayed::Job.enqueue(MessageSentJob.new(message.id, @current_community.id))
+      end
+    end
+    redirect_to person_transaction_path(person_id: @current_user.id, id: tx_model[:id])
   end
 
   private
@@ -444,6 +463,7 @@ class TransactionsController < ApplicationController
         per_hour: booking_per_hour,
         start_time: booking_per_hour ? tx[:booking][:start_time] : nil,
         end_time: booking_per_hour ? tx[:booking][:end_time] : nil,
+        deposit: tx[:deposit]
       })
     end
   end
