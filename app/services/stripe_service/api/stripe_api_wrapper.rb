@@ -68,8 +68,8 @@ class StripeService::API::StripeApiWrapper
             capture: false
           }.merge(metadata: metadata))
         when :destination
+          source_params = token =~ /^cus_/ ? {customer: token} : {source: token}
           Stripe::Charge.create({
-            source: token,
             amount: amount,
             description: description,
             currency: currency,
@@ -78,7 +78,7 @@ class StripeService::API::StripeApiWrapper
               account: seller_account_id,
               amount: amount - fee
             }
-          }.merge(metadata: metadata))
+          }.merge(metadata: metadata).merge(source_params))
         end
       end
     end
@@ -249,12 +249,13 @@ class StripeService::API::StripeApiWrapper
       end
     end
 
-    def cancel_charge(community:, charge_id:, account_id:, reason:, metadata:  {})
+    def cancel_charge(community:, charge_id:, account_id:, reason:, metadata:  {}, amount: nil)
       with_stripe_payment_config(community) do |payment_settings|
         reason_data = reason.present? ? {reason: reason} : {}
+        amount_data = amount.present? ? {amount: amount} : {}
         case charges_mode(community)
         when :separate, :destination
-          Stripe::Refund.create({charge: charge_id}.merge(reason_data).merge(metadata: metadata))
+          Stripe::Refund.create({charge: charge_id}.merge(amount_data).merge(reason_data).merge(metadata: metadata))
         end
       end
     end

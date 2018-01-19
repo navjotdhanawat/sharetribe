@@ -32,7 +32,10 @@ module StripeService::Store::StripePayment
     [:stripe_transfer_id, :string],
     [:transfered_at, :time],
     [:available_on, :time],
-    [:is_deposit, :to_bool]
+    [:is_deposit, :to_bool],
+    [:refund_amount, :money],
+    [:is_refunded, :to_bool],
+    [:refund_id, :string]
   )
 
   module_function
@@ -71,15 +74,17 @@ module StripeService::Store::StripePayment
           commission: stripe_payment.commission,
           subtotal: stripe_payment.subtotal,
           real_fee: stripe_payment.real_fee,
+          refund_amount: stripe_payment.refund_amount
         }))
     StripePayment.call(hash)
   end
 
   def find_payment(opts)
     StripePaymentModel.where(
-      "(community_id = ? and transaction_id = ?)",
+      "(community_id = ? and transaction_id = ? and is_deposit = ?)",
       opts[:community_id],
-      opts[:transaction_id]
+      opts[:transaction_id],
+      opts[:is_deposit] || false
     ).first
   end
 

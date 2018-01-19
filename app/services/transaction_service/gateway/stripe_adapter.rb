@@ -6,8 +6,8 @@ module TransactionService::Gateway
     end
 
     def create_payment(tx:, gateway_fields:, force_sync:)
-      deposit = stripe_api.payments.create_preauth_deposit(tx, gateway_fields)
       result = stripe_api.payments.create_preauth_payment(tx, gateway_fields)
+      deposit = stripe_api.payments.create_preauth_deposit(tx, gateway_fields)
       SyncCompletion.new(result)
     end
 

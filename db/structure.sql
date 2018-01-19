@@ -1276,6 +1276,9 @@ CREATE TABLE `stripe_payments` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   `is_deposit` tinyint(1) DEFAULT 0,
+  `is_refunded` tinyint(1) DEFAULT 0,
+  `refund_amount_cents` int(11) DEFAULT NULL,
+  `refund_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -2260,6 +2263,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20180110122905'),
 ('20180111131251'),
 ('20180115100148'),
-('20180117123316');
+('20180117123316'),
+('20180119062156');
 
 
