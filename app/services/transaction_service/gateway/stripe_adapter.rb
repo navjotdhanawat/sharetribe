@@ -7,8 +7,12 @@ module TransactionService::Gateway
 
     def create_payment(tx:, gateway_fields:, force_sync:)
       result = stripe_api.payments.create_preauth_payment(tx, gateway_fields)
-      deposit = stripe_api.payments.create_preauth_deposit(tx, gateway_fields)
-      SyncCompletion.new(result)
+      if result.success
+        deposit = stripe_api.payments.create_preauth_deposit(tx, gateway_fields)
+        SyncCompletion.new(deposit)
+      else
+        SyncCompletion.new(result)
+      end
     end
 
     def reject_payment(tx:, reason: "")
@@ -19,8 +23,12 @@ module TransactionService::Gateway
 
     def complete_preauthorization(tx:)
       result = stripe_api.payments.capture(tx)
-      stripe_api.payments.capture_deposit(tx)
-      SyncCompletion.new(result)
+      if result.success
+        deposit = stripe_api.payments.capture_deposit(tx)
+        SyncCompletion.new(deposit)
+      else
+        SyncCompletion.new(result)
+      end
     end
 
     def get_payment_details(tx:)

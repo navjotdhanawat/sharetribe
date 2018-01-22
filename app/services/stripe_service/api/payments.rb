@@ -192,7 +192,8 @@ module StripeService::API
 
       def cancel_deposit(tx, reason, amount = nil)
         payment = PaymentStore.get(tx[:community_id], tx[:id], true)
-        return if payment.nil?
+        return Result::Success.new("No deposit") if payment.nil?
+        return Result::Success.new("Already refunded") if payment[:is_refunded]
 
         seller_account = accounts_api.get(community_id: tx[:community_id], person_id: tx[:listing_author_id]).data
         refund = stripe_api.cancel_charge(
@@ -212,7 +213,8 @@ module StripeService::API
 
       def capture_deposit(tx)
         payment = PaymentStore.get(tx[:community_id], tx[:id], true)
-        return if payment.nil?
+        return Result::Success.new("No deposit") if payment.nil?
+
         seller_account = accounts_api.get(community_id: tx[:community_id], person_id: tx[:listing_author_id]).data
         charge = stripe_api.capture_charge(community: tx[:community_id], charge_id: payment[:stripe_charge_id], seller_id: seller_account[:stripe_seller_id])
         balance_txn = stripe_api.get_balance_txn(community: tx[:community_id], balance_txn_id: charge.balance_transaction, account_id: seller_account[:stripe_seller_id])

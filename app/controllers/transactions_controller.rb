@@ -291,7 +291,7 @@ class TransactionsController < ApplicationController
         message = Message.new(
           conversation_id: tx_model.conversation_id, 
           sender_id: @current_user.id,
-          content: "Refunded security deposit of " + MoneyViewUtils.to_humanized(result.data[:refund_amount]))
+          content: "Refunded deposit of " + MoneyViewUtils.to_humanized(result.data[:refund_amount]))
         message.save
         Delayed::Job.enqueue(MessageSentJob.new(message.id, @current_community.id))
       end
