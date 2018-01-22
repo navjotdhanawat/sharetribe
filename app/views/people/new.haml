@@ -59,6 +59,9 @@
     = form.label :password2, t('.password_again')
     = form.password_field :password2, :class => :text_field, :maxlength => "255"
 
+    = form.label :is_vendor, t(".is_vendor")
+    = form.select :is_vendor, [[t(".vendor_business"), 1], [t(".vendor_individual"), 0]]
+
     -# Terms
     .outer-checkbox-container
       .checkbox-container

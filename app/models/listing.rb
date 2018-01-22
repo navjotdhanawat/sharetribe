@@ -48,6 +48,7 @@
 #  shipping_price_additional_cents :integer
 #  availability                    :string(32)       default("none")
 #  featured                        :boolean          default(FALSE)
+#  deposit_cents                   :integer          default(0)
 #
 # Indexes
 #

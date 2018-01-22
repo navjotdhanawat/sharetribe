@@ -45,6 +45,8 @@
 #  rating_average                     :float(24)        default(0.0)
 #  rating_count                       :integer          default(0)
 #  is_confirmed                       :integer          default(0)
+#  guest                              :boolean          default(FALSE)
+#  is_vendor                          :boolean          default(FALSE)
 #
 # Indexes
 #
