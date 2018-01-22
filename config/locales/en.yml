@@ -761,6 +761,7 @@ en:
       payment_fee_info: "* Excludes <a id='%{fee_info_link_id}' href='#'>payment processing fee</a>"
       shipping_price_label: "Shipping:"
       stripe-fee_label: "Payment processing fee"
+      deposit: "Refundable deposit:"
     confirm:
       confirm_description: "If your order has been fulfilled you should confirm it as done. Then you can give feedback to the other party."
       cancel_description: "If your order was not fulfilled, you can mark it as 'disputed'. You can still give feedback to the other party and describe what happened."
@@ -797,6 +798,7 @@ en:
     message:
       accepted_request: "accepted the request"
       received_payment: "accepted the request, received payment for %{sum}"
+      received_payment_and_deposit: "accepted the request, received payment for %{sum}, secured deposit for %{deposit}"
       accepted_offer: "accepted the offer"
       rejected_request: "rejected the request, canceled the payment"
       rejected_offer: "rejected the offer"
@@ -1645,6 +1647,7 @@ en:
         location: Location
       price:
         price: Price
+        deposit: Refundable deposit
         per: per
         per_day: "per day"
         mass: "piece, kg, l, m2, ..."
@@ -2324,6 +2327,11 @@ en:
     unit_price: "Unit price: %{unit_price}"
     total: "Total:"
     total_to_pay: "Payment total:"
+    deposit: "Refundable deposit:"
+    refund_actions:
+      perform_refund: "Perform partial or full refund"
+      refund_button: "Refund deposit"
+      performed_refund: "Refunded amount:"
   unit:
     day: day
     days: days

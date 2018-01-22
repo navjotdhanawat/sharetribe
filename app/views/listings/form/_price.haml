@@ -89,3 +89,10 @@
     - content_for :extra_javascript do
       :javascript
         $('#payment_fee_info_link').click(function() { $('#payment_fee_info_content').lightbox_me({centered: true, zIndex: 1000000}); ; return false});
+.price-container
+  - if @listing_presenter.shape[:price_enabled]
+    = form.label :deposit, t(".deposit")
+    = form.text_field :deposit, :class => "price-field", :maxlength => "10", :placeholder => "0", :value => (@listing.deposit ? @listing.deposit.to_s: 0)
+    = render partial: "listings/form/price_currency", locals: {form: form}
+
+
