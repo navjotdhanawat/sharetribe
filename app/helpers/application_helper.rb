@@ -75,13 +75,13 @@ module ApplicationHelper
   def avatar_thumb(size, person, avatar_html_options={})
     return "" if person.nil?
 
-    image_url = person.image.present? ? person.image.url(size) : missing_avatar(size)
+    image_url = person.image.present? ? person.image.url(size) : missing_avatar(size, person.is_vendor)
 
     link_to_unless(person.deleted?, image_tag(image_url, avatar_html_options), person)
   end
 
   def large_avatar_thumb(person, options={})
-    image_url = person.image.present? ? person.image.url(:medium) : missing_avatar(:medium)
+    image_url = person.image.present? ? person.image.url(:medium) : missing_avatar(:medium, person.is_vendor)
 
     image_tag image_url, { :alt => PersonViewUtils.person_display_name(person, @current_community) }.merge(options)
   end
@@ -89,20 +89,21 @@ module ApplicationHelper
   def huge_avatar_thumb(person, options={})
     # FIXME! Need a new picture size: :large
 
-    image_url = person.image.present? ? person.image.url(:medium) : missing_avatar(:medium)
+    image_url = person.image.present? ? person.image.url(:medium) : missing_avatar(:medium, person.is_vendor)
 
     image_tag image_url, { :alt => PersonViewUtils.person_display_name(person, @current_community) }.merge(options)
   end
 
-  def missing_avatar(size = :medium)
+  def missing_avatar(size = :medium, is_vendor = false)
+    suffix = is_vendor  ? "_vendor" : ""
     case size.to_sym
     when :small
-      image_path("profile_image/small/missing.png")
+      image_path("profile_image/small/missing#{suffix}.png")
     when :thumb
-      image_path("profile_image/thumb/missing.png")
+      image_path("profile_image/thumb/missing#{suffix}.png")
     else
       # default to medium size
-      image_path("profile_image/medium/missing.png")
+      image_path("profile_image/medium/missing#{suffix}.png")
     end
   end
 
