@@ -51,7 +51,8 @@ module ListingIndexService::Search::Converters
             },
             is_deleted: l.author.deleted?,
             rating_average: l.author.rating_average,
-            rating_count: l.author.rating_count
+            rating_count: l.author.rating_count,
+            is_vendor: l.author.is_vendor
           }.merge(num_of_reviews_hash(l, includes))
         }
       else

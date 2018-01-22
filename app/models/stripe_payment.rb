@@ -2,24 +2,28 @@
 #
 # Table name: stripe_payments
 #
-#  id                 :integer          not null, primary key
-#  community_id       :integer
-#  transaction_id     :integer
-#  payer_id           :string(255)
-#  receiver_id        :string(255)
-#  status             :string(255)
-#  sum_cents          :integer
-#  commission_cents   :integer
-#  currency           :string(255)
-#  stripe_charge_id   :string(255)
-#  stripe_transfer_id :string(255)
-#  transfered_at      :datetime
-#  created_at         :datetime         not null
-#  updated_at         :datetime         not null
-#  fee_cents          :integer
-#  real_fee_cents     :integer
-#  subtotal_cents     :integer
-#  available_on       :datetime
+#  id                  :integer          not null, primary key
+#  community_id        :integer
+#  transaction_id      :integer
+#  payer_id            :string(255)
+#  receiver_id         :string(255)
+#  status              :string(255)
+#  sum_cents           :integer
+#  commission_cents    :integer
+#  currency            :string(255)
+#  stripe_charge_id    :string(255)
+#  stripe_transfer_id  :string(255)
+#  fee_cents           :integer
+#  real_fee_cents      :integer
+#  subtotal_cents      :integer
+#  transfered_at       :datetime
+#  available_on        :datetime
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#  is_deposit          :boolean          default(FALSE)
+#  is_refunded         :boolean          default(FALSE)
+#  refund_amount_cents :integer
+#  refund_id           :string(255)
 #
 
 class StripePayment < ApplicationRecord

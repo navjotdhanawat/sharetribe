@@ -30,7 +30,8 @@ module ListingIndexViewUtils
     :is_deleted,
     :num_of_reviews,
     :rating_average,
-    :rating_count
+    :rating_count,
+    :is_vendor
   )
 
   ListingImage = Struct.new(
@@ -55,7 +56,8 @@ module ListingIndexViewUtils
             l[:author][:is_deleted],
             l[:author][:num_of_reviews],
             l[:author][:rating_average],
-            l[:author][:rating_count]
+            l[:author][:rating_count],
+            l[:author][:is_vendor]
           )
         end
 
