@@ -40,13 +40,12 @@ class TransactionProcessStateMachine
     current_community = transaction.community
 
     Delayed::Job.enqueue(TransactionStatusChangedJob.new(transaction.id, rejecter.id, current_community.id))
+    Delayed::Job.enqueue(StripeCancelDepositJob.new(transaction.id, current_community.id))
   end
 
   after_transition(to: :confirmed) do |conversation|
     confirmation = ConfirmConversation.new(conversation, conversation.starter, conversation.community)
     confirmation.confirm!
-    tx = TransactionService::Transaction.query transaction_id
-    StripeService::API::Api.payments.cancel_deposit(tx)
   end
 
   after_transition(from: :paid, to: :canceled) do |conversation|
