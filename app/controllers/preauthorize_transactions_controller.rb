@@ -161,6 +161,8 @@ class PreauthorizeTransactionsController < ApplicationController
         else
           Result::Success.new(tx_params)
         end
+      else
+        Result::Success.new(tx_params)
       end
     end
 
