@@ -2337,6 +2337,13 @@ en:
       perform_refund: "Perform partial or full refund"
       refund_button: "Refund deposit"
       performed_refund: "Refunded amount:"
+    guest:
+      title: "Guest Checkout"
+      last_name: "Last Name"
+      first_name: "First Name"
+      email: "Email"
+      phone: "Phone"
+
   unit:
     day: day
     days: days
