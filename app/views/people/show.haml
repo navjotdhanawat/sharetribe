@@ -55,7 +55,10 @@
         %h2.people-header
           - if received_testimonials.size > 0
             = pluralize(received_testimonials.size, t(".review"), t(".reviews"))
-            = "(#{t(".average_rating", average_rating: @person.rating_average.to_f.round(1))})"
+            = "("
+            = stars_rating_tag @person.rating_average.to_f.round(1), readonly: true
+            = t(".average_rating", average_rating: @person.rating_average.to_f.round(1))
+            = ")"
           - else
             = t(".no_reviews")
         - if received_testimonials.size > 0
@@ -75,3 +78,6 @@
   :javascript
     window.ST.initializeFollowButtons();
     initRatings();
+:css
+  #people-testimonials.listing-main .star {display: inline; }
+  #people-testimonials.listing-main .star-c3-png { display: none; }
