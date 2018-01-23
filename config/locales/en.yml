@@ -2325,6 +2325,12 @@ en:
     unit_price: "Unit price: %{unit_price}"
     total: "Total:"
     total_to_pay: "Payment total:"
+    guest:
+      title: "Guest Checkout"
+      last_name: "Last Name"
+      first_name: "First Name"
+      email: "Email"
+      phone: "Phone"
   unit:
     day: day
     days: days
