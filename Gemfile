@@ -102,7 +102,7 @@ gem 'mail', '~> 2.6.6.rc1'
 
 group :staging, :production do
   gem 'newrelic_rpm', '~> 4.2.0.334'
-  gem 'rails_12factor', '~> 0.0.3'
+  # gem 'rails_12factor', '~> 0.0.3'
 end
 
 group :development, :test do
