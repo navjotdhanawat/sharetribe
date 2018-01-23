@@ -1,0 +1,17 @@
+- fields = [:first_name, :last_name, :street1, :street2, :postal_code, :city, :state_or_province, :country]
+- starter = transaction_model.starter
+.shipping-address-container
+  %h2
+    = t("listing_conversations.guest.title")
+  .shipping-address-name= t("transactions.guest.first_name")
+  .shipping-address-row= starter.given_name
+  
+  .shipping-address-name= t("transactions.guest.last_name")
+  .shipping-address-row= starter.family_name
+  
+  .shipping-address-name= t("transactions.guest.email")
+  .shipping-address-row= starter.primary_email.address
+
+  - if starter.phone_number.present?
+    .shipping-address-name= t("transactions.guest.phone")
+    .shipping-address-row= starter.phone_number
