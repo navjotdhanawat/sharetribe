@@ -203,8 +203,8 @@ class Transaction < ApplicationRecord
     Maybe(read_attribute(:unit_type)).to_sym.or_else(nil)
   end
 
-  has_one :deposit_payment, ->{ where(is_deposit: true) }, class_name: 'StripePayment' 
-  has_one :stripe_payment, ->{ where(is_deposit: false) }, class_name: 'StripePayment' 
+  has_one :deposit_payment, ->{ where(is_deposit: true) }, class_name: 'StripePayment'
+  has_one :stripe_payment, ->{ where(is_deposit: false) }, class_name: 'StripePayment'
 
   def was_paid?
     stripe_payment.present? && stripe_payment.status == 'paid'

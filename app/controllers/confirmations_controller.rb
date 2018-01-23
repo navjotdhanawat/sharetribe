@@ -53,7 +53,7 @@ class ConfirmationsController < Devise::ConfirmationsController
         person.image = File.new(Rails.root+"app/assets/images/red_shop_logo.png")
       end
       person.save
- 
+
       record_event(flash, "AccountConfirmed")
 
       if @current_user && @current_user.has_admin_rights?(@current_community)

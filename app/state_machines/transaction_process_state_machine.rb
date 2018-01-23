@@ -31,7 +31,7 @@ class TransactionProcessStateMachine
     else
       ConfirmConversation.new(transaction, payer, current_community).activate_automatic_confirmation!
     end
-    
+
     Delayed::Job.enqueue(SendPaymentReceipts.new(transaction.id))
   end
 
@@ -52,7 +52,7 @@ class TransactionProcessStateMachine
   after_transition(from: :paid, to: :canceled) do |conversation|
     confirmation = ConfirmConversation.new(conversation, conversation.starter, conversation.community)
     confirmation.cancel!
-    Delayed::Job.enqueue(TwilioSmsJob.new(conversation.community_id, conversation.starter_id, I81n.t("twilio.transaction_canceled", transaction_id: conversation.id) ), :priority => 9)
+    Delayed::Job.enqueue(TwilioSmsJob.new(conversation.community_id, conversation.starter_id, I81n.t("twilio.transaction_canceled", transaction_id: conversation.id)), :priority => 9)
   end
 
 end
