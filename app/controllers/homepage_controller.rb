@@ -7,7 +7,6 @@ class HomepageController < ApplicationController
   VIEW_TYPES = ["grid", "list", "map"]
 
   # rubocop:disable AbcSize
-  # rubocop:disable MethodLength
   def index
     params = unsafe_params_hash.select{|k, v| v.present? }
 

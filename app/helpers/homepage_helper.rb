@@ -27,7 +27,7 @@ module HomepageHelper
   DEFAULT_SORT_ORDER = 'sort_date_desc'
 
   def sorting_options(selected_value)
-    sort_data = ListingIndexService::DataTypes::SortingOptions.map{|value, sql| [t("homepage.sorting.#{value}"), value]}
+    sort_data = ListingIndexService::DataTypes::SORTING_OPTIONS.map{|value, sql| [t("homepage.sorting.#{value}"), value]}
     options_for_select(sort_data, selected_value.present? ? selected_value : DEFAULT_SORT_ORDER)
   end
 

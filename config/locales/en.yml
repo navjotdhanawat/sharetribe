@@ -1023,6 +1023,7 @@ en:
       price_per_unit_type: "Price per %{unit_type}"
       quantity: "Quantity:"
       you_have_received_new_payment: "You have been paid <b>%{payment_sum}</b> for <b>%{listing_title}</b> by %{payer_full_name}. Here is your receipt."
+      deposit: "Refundable deposit:"
     payment_receipt_to_payer:
       receipt_of_payment: "Receipt of payment"
       you_have_made_new_payment: "You have paid <b>%{payment_sum}</b> for <b>%{listing_title}</b> to %{recipient_full_name}. Here is a receipt of the payment."
@@ -1033,6 +1034,7 @@ en:
       subtotal: Subtotal
       total: Total
       price: Price
+      deposit: "Refundable deposit:"
       service_fee: "Service fee"
       stripe_gateway_fee: "Stripe's fee:"
       paypal_gateway_fee: "PayPal's fee:"

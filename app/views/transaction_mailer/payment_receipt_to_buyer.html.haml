@@ -47,6 +47,14 @@
             %b=t("emails.receipt_to_payer.total")
           %td
             %b= payment_total
+        
+        - if deposit.present?
+          %tr{:style => "border-top: 1px solid black"}
+            %td
+              %b=t("emails.payment_receipt_to_payer.deposit")
+            %td
+              %b= deposit
+
 - if show_money_will_be_transferred_note
   %tr
     %td{:align => "left"}

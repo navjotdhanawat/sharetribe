@@ -95,12 +95,12 @@ module ListingIndexService::Search
           with[:geodist] = 0..(search[:distance_max] * multiplier).to_i if search[:distance_max].present? && !search[:bounds].present?
           geo = [to_radians(input_latitude), to_radians(input_longitude)]
           order ||= 'geodist ASC'
-        else
-          order = nil if search[:sort] == 'distance_asc'
+        elsif search[:sort] == 'distance_asc'
+          order = nil
         end
 
         order ||= 'sort_date DESC'
-        
+
         final_search_params = {
           page: search[:page],
           select: "*, weight() as wght",
@@ -126,7 +126,7 @@ module ListingIndexService::Search
 
     end
 
-    def to_radians degrees
+    def to_radians(degrees)
       degrees.to_f * Math::PI / 180
     end
 
@@ -143,8 +143,8 @@ module ListingIndexService::Search
       end
     end
 
-    def check_sort_order value
-      ListingIndexService::DataTypes::SortingOptions[value]
+    def check_sort_order(value)
+      ListingIndexService::DataTypes::SORTING_OPTIONS[value]
     end
   end
 end
