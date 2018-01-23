@@ -1,10 +1,11 @@
 module RatyHelper
+  # rubocop:disable Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
   def stars_rating_tag(average, options={})
     if average < 1 && options[:readonly]
       return
     end
     dimension    = "quality"
-    read_only    = !!options[:readonly] 
+    read_only    = !!options[:readonly]
     show_quantity= options[:show_quantity]|| false
     star         = options[:star]         || 5
     enable_half  = options[:enable_half]  || false
@@ -18,58 +19,56 @@ module RatyHelper
     cancel_hint  = options[:cancel_hint]  || "Cancel current rating!"
     cancel_on    = options[:cancel_on]    || "cancel-on.png"
     cancel_off   = options[:cancel_off]   || "cancel-off.png"
-    noRatedMsg   = options[:noRatedMsg]   || "I am read-only and I haven't rated yet!"
+    no_rated_msg = options[:noRatedMsg]   || "I am read-only and I haven't rated yet!"
     # round        = options[:round]        || { down: .26, full: .6, up: .76 }
     space        = options[:space]        || false
     single       = options[:single]       || false
     target       = options[:target]       || ''
-    targetText   = options[:targetText]   || ''
-    targetType   = options[:targetType]   || 'hint'
-    targetFormat = options[:targetFormat] || '{score}'
-    targetScore  = options[:targetScore]  || '#non-existing'
-    scoreName    = options[:scoreName]    || 'DETACHED'
-    averageAsDefault = options[:averageAsDefault].nil? ? true : !!options[:averageAsDefault]
+    target_text  = options[:targetText]   || ''
+    target_type  = options[:targetType]   || 'hint'
+    target_format = options[:targetFormat] || '{score}'
+    target_score  = options[:targetScore]  || '#non-existing'
+    score_name    = options[:scoreName]    || 'DETACHED'
+    average_as_default = options[:averageAsDefault].nil? ? true : !!options[:averageAsDefault]
 
     disable_after_rate = options[:disable_after_rate] && true
-    disable_after_rate = true if disable_after_rate == nil
+    disable_after_rate = true if disable_after_rate.nil?
 
-    if show_quantity
-      total_quantity = quantity
-    else
-      total_quantity = false
-    end
+    total_quantity = show_quantity ? quantity : false
 
     html_class   = options[:class] || ''
     html_base_class = "star"
     html_class = html_class.present? ? "#{html_base_class} #{html_class}" : html_base_class
 
-    content_tag :div, '', "data-dimension" => dimension, :class => html_class,
-                "data-rating" => (averageAsDefault ? average : nil),
-                "data-disable-after-rate" => disable_after_rate,
-                "data-readonly" => read_only,
-                "data-enable-half" => enable_half,
-                "data-half-show" => half_show,
-                "data-star-count" => star,
-                "data-star-path" => star_path,
-                "data-star-on" => star_on,
-                "data-star-off" => star_off,
-                "data-star-half" => star_half,
-                "data-cancel" => cancel,
-                "data-cancel-place" => cancel_place,
-                "data-cancel-hint"  => cancel_hint,
-                "data-cancel-on" => cancel_on,
-                "data-cancel-off" => cancel_off,
-                "data-no-rated-message" => noRatedMsg,
-                # "data-round" => round,
-                "data-space" => false,
-                "data-single" => single,
-                "data-target" => target,
-                "data-target-text" => targetText,
-                "data-target-type" => targetType,
-                "data-target-format" => targetFormat,
-                "data-target-score" => targetScore,
-                "data-score-name" => scoreName,
-                "data-url-transaction" => '/',
-                "data-quantity" => total_quantity
+    content_tag :div, '',
+      :class => html_class,
+      "data-dimension" => dimension,
+      "data-rating" => (average_as_default ? average : nil),
+      "data-disable-after-rate" => disable_after_rate,
+      "data-readonly" => read_only,
+      "data-enable-half" => enable_half,
+      "data-half-show" => half_show,
+      "data-star-count" => star,
+      "data-star-path" => star_path,
+      "data-star-on" => star_on,
+      "data-star-off" => star_off,
+      "data-star-half" => star_half,
+      "data-cancel" => cancel,
+      "data-cancel-place" => cancel_place,
+      "data-cancel-hint"  => cancel_hint,
+      "data-cancel-on" => cancel_on,
+      "data-cancel-off" => cancel_off,
+      "data-no-rated-message" => no_rated_msg,
+      # "data-round" => round,
+      "data-space" => false,
+      "data-single" => single,
+      "data-target" => target,
+      "data-target-text" => target_text,
+      "data-target-type" => target_type,
+      "data-target-format" => target_format,
+      "data-target-score" => target_score,
+      "data-score-name" => score_name,
+      "data-url-transaction" => '/',
+      "data-quantity" => total_quantity
   end
 end

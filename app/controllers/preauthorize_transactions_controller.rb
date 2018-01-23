@@ -1,4 +1,5 @@
 # coding: utf-8
+# rubocop:disable Metrics/ClassLength
 class PreauthorizeTransactionsController < ApplicationController
 
   before_action do |controller|

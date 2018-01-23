@@ -50,7 +50,7 @@ class ConfirmationsController < Devise::ConfirmationsController
       flash[:notice] = t("layouts.notifications.additional_email_confirmed")
       person.is_confirmed = 1
       person.save
- 
+
       record_event(flash, "AccountConfirmed")
 
       if @current_user && @current_user.has_admin_rights?(@current_community)

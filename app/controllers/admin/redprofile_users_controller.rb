@@ -2,16 +2,16 @@ class Admin::RedprofileUsersController < Admin::AdminBaseController
   def create
     @person = Person.new({
         username: params[:username],
-        community_id: @current_community.id, 
-        given_name: params[:given_name], 
-        family_name: params[:family_name], 
+        community_id: @current_community.id,
+        given_name: params[:given_name],
+        family_name: params[:family_name],
         description: params[:description],
         locale: I18n.locale,
         password: params[:password]
       })
     email_address = params[:email].downcase.strip
     allowed_and_available = @current_community.email_allowed?(email_address) && Email.email_available?(email_address, @current_community.id)
-    if !allowed_and_available
+    unless allowed_and_available
       flash[:error] = "The email #{email_address} is already in use"
       redirect_to admin_community_community_memberships_path(@current_community)
       return
