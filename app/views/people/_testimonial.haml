@@ -3,7 +3,6 @@
   .testimonial-avatar
     = small_avatar_thumb(testimonial.author)
   .testimonial-details
-    = stars_rating_tag testimonial.grade, readonly: true
     .testimonial-message
       - text_with_line_breaks do
         #{testimonial.text}
