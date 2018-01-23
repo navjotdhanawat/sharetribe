@@ -438,11 +438,6 @@ GEM
     rails-i18n (5.0.4)
       i18n (~> 0.7)
       railties (~> 5.0)
-    rails_12factor (0.0.3)
-      rails_serve_static_assets
-      rails_stdout_logging
-    rails_serve_static_assets (0.0.5)
-    rails_stdout_logging (0.0.5)
     railties (5.1.1)
       actionpack (= 5.1.1)
       activesupport (= 5.1.1)
@@ -687,7 +682,6 @@ DEPENDENCIES
   rails (= 5.1.1)
   rails-controller-testing (~> 1.0.2)
   rails-i18n (~> 5.0.4)
-  rails_12factor (~> 0.0.3)
   rb-fsevent (~> 0.9.8)
   react_on_rails (~> 6.9.0)
   readthis (~> 2.0.2)
