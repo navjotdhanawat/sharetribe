@@ -90,6 +90,7 @@ class TransactionMailer < ActionMailer::Base
         transaction[:listing_title]
       end
 
+
       premailer_mail(:to => seller_model.confirmed_notification_emails_to,
                      :from => community_specific_sender(community),
                      :subject => t("emails.new_payment.new_payment")) do |format|
@@ -135,8 +136,10 @@ class TransactionMailer < ActionMailer::Base
       else
         transaction[:listing_title]
       end
+      
+      recipient_emails = buyer_model.guest? ? [buyer_model.primary_email.address] : buyer_model.confirmed_notification_emails_to
 
-      premailer_mail(:to => buyer_model.confirmed_notification_emails_to,
+      premailer_mail(:to => recipient_emails,
                      :from => community_specific_sender(community),
                      :subject => t("emails.receipt_to_payer.receipt_of_payment")) { |format|
         format.html {
