@@ -9,7 +9,11 @@ module TransactionService::Gateway
       result = stripe_api.payments.create_preauth_payment(tx, gateway_fields)
       if result.success
         deposit = stripe_api.payments.create_preauth_deposit(tx, gateway_fields)
-        SyncCompletion.new(deposit)
+        if deposit.success
+          SyncCompletion.new(result)
+        else
+          SyncCompletion.new(deposit)
+        end
       else
         SyncCompletion.new(result)
       end
@@ -25,7 +29,11 @@ module TransactionService::Gateway
       result = stripe_api.payments.capture(tx)
       if result.success
         deposit = stripe_api.payments.capture_deposit(tx)
-        SyncCompletion.new(deposit)
+        if deposit.success
+          SyncCompletion.new(result)
+        else
+          SyncCompletion.new(deposit)
+        end
       else
         SyncCompletion.new(result)
       end
