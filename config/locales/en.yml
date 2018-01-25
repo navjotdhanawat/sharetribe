@@ -2028,7 +2028,7 @@ en:
       show_all_listings: "Show all listings"
       show_all_open_listings: "Show all open listings"
       show_all_reviews: "Show all reviews"
-      average_rating: "Average rating: %{average_rating}"
+      average_rating: "Average rating: %{average_rating} out of 5"
     followed_people:
       you_follow_plural: "You follow %{count} people"
       you_follow_singular: "You follow %{count} person"
