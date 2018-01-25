@@ -56,7 +56,7 @@
           - if received_testimonials.size > 0
             = pluralize(received_testimonials.size, t(".review"), t(".reviews"))
             = "("
-            = stars_rating_tag @person.rating_average.to_f.round(1), readonly: true
+            = stars_rating_tag @person.rating_average.to_f.round(1), readonly: true, enable_half: true, half_show: true
             = t(".average_rating", average_rating: @person.rating_average.to_f.round(1))
             = ")"
           - else
@@ -80,4 +80,3 @@
     initRatings();
 :css
   #people-testimonials.listing-main .star {display: inline; }
-  #people-testimonials.listing-main .star-c3-png { display: none; }
