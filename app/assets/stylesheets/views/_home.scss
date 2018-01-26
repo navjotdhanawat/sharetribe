@@ -738,6 +738,14 @@ $home-list-avatar-padding: lines(0.25);
 
 @media (min-width: 1201px) {
   .homepage {
+    .map-column {
+      left: 55%;
+    }
+
+    .listings-column {
+      right: 45%;
+    }
+
     .toggle.with-borders.toggled {
       background: #9d3531;
       border-radius: 0.3125em;
@@ -785,8 +793,20 @@ $home-list-avatar-padding: lines(0.25);
       margin-right: 0;
     }
 
+    .home-fluid-thumbnail-grid-wide .home-fluid-thumbnail-grid-item {
+      width: 33.333%;
+    }
+
     .home-listings-list {
       padding-right: 25px;
+    }
+  }
+}
+
+@media (min-width: 1440px) {
+  .homepage {
+    .home-fluid-thumbnail-grid-wide .home-fluid-thumbnail-grid-item {
+      width: 25%;
     }
   }
 }
