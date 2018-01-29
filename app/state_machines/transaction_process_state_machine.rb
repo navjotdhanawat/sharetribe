@@ -35,11 +35,11 @@ class TransactionProcessStateMachine
     Delayed::Job.enqueue(SendPaymentReceipts.new(transaction.id))
   end
 
-  after_transition(to: :rejected) do |transaction|
+  after_transition(to: :rejected) do |transaction, transition|
     rejecter = transaction.listing.author
     current_community = transaction.community
 
-    Delayed::Job.enqueue(TransactionStatusChangedJob.new(transaction.id, rejecter.id, current_community.id))
+    Delayed::Job.enqueue(TransactionStatusChangedJob.new(transaction.id, rejecter.id, current_community.id, transition.metadata))
     Delayed::Job.enqueue(TwilioSmsJob.new(transaction.community_id, transaction.starter_id, I18n.t("twilio.transaction_rejected", rejecter_name: rejecter.full_name, transaction_id: transaction.id)), :priority => 9)
     Delayed::Job.enqueue(StripeCancelDepositJob.new(transaction.id, current_community.id))
   end
