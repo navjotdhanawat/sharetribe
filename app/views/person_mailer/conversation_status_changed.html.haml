@@ -6,7 +6,12 @@
 %tr
   %td{:align => "left"}
     %font{body_font}
-      = t("emails.conversation_status_changed.has_#{@transaction.status}_your_request", :accepter => PersonViewUtils.person_display_name(@transaction.listing.author, @current_community), :listing => @transaction.listing_title)
+      - if @transaction.status == 'rejected' && @transition_metadata && @transition_metadata["auto"]
+        - exp_data =  TimeUtils.time_to(APP_CONFIG.stripe_expiration_period.days.from_now + 1.minute)
+        = t("emails.conversation_status_changed.has_auto_rejected_your_request", :accepter => PersonViewUtils.person_display_name(@transaction.listing.author, @current_community), :listing => @transaction.listing_title, :expiration => translate_time_to(exp_data[:unit], exp_data[:count]))
+
+      - else
+        = t("emails.conversation_status_changed.has_#{@transaction.status}_your_request", :accepter => PersonViewUtils.person_display_name(@transaction.listing.author, @current_community), :listing => @transaction.listing_title)
       = additional_text
 
 -# TODO: Should we link transition to message?
