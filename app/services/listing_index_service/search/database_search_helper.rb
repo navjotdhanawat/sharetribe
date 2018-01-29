@@ -39,18 +39,18 @@ module ListingIndexService::Search::DatabaseSearchHelper
   end
 
   def needs_search?(search)
+    need_sort = search[:sort].present? && search[:sort].to_sym != :sort_date_desc
     [
       :keywords,
       :latitude,
       :longitude,
       :distance_max,
-      :sort,
       :listing_shape_id,
       :categories,
       :fields,
       :price_cents,
       :bounds
-    ].any? { |field| search[field].present? }
+    ].any? { |field| search[field].present? } || need_sort
   end
 
 end
