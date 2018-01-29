@@ -982,6 +982,7 @@ en:
       has_accepted_your_request: "%{accepter} has accepted your request %{listing}."
       has_rejected_your_offer: "%{accepter} has rejected your offer %{listing}."
       has_rejected_your_request: "%{accepter} has rejected your request %{listing}."
+      has_auto_rejected_your_request: "Your request for %{listing} from %{accepter} has been automatically rejected due to the provider not responding within %{expiration}."
       view_thread: "View conversation"
       your_offer_was_accepted: "Your offer was accepted"
       your_offer_was_rejected: "Your offer was rejected"
