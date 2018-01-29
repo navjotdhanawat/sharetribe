@@ -7,7 +7,8 @@ class Admin::RedprofileUsersController < Admin::AdminBaseController
         family_name: params[:family_name], 
         description: params[:description],
         locale: I18n.locale,
-        password: params[:password]
+        password: params[:password],
+        is_vendor: params[:is_vendor]
       })
     email_address = params[:email].downcase.strip
     allowed_and_available = @current_community.email_allowed?(email_address) && Email.email_available?(email_address, @current_community.id)
@@ -31,6 +32,10 @@ class Admin::RedprofileUsersController < Admin::AdminBaseController
     @person.save!
     @membership = CommunityMembership.new(:person => @person, :community => @current_community, :consent => @current_community.consent, status: 'pending_email_confirmation')
     @membership.save!
+    if @person.is_vendor
+      @person.image = File.new(Rails.root+"app/assets/images/gray_shop_logo.png")
+      @person.save
+    end
     redirect_to admin_community_community_memberships_path(@current_community)
   end
 end
