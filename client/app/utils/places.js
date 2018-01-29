@@ -99,11 +99,18 @@ export const coordinates = (place) => {
  * null if cannot get the viewport of the place object
  */
 export const viewport = (place) => {
-  if (place && place.geometry && place.geometry.viewport) {
+  if (place && place.geometry) {
+    // distance in miles per degree
+    const delta = 20 * 1609.0 / 111111 ; // eslint-disable-line no-magic-numbers
+    const north = delta ;
+    const p = place.geometry.location;
+    const east  = delta * Math.cos(p.lat() * (Math.PI / 180)); // eslint-disable-line no-magic-numbers
     // As above in coordinates, the places object might be incomplete,
     // but in addition, not all places have the viewport defined
     // (e.g. a bus station).
-    return place.geometry.viewport.toUrlValue();
+    const vp = new google.maps.LatLngBounds(new google.maps.LatLng(p.lat() - east, p.lng()-north), 
+      new google.maps.LatLng(p.lat()+east, p.lng()+north));
+    return vp.toUrlValue();
   }
   return null;
 };
@@ -118,9 +125,20 @@ export const viewport = (place) => {
  * viewport of the place object
  */
 export const maxDistance = (place) => {
-  if (place && place.geometry && place.geometry.viewport) {
-    return getDistance(place.geometry.viewport.getNorthEast(),
-                       place.geometry.viewport.getSouthWest()) / 2; // eslint-disable-line no-magic-numbers
+  if (place && place.geometry) {
+    // distance in miles per degree
+    const delta = 20 * 1609.0 / 111111 ; // eslint-disable-line no-magic-numbers
+    const north = delta ;
+    const p = place.geometry.location;
+    const east  = delta * Math.cos(p.lat() * (Math.PI / 180)); // eslint-disable-line no-magic-numbers
+    // As above in coordinates, the places object might be incomplete,
+    // but in addition, not all places have the viewport defined
+    // (e.g. a bus station).
+    const vp = new google.maps.LatLngBounds(new google.maps.LatLng(p.lat() - east, p.lng()-north), 
+      new google.maps.LatLng(p.lat()+east, p.lng()+north));
+
+    return getDistance(vp.getNorthEast(),
+                       vp.getSouthWest()) / 2; // eslint-disable-line no-magic-numbers
   }
   return null;
 };
