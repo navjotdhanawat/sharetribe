@@ -1169,6 +1169,7 @@ CREATE TABLE `people` (
   `is_confirmed` int(11) DEFAULT 0,
   `guest` tinyint(1) DEFAULT 0,
   `is_vendor` tinyint(1) DEFAULT 0,
+  `sort_priority` int(11) DEFAULT 3,
   UNIQUE KEY `index_people_on_username_and_community_id` (`username`,`community_id`) USING BTREE,
   UNIQUE KEY `index_people_on_uuid` (`uuid`),
   UNIQUE KEY `index_people_on_email` (`email`) USING BTREE,
@@ -2266,6 +2267,8 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20180115100148'),
 ('20180117123316'),
 ('20180119062156'),
-('20180122092240');
+('20180122092240'),
+('20180130070456'),
+('20180130070652');
 
 

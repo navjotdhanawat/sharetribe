@@ -47,6 +47,7 @@
 #  is_confirmed                       :integer          default(0)
 #  guest                              :boolean          default(FALSE)
 #  is_vendor                          :boolean          default(FALSE)
+#  sort_priority                      :integer          default(3)
 #
 # Indexes
 #
@@ -182,6 +183,8 @@ class Person < ApplicationRecord
     self.id = SecureRandom.urlsafe_base64
     set_default_preferences unless self.preferences
   end
+
+  before_save :set_sort_priority
 
   after_initialize :add_uuid
   def add_uuid
@@ -649,6 +652,28 @@ class Person < ApplicationRecord
     listings.each do |listing|
       listing.delta = true
       listing.save
+    end
+  end
+
+  def set_sort_priority
+
+    # 1) The TOP listings: Vendor/Business with their own account that uploaded/changed their RED profile shop) AND/OR 
+    if is_vendor? && is_confirmed? && image_file_name.present? && image_file_name != 'gray_shop_logo.png' && image_file_name != 'red_shop_logo.png'
+      self.sort_priority = 1
+    # 1) Individual provider that uploaded/changed their GRAY profile pic. This will give them incentive to add a profile pic.
+    elsif !is_vendor? && is_confirmed? && image_file_name.present? 
+      self.sort_priority = 1
+    # 2) The MIDDLE: Vendor/Business with their own account WITH RED profile shop pic 
+    elsif is_vendor? && is_confirmed? && (image_file_name.blank? || image_file_name == 'red_shop_logo.png')
+      self.sort_priority = 2
+    # 2) AND/OR Individual provider WITHOUT profile pic.
+    elsif !is_vendor? && is_confirmed? && image_file_name.blank?
+      self.sort_priority = 3
+    # 3) LAST: Vendor/Business that Admins created (GRAY profile pics)
+    elsif is_vendor? && !is_confirmed? && (image_file_name.blank? || image_file_name == 'gray_shop_logo.png')
+      self.sort_priority = 3
+    else
+      self.sort_priority = 4
     end
   end
 
