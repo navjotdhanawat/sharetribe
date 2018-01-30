@@ -34,6 +34,7 @@ if APP_CONFIG.use_thinking_sphinx_indexing.to_s.casecmp("true") == 0
     has author.rating_average, as: :rating_average, type: :float
     has author.is_confirmed, :as => :author_confirmed, type: :integer
     has author.is_vendor, :as => :author_vendor, type: :integer
+    has author.sort_priority, :as => :author_sort_priority, type: :integer
 
     set_property :enable_star => true
 
