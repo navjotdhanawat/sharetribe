@@ -63,7 +63,7 @@
             .listings__listing-info
               .listings__listings__3__listings__price-container.listings__price-container
                 %span.listings__price-amount= humanized_money_with_symbol(listing.price)
-                %span.listings__price-unit= " / " + (ListingViewUtils.translate_quantity(listing.unit_type, listing.unit_selector_tr_key) rescue "item")
+                %span.listings__price-unit= " / " + (ListingViewUtils.translate_unit(listing.unit_type, listing.unit_selector_tr_key) rescue "item")
               %a.listings__listings__3__listings__author-link.listings__author-link{:href => person_path(listing.author)}
                 .listings__author-container
                   .listings__author-avatar-container
