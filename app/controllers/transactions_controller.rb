@@ -89,6 +89,9 @@ class TransactionsController < ApplicationController
                                       is_booking: is_booking,
                                       unit: listing_model.unit_type&.to_sym)
 
+        if @current_user.guest?
+          create_guest_record
+        end
 
         transaction_service.create(
           {
@@ -578,4 +581,10 @@ class TransactionsController < ApplicationController
       @current_user = Person.build_guest(@current_community)
     end
   end
+
+  def create_guest_record
+    @current_user.store_guest_info(params)
+    session[:guest_user] = @current_user.id.to_s
+  end
+
 end

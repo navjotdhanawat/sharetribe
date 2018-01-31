@@ -28,6 +28,33 @@
 
     = hidden_field_tag(:start_on, booking_start)
     = hidden_field_tag(:end_on, booking_end)
+    
+    - if @current_user.guest?
+      %h2
+        = t("listing_conversations.guest.free_title")
+      .row
+        .col-12
+          - login_link = link_to(t("listing_conversations.guest.login_title"), login_path)
+          - signup_link = link_to(t("listing_conversations.guest.signup_title"), sign_up_path)
+          = t("listing_conversations.guest.login", login: login_link, signup: signup_link).html_safe
+
+      .row
+        .col-12
+          %label= t("listing_conversations.guest.last_name")
+          = text_field_tag 'user[last_name]', '', class: 'required'
+      .row
+        .col-12
+          %label= t("listing_conversations.guest.first_name")
+          = text_field_tag 'user[first_name]', '', class: 'required'
+      .row
+        .col-12
+          %label= t("listing_conversations.guest.email")
+          = text_field_tag 'user[email]', '', class: 'required'
+      .row
+        .col-12
+          %label= t("listing_conversations.guest.phone")
+          = text_field_tag 'user[phone]', '', class: ''
+
 
 
     .preauthorize-section

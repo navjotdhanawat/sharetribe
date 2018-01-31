@@ -1858,6 +1858,7 @@ en:
       address_postal_code: "ZIP / Postal code *"
     guest:
       title: "Guest Checkout"
+      free_title: "Guest Request"
       last_name: "Last Name *"
       first_name: "First Name *"
       email: "Email *"
@@ -2333,6 +2334,12 @@ en:
     unit_price: "Unit price: %{unit_price}"
     total: "Total:"
     total_to_pay: "Payment total:"
+    guest:
+      title: "Guest Checkout"
+      last_name: "Last Name"
+      first_name: "First Name"
+      email: "Email"
+      phone: "Phone"
     deposit: "Refundable deposit:"
     refund_actions:
       perform_refund: "Perform partial or full refund"
