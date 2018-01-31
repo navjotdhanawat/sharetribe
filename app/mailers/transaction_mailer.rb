@@ -177,8 +177,9 @@ class TransactionMailer < ActionMailer::Base
   end
 
   def mail_params(recipient, community, subject)
+    recipient_emails = recipient.guest? ? [recipient.primary_email.address] : recipient.confirmed_notification_emails_to
     {
-      to: recipient.confirmed_notification_emails_to,
+      to: recipient_emails,
       from: community_specific_sender(community),
       subject: subject
     }

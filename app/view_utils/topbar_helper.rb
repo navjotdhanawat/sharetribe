@@ -5,6 +5,9 @@ module TopbarHelper
   def topbar_props(community:, path_after_locale_change:, user: nil, search_placeholder: nil,
                    locale_param: nil, current_path: nil, landing_page: false, host_with_port:)
 
+    if user && user.guest?
+      user = nil
+    end
     links = links(community: community, user: user, locale_param: locale_param, host_with_port: host_with_port)
 
     main_search =

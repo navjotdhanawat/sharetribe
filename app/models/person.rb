@@ -45,6 +45,7 @@
 #  rating_average                     :float(24)        default(0.0)
 #  rating_count                       :integer          default(0)
 #  is_confirmed                       :integer          default(0)
+#  guest                              :boolean          default(FALSE)
 #
 # Indexes
 #
@@ -466,7 +467,11 @@ class Person < ApplicationRecord
   # Returns Email record
   #
   def primary_email
-    EmailService.emails_to_send_message(emails).first
+    if guest?
+      Email.new(address: email.to_s.split("/", 2).last)
+    else
+      EmailService.emails_to_send_message(emails).first
+    end
   end
 
   # Notice: If no confirmed notification emails is found, this
@@ -609,6 +614,33 @@ class Person < ApplicationRecord
     self.rating_average = received_testimonials.average(:grade).to_f
     self.rating_count = received_testimonials.count
     save
+  end
+
+  def self.build_guest(community)
+    guest = Person.new
+    guest.id = SecureRandom.urlsafe_base64
+    guest.username = SecureRandom.urlsafe_base64
+    guest.given_name = 'Guest'
+    guest.family_name = 'Guest'
+    guest.community = community
+    guest.guest = true
+    guest.community_membership = CommunityMembership.new(person: guest, community: community)
+    guest
+  end
+
+  def store_guest_info(params)
+    username = Devise.friendly_token[0,20].tr('-','X')
+    self.given_name = params[:user][:first_name]
+    self.family_name = params[:user][:last_name]
+    self.display_name = [params[:user][:first_name], params[:user][:last_name]].join(", ")
+    self.email = username + "/" + params[:user][:email]
+    self.username = username
+    self.locale = I18n.locale
+    self.password = Devise.friendly_token[0,20].tr('-','X')
+    self.phone_number = params[:user][:phone]
+    self.consent = @current_community.consent
+    self.save!
+    self
   end
 
   private

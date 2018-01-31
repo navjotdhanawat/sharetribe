@@ -1166,6 +1166,7 @@ CREATE TABLE `people` (
   `rating_average` float DEFAULT 0,
   `rating_count` int(11) DEFAULT 0,
   `is_confirmed` int(11) DEFAULT 0,
+  `guest` tinyint(1) DEFAULT 0,
   UNIQUE KEY `index_people_on_username_and_community_id` (`username`,`community_id`) USING BTREE,
   UNIQUE KEY `index_people_on_uuid` (`uuid`),
   UNIQUE KEY `index_people_on_email` (`email`) USING BTREE,
@@ -2254,6 +2255,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20180110121729'),
 ('20180110122849'),
 ('20180110122905'),
-('20180111131251');
+('20180111131251'),
+('20180115100148');
 
 

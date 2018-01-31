@@ -36,7 +36,7 @@ class ListingVisibilityGuard
   end
 
   def user_logged_in?
-    !@user.nil?
+    !@user.nil? && !@user.guest?
   end
 
   def user_member_of_community?
