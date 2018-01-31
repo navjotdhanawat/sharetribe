@@ -41,6 +41,7 @@ class TransactionProcessStateMachine
 
     Delayed::Job.enqueue(TransactionStatusChangedJob.new(transaction.id, rejecter.id, current_community.id))
     Delayed::Job.enqueue(TwilioSmsJob.new(transaction.community_id, transaction.starter_id, I18n.t("twilio.transaction_rejected", rejecter_name: rejecter.full_name, transaction_id: transaction.id)), :priority => 9)
+    Delayed::Job.enqueue(StripeCancelDepositJob.new(transaction.id, current_community.id))
   end
 
   after_transition(to: :confirmed) do |conversation|
