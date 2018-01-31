@@ -69,6 +69,12 @@
               .col-6
                 = text_field_tag 'password'
             .row
+              .col-6
+                %label= t("people.new.is_vendor")
+              .col-6
+                =  select_tag :is_vendor, options_for_select([[t("people.new.vendor_business"), 1], [t("people.new.vendor_individual"), 0]])
+
+            .row
               = submit_tag t("admin.communities.redprofile_users.create"), class: 'button'
 
 
