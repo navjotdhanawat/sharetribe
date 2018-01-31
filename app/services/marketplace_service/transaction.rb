@@ -32,6 +32,7 @@ module MarketplaceService
         :created_at,
         :availability,
         :booking_uuid,
+        :deposit,
         :__model
       )
 
@@ -112,6 +113,7 @@ module MarketplaceService
           community_uuid: transaction_model.community_uuid_object,
           starter_uuid: transaction_model.starter_uuid_object,
           listing_author_uuid: transaction_model.listing_author_uuid_object,
+          deposit: transaction_model.deposit,
           __model: transaction_model
         })]
       end

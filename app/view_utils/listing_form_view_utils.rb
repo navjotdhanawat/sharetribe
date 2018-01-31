@@ -4,6 +4,7 @@ module ListingFormViewUtils
   def filter(params, shape, valid_until_enabled)
     filter_fields = []
     filter_fields << :price unless shape[:price_enabled]
+    filter_fields << :deposit unless shape[:price_enabled]
     filter_fields << :currency unless shape[:price_enabled]
     filter_fields << :unit unless shape_units(shape).present?
     filter_fields << :shipping_price unless shape[:shipping_enabled]
@@ -52,6 +53,8 @@ module ListingFormViewUtils
       case k
       when "price"
         hash.merge(:price_cents =>  MoneyUtil.parse_str_to_subunits(v, currency))
+      when "deposit"
+        hash.merge(:deposit_cents =>  MoneyUtil.parse_str_to_subunits(v, currency))
       when "shipping_price"
         hash.merge(:shipping_price_cents =>  MoneyUtil.parse_str_to_subunits(v, currency))
       when "shipping_price_additional"
@@ -113,6 +116,7 @@ module ListingFormViewUtils
       require_shipping_address: Maybe(params[:delivery_methods]).map { |d| d.include?("shipping") }.or_else(false),
       pickup_enabled: Maybe(params[:delivery_methods]).map { |d| d.include?("pickup") }.or_else(false),
       price_cents: params[:price_cents],
+      deposit_cents: params[:deposit_cents],
       shipping_price_cents: params[:shipping_price_cents],
       shipping_price_additional_cents: params[:shipping_price_additional_cents],
       currency: params[:currency]

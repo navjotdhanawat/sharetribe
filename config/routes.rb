@@ -456,7 +456,11 @@ Rails.application.routes.draw do
           end
         end
 
-        resources :transactions, only: [:show, :new, :create]
+        resources :transactions, only: [:show, :new, :create] do
+          member do
+            post :refund
+          end
+        end
         resource :settings do
           member do
             get :account

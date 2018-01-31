@@ -48,6 +48,7 @@
 #  shipping_price_additional_cents :integer
 #  availability                    :string(32)       default("none")
 #  featured                        :boolean          default(FALSE)
+#  deposit_cents                   :integer          default(0)
 #
 # Indexes
 #
@@ -100,6 +101,7 @@ class Listing < ApplicationRecord
   monetize :price_cents, :allow_nil => true, with_model_currency: :currency
   monetize :shipping_price_cents, allow_nil: true, with_model_currency: :currency
   monetize :shipping_price_additional_cents, allow_nil: true, with_model_currency: :currency
+  monetize :deposit_cents, allow_nil: true, with_model_currency: :currency
 
   before_validation :set_valid_until_time
 
