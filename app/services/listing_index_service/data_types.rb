@@ -53,7 +53,8 @@ module ListingIndexService::DataTypes
     [:is_deleted, :bool, default: false],
     [:num_of_reviews, :fixnum, default: 0],
     [:rating_average, default: 0],
-    [:rating_count, :fixnum, default: 0]
+    [:rating_count, :fixnum, default: 0],
+    [:is_vendor, :bool, default: false]
   )
 
   Listing = EntityUtils.define_builder(
@@ -89,7 +90,7 @@ module ListingIndexService::DataTypes
   )
 
   SortingOptions = {
-   'sort_date_desc' => 'author_confirmed DESC, sort_date DESC',
+   'sort_date_desc' => 'author_confirmed DESC, author_vendor, sort_date DESC',
    'distance_asc' => 'geodist ASC',
    'score_desc' => 'wght DESC',
    'price_asc' => 'price_cents ASC',

@@ -371,6 +371,7 @@ class PeopleController < Devise::RegistrationsController
         :username,
         :test_group_number,
         :community_id,
+        :is_vendor
     ).permit!
   end
 
