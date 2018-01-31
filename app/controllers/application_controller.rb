@@ -243,7 +243,7 @@ class ApplicationController < ActionController::Base
   end
 
   def logged_in?
-    @current_user.present?
+    @current_user.present? && !@current_user.guest?
   end
 
   def current_user?(person)
@@ -538,9 +538,10 @@ class ApplicationController < ActionController::Base
 
   def header_props
     user = Maybe(@current_user).map { |u|
+      suffix = u.is_vendor ? "_vendor" : ""
       {
         unread_count: MarketplaceService::Inbox::Query.notification_count(u.id, @current_community.id),
-        avatar_url: u.image.present? ? u.image.url(:thumb) : view_context.image_path("profile_image/thumb/missing#{u.is_vendor ? "_vendor" : ""}.png"),
+        avatar_url: u.image.present? ? u.image.url(:thumb) : view_context.image_path("profile_image/thumb/missing#{suffix}.png"),
         current_user_name: PersonViewUtils.person_display_name(u, @current_community),
         inbox_path: person_inbox_path(u),
         profile_path: person_path(u),
@@ -560,7 +561,7 @@ class ApplicationController < ActionController::Base
     }
 
     common = {
-      logged_in: @current_user.present?,
+      logged_in: @current_user.present? && !@current_user.guest?,
       homepage_path: @homepage_path,
       current_locale_name: get_full_locale_name(I18n.locale),
       sign_up_path: sign_up_path,

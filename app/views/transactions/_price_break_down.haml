@@ -91,7 +91,7 @@
       %span.initiate-transaction-total-value
         = MoneyViewUtils.to_humanized(is_author ? seller_gets : total)
 
-  - if deposit.present?
+  - if deposit.present? && deposit > 0
     .initiate-transaction-total-wrapper
       %span.initiate-transaction-total-label
         = t("transactions.deposit")

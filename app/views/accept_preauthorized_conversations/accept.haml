@@ -107,7 +107,7 @@
         .conversation-total-wrapper
           %span.conversation-total-label
             = t("conversations.accept.total_label")
-          %span.conversation-total-paypal-value
+          %span.conversation-total-value
             = t("conversations.accept.total_value_#{payment_gateway}", seller_gets: MoneyViewUtils.to_humanized(seller_gets))
         
         - if deposit.present? && deposit > 0

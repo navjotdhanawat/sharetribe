@@ -1,4 +1,5 @@
 # coding: utf-8
+# rubocop:disable Metrics/ClassLength
 class PreauthorizeTransactionsController < ApplicationController
 
   before_action do |controller|
@@ -161,6 +162,8 @@ class PreauthorizeTransactionsController < ApplicationController
         else
           Result::Success.new(tx_params)
         end
+      else
+        Result::Success.new(tx_params)
       end
     end
 
@@ -321,7 +324,7 @@ class PreauthorizeTransactionsController < ApplicationController
                author: query_person_entity(listing_entity[:author_id]),
                action_button_label: translate(listing_entity[:action_button_tr_key]),
                paypal_in_use: PaypalHelper.user_and_community_ready_for_payments?(listing.author_id, @current_community.id),
-               paypal_expiration_period: MarketplaceService::Transaction::Entity.authorization_expiration_period(:paypal),
+               paypal_expiration_period: MarketplaceService::Transaction::Entity.authorization_expiration_period(:stripe),
                stripe_in_use: StripeHelper.user_and_community_ready_for_payments?(listing.author_id, @current_community.id),
                stripe_publishable_key: StripeHelper.publishable_key(@current_community.id),
                stripe_shipping_required: listing.require_shipping_address && tx_params[:delivery] != :pickup,

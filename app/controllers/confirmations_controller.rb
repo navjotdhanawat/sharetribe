@@ -49,8 +49,11 @@ class ConfirmationsController < Devise::ConfirmationsController
       end
       flash[:notice] = t("layouts.notifications.additional_email_confirmed")
       person.is_confirmed = 1
+      if person.image.present? && person.image_file_name == 'gray_shop_logo.png'
+        person.image = File.new(Rails.root+"app/assets/images/red_shop_logo.png")
+      end
       person.save
- 
+
       record_event(flash, "AccountConfirmed")
 
       if @current_user && @current_user.has_admin_rights?(@current_community)

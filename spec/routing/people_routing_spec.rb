@@ -47,6 +47,7 @@
 #  is_confirmed                       :integer          default(0)
 #  guest                              :boolean          default(FALSE)
 #  is_vendor                          :boolean          default(FALSE)
+#  sort_priority                      :integer          default(3)
 #
 # Indexes
 #

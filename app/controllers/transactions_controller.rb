@@ -151,7 +151,7 @@ class TransactionsController < ApplicationController
     tx = transaction_service.get(community_id: @current_community.id, transaction_id: params[:id])
          .maybe()
          .or_else(nil)
-    
+
     unless tx.present? && transaction_conversation.present?
       flash[:error] = t("layouts.notifications.you_are_not_authorized_to_view_this_content")
       return redirect_to search_path
@@ -290,11 +290,11 @@ class TransactionsController < ApplicationController
     tx_model = Transaction.where(community_id: @current_community.id, listing_author_id: @current_user.id, id: params[:id]).first
     amount = (params[:amount].to_f * 100).to_i # cents
     if tx_model.can_refund? && tx_model.deposit_cents >= amount
-      result = StripeService::API::Api.payments.cancel_deposit(tx_model, nil, amount) 
+      result = StripeService::API::Api.payments.cancel_deposit(tx_model, nil, amount)
       logger.error result
       if result.success
         message = Message.new(
-          conversation_id: tx_model.conversation_id, 
+          conversation_id: tx_model.conversation_id,
           sender_id: @current_user.id,
           content: "Refunded deposit of " + MoneyViewUtils.to_humanized(result.data[:refund_amount]))
         message.save

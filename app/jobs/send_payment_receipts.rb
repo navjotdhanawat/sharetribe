@@ -6,9 +6,9 @@ class SendPaymentReceipts < Struct.new(:transaction_id)
     transaction = TransactionService::Transaction.query(transaction_id)
     set_service_name!(transaction[:community_id])
     receipt_to_seller = seller_should_receive_receipt(transaction[:listing_author_id])
-    
+
     amount = MoneyViewUtils.to_humanized(transaction[:payment_total])
-    Delayed::Job.enqueue(TwilioSmsJob.new(community_id, transaction[:starter_id], I18n.t("twilio.transaction_paid", amount: amount, transaction_id: transaction_id) ), :priority => 9)
+    Delayed::Job.enqueue(TwilioSmsJob.new(transaction[:community_id], transaction[:starter_id], I18n.t("twilio.transaction_paid", amount: amount, transaction_id: transaction_id)), :priority => 9)
 
     receipts =
       case transaction[:payment_gateway]

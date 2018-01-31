@@ -17,7 +17,7 @@ class StripeCancelDepositJob < Struct.new(:transaction_id, :community_id)
       unless result.data.is_a?(String)
         tx_model = ::Transaction.find(transaction_id)
         message = Message.new(
-          conversation_id: tx_model.conversation_id, 
+          conversation_id: tx_model.conversation_id,
           sender_id: tx_model.listing_author_id,
           content: "Automatically refunded deposit of " + MoneyViewUtils.to_humanized(result.data[:refund_amount]))
         message.save

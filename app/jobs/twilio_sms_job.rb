@@ -1,4 +1,4 @@
-class TwilioSmsJob < Struct.new(:community_id, :user_id, :message) 
+class TwilioSmsJob < Struct.new(:community_id, :user_id, :message)
   include DelayedAirbrakeNotification
 
   # This before hook should be included in all Jobs to make sure that the service_name is
