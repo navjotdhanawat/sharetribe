@@ -16,6 +16,8 @@
   :javascript
     initRatings()
 
+- @big_cover_photo = false
+
 - content_for :title_header do
   - is_homepage = params[:controller] == "homepage" && params[:action] == "index"
   - if @big_cover_photo
@@ -62,7 +64,7 @@
         %div
         - if listing_shape_menu_enabled
           .auto-col.toggle-container.home-toolbar-toggle-container
-            .toggle.with-borders#home_toolbar-select-share-type{data: {toggle: '.home-toolbar-share-type-menu'}}
+            .toggle.with-borders#home_toolbar-select-share-type{data: {toggle: '#toolbar-share-type-filter'}, class: (selected_shape.present? ? 'inverted' : '') }
               .toggle-header-container
                 .toggle-header
                   - if selected_shape
@@ -72,7 +74,7 @@
 
                 = icon_tag("dropdown", ["icon-dropdown"])
 
-            .home-toolbar-share-type-menu.toggle-menu.hidden
+            .home-toolbar-share-type-menu.toggle-menu.hidden#toolbar-share-type-filter
               .filter-width
                 = link_to t("homepage.filters.all_listing_types"), search_path(search_params.merge({transaction_type: "all"}))
                 - shapes.each do |shape|
@@ -81,7 +83,7 @@
 
         - if @show_categories
           .auto-col.toggle-container.home-toolbar-toggle-container
-            .toggle.with-borders{data: {toggle: '#home-toolbar-categories-menu'}}
+            .toggle.with-borders{data: {toggle: '#home-toolbar-categories-menu'}, class: (selected_category.present? ?  'inverted' : '') }
               .toggle-header-container
                 .toggle-header
                   - if selected_category
@@ -99,8 +101,20 @@
                     - is_selected = selected_category == child
                     = link_to child.display_name(I18n.locale), search_path(search_params.merge({category: child})), :class => "toggle-menu-subitem"
           = render :partial => "filters", :locals => { show_price_filter: show_price_filter, show_custom_fields: @show_custom_fields, filters: filters }
-        .auto-col.toggle-container.home-toolbar-toggle-container{style: 'vertical-align: top'}
-          = select_tag :sort_order, sorting_options(params[:sort_order])
+        .auto-col.toggle-container.home-toolbar-toggle-container
+          .toggle.with-borders{data: {toggle: '#home-toolbar-sorting'}}
+            .toggle-header-container
+              .toggle-header
+                - sort_order = params[:sort_order].to_s.present? ? params[:sort_order].to_s : 'sort_date_desc'
+                = t("homepage.sorting.#{sort_order}")
+              = icon_tag("dropdown", ["icon-dropdown"])
+
+          .home-toolbar-share-type-menu.toggle-menu.hidden#home-toolbar-sorting
+            .filter-width
+              - ListingIndexService::DataTypes::SortingOptions.keys.each do |sort_option|
+                = link_to search_path(search_params.merge({sort_order: sort_option})), class:  "toggle-menu-subitem" do
+                  = t("homepage.sorting.#{sort_option}")
+
         .auto-col.filters-enabled.home-toolbar-button-group.mob-visible
           %a.home-toolbar-button-group-button.selected.view-toggle{data: {mode: 'grid-mode'}, href: '#'}
             %i.ss-thumbnails
@@ -108,8 +122,7 @@
             %i.ss-list
 
       .row
-        = yield :selected_filters
-
+        -# yield :selected_filters
 .row.fixed-homepage
   .map-column
     .home-map
@@ -118,6 +131,7 @@
     .row.grid-mode#search-results
       = render partial: 'grid_item_map_content', locals: {show_distance: location_search_in_use, shape_name_map: shape_name_map}
 
+.filter-overlay
 - content_for :extra_javascript do
   :javascript
     $(".view-toggle").click(function(){
