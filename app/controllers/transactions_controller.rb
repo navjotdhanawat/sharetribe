@@ -2,8 +2,10 @@
 class TransactionsController < ApplicationController
 
   before_action only: [:show] do |controller|
-    controller.ensure_logged_in t("layouts.notifications.you_must_log_in_to_view_your_inbox")
+    #controller.ensure_logged_in t("layouts.notifications.you_must_log_in_to_view_your_inbox")
   end
+
+  before_action :ensure_logged_in_or_guest
 
   before_action only: [:new] do |controller|
     fetch_data(params[:listing_id]).on_success do |listing_id, listing_model, _, process|
@@ -19,7 +21,7 @@ class TransactionsController < ApplicationController
   end
 
   before_action do |controller|
-    controller.ensure_logged_in t("layouts.notifications.you_must_log_in_to_do_a_transaction")
+    #controller.ensure_logged_in t("layouts.notifications.you_must_log_in_to_do_a_transaction")
   end
 
   MessageForm = Form::Message
@@ -87,6 +89,9 @@ class TransactionsController < ApplicationController
                                       is_booking: is_booking,
                                       unit: listing_model.unit_type&.to_sym)
 
+        if @current_user.guest?
+          create_guest_record
+        end
 
         transaction_service.create(
           {
@@ -542,4 +547,24 @@ class TransactionsController < ApplicationController
   def transaction_process_tokens
     TransactionService::API::Api.process_tokens
   end
+
+  def ensure_logged_in_or_guest
+    if @current_user.present?
+      return
+    elsif params[:action] == 'show'
+      if session[:guest_user].present?
+        @current_user = Person.find(session[:guest_user])
+      else
+        ensure_logged_in t("layouts.notifications.you_must_log_in_to_view_your_inbox")
+      end
+    else
+      @current_user = Person.build_guest(@current_community)
+    end
+  end
+
+  def create_guest_record
+    @current_user.store_guest_info(params)
+    session[:guest_user] = @current_user.id.to_s
+  end
+
 end

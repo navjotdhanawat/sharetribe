@@ -172,6 +172,8 @@ gem 'twitter_cldr'
 gem 'memoist'
 gem 'biz'
 
+gem 'twilio-ruby'
+
 # Capistrano
 gem 'foreman', '>= 0.84.0'
 gem 'capistrano', '>= 3.1.0', require: false

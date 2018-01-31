@@ -103,7 +103,7 @@ class Conversation < ApplicationRecord
   # TODO This should be removed. It's not model's resp to send emails.
   def send_email_to_participants(community)
     recipients(messages.last.sender).each do |recipient|
-      if recipient.should_receive?("email_about_new_messages")
+      if recipient.should_receive?("email_about_new_messages") || recipient.guest?
         MailCarrier.deliver_now(PersonMailer.new_message_notification(messages.last, community))
       end
     end
