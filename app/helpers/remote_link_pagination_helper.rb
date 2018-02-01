@@ -5,4 +5,4 @@ module RemoteLinkPaginationHelper
       super
     end
   end
-end 
+end

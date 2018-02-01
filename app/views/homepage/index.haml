@@ -64,7 +64,7 @@
         %div
         - if listing_shape_menu_enabled
           .auto-col.toggle-container.home-toolbar-toggle-container
-            .toggle.with-borders#home_toolbar-select-share-type{data: {toggle: '.home-toolbar-share-type-menu'}, class: (selected_shape.present? ? 'inverted' : '') }
+            .toggle.with-borders#home_toolbar-select-share-type{data: {toggle: '#toolbar-share-type-filter'}, class: (selected_shape.present? ? 'inverted' : '') }
               .toggle-header-container
                 .toggle-header
                   - if selected_shape
@@ -111,7 +111,7 @@
 
           .home-toolbar-share-type-menu.toggle-menu.hidden#home-toolbar-sorting
             .filter-width
-              - ListingIndexService::DataTypes::SortingOptions.keys.each do |sort_option|
+              - ListingIndexService::DataTypes::SORTING_OPTIONS.keys.each do |sort_option|
                 = link_to search_path(search_params.merge({sort_order: sort_option})), class:  "toggle-menu-subitem" do
                   = t("homepage.sorting.#{sort_option}")
 

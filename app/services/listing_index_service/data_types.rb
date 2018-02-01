@@ -89,8 +89,8 @@ module ListingIndexService::DataTypes
     [:listings, collection: Listing]
   )
 
-  SortingOptions = {
-   'sort_date_desc' => 'author_confirmed DESC, author_vendor, sort_date DESC',
+  SORTING_OPTIONS = {
+   'sort_date_desc' => 'author_sort_priority ASC, sort_date DESC',
    'distance_asc' => 'geodist ASC',
    'score_desc' => 'wght DESC',
    'price_asc' => 'price_cents ASC',
