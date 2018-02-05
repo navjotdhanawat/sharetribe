@@ -1,4 +1,4 @@
-.conversation-status
+-#.conversation-status
   .inbox-horizontally-aligned-status
     - if transaction_model.can_refund?
       = form_tag refund_person_transaction_path(person_id: @current_user.id, id: transaction_model.id), method: :post do
