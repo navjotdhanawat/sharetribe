@@ -75,7 +75,6 @@ class TransactionMailer < ActionMailer::Base
     payment_total = transaction[:payment_total]
     service_fee = Maybe(transaction[:charged_commission]).or_else(Money.new(0, payment_total.currency))
     gateway_fee = transaction[:payment_gateway_fee]
-    deposit = transaction[:deposit] && transaction[:deposit] > 0 ? transaction[:deposit] : nil
 
     prepare_template(community, seller_model, "email_about_new_payments")
     with_locale(seller_model.locale, community.locales.map(&:to_sym), community.id) do
@@ -111,7 +110,6 @@ class TransactionMailer < ActionMailer::Base
                    payer_full_name: buyer_model.name(community),
                    payer_given_name: PersonViewUtils.person_display_name_for_type(buyer_model, "first_name_only"),
                    gateway: transaction[:payment_gateway],
-                   deposit: (deposit ? MoneyViewUtils.to_humanized(deposit) : nil)
                  }
         }
       end
@@ -125,7 +123,6 @@ class TransactionMailer < ActionMailer::Base
     community ||= Community.find(transaction[:community_id])
 
     prepare_template(community, buyer_model, "email_about_new_payments")
-    deposit = transaction[:deposit] && transaction[:deposit] > 0 ? transaction[:deposit] : nil
     with_locale(buyer_model.locale, community.locales.map(&:to_sym), community.id) do
 
       unit_type = Maybe(transaction).select { |t| t[:unit_type].present? }.map { |t| ListingViewUtils.translate_unit(t[:unit_type], t[:unit_tr_key]) }.or_else(nil)
@@ -156,7 +153,6 @@ class TransactionMailer < ActionMailer::Base
                    automatic_confirmation_days: nil,
                    show_money_will_be_transferred_note: false,
                    gateway: transaction[:payment_gateway],
-                   deposit: (deposit ? MoneyViewUtils.to_humanized(deposit) : nil)
 
                  }
         }

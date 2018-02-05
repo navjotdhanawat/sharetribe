@@ -29,8 +29,7 @@ module TransactionService::Store::Transaction
     [:content, :string],
     [:starting_page, :string],
     [:booking_uuid, :string, transform_with: UUIDUtils::RAW], # :string type for raw bytes
-    [:booking_fields, :hash],
-    [:deposit, :money]
+    [:booking_fields, :hash]
   )
 
   Transaction = EntityUtils.define_builder(
@@ -61,8 +60,7 @@ module TransactionService::Store::Transaction
     [:current_state, :to_symbol],
     [:shipping_address, :hash],
     [:booking_uuid, :uuid, transform_with: UUIDUtils::PARSE_RAW],
-    [:booking, :hash],
-    [:deposit, :money]
+    [:booking, :hash]
   )
 
   ShippingAddress = EntityUtils.define_builder(
@@ -181,7 +179,7 @@ module TransactionService::Store::Transaction
     Maybe(model)
       .map { |m|
         hash = EntityUtils.model_to_hash(m)
-          .merge({unit_price: m.unit_price, minimum_commission: m.minimum_commission, shipping_price: m.shipping_price, deposit: m.deposit })
+          .merge({unit_price: m.unit_price, minimum_commission: m.minimum_commission, shipping_price: m.shipping_price})
 
         hash = add_opt_shipping_address(hash, m)
         hash = add_opt_booking(hash, m)

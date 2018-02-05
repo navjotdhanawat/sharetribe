@@ -58,10 +58,4 @@
           %td
             %b= payment_seller_gets
 
-        - if deposit.present?
-          %tr{:style => "border-top: 1px solid black"}
-            %td
-              %b=t("emails.payment_receipt_to_seller.deposit")
-            %td
-              %b= deposit
 = render :partial => "person_mailer/action_button", :locals => { :text => t("emails.conversation_status_changed.view_thread"), :url => conversation_url}

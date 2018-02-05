@@ -353,7 +353,6 @@ class PreauthorizeTransactionsController < ApplicationController
                  start_time: tx_params[:start_time],
                  end_time:   tx_params[:end_time],
                  per_hour:   tx_params[:per_hour],
-                 deposit: listing.deposit.present? && listing.deposit > 0 ? listing.deposit : nil
                 )
              }
     }
@@ -689,7 +688,6 @@ class PreauthorizeTransactionsController < ApplicationController
           payment_process: :preauthorize,
           booking_fields: opts[:booking_fields],
           delivery_method: opts[:delivery_method],
-          deposit: opts[:listing].deposit
     }
 
     if(opts[:delivery_method] == :shipping)
