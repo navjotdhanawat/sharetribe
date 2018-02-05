@@ -90,7 +90,6 @@ class TransactionMailer < ActionMailer::Base
         transaction[:listing_title]
       end
 
-
       premailer_mail(:to => seller_model.confirmed_notification_emails_to,
                      :from => community_specific_sender(community),
                      :subject => t("emails.new_payment.new_payment")) do |format|

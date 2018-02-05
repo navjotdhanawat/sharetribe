@@ -48,7 +48,7 @@
           %td
             %b= payment_total
         
-        - if deposit.present?
+        - if deposit.present? && @DEPOSIT_FEATURE_AVAILABLE
           %tr{:style => "border-top: 1px solid black"}
             %td
               %b=t("emails.payment_receipt_to_payer.deposit")
