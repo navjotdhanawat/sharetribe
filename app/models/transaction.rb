@@ -36,7 +36,6 @@
 #  availability                      :string(32)       default("none")
 #  booking_uuid                      :binary(16)
 #  deleted                           :boolean          default(FALSE)
-#  deposit_cents                     :integer          default(0)
 #
 # Indexes
 #
@@ -72,7 +71,6 @@ class Transaction < ApplicationRecord
   monetize :minimum_commission_cents, with_model_currency: :minimum_commission_currency
   monetize :unit_price_cents, with_model_currency: :unit_price_currency
   monetize :shipping_price_cents, allow_nil: true, with_model_currency: :unit_price_currency
-  monetize :deposit_cents, allow_nil: true, with_model_currency: :unit_price_currency
 
   scope :for_person, -> (person){
     joins(:listing)
@@ -201,21 +199,6 @@ class Transaction < ApplicationRecord
 
   def unit_type
     Maybe(read_attribute(:unit_type)).to_sym.or_else(nil)
-  end
-
-  has_one :deposit_payment, ->{ where(is_deposit: true) }, class_name: 'StripePayment'
-  has_one :stripe_payment, ->{ where(is_deposit: false) }, class_name: 'StripePayment'
-
-  def was_paid?
-    stripe_payment.present? && stripe_payment.status == 'paid'
-  end
-
-  def can_refund?
-    deposit_payment.present? && deposit_payment.status == 'paid'
-  end
-
-  def refunded_amount
-    deposit_payment.present? ? deposit_payment.refund_amount : nil
   end
 
 end

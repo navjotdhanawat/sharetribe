@@ -7,36 +7,17 @@ module TransactionService::Gateway
 
     def create_payment(tx:, gateway_fields:, force_sync:)
       result = stripe_api.payments.create_preauth_payment(tx, gateway_fields)
-      if result.success
-        deposit = stripe_api.payments.create_preauth_deposit(tx, gateway_fields)
-        if deposit.success
-          SyncCompletion.new(result)
-        else
-          SyncCompletion.new(deposit)
-        end
-      else
-        SyncCompletion.new(result)
-      end
+      SyncCompletion.new(result)
     end
 
     def reject_payment(tx:, reason: "")
-      stripe_api.payments.cancel_deposit(tx, reason)
       result = stripe_api.payments.cancel_preauth(tx, reason)
       SyncCompletion.new(result)
     end
 
     def complete_preauthorization(tx:)
       result = stripe_api.payments.capture(tx)
-      if result.success
-        deposit = stripe_api.payments.capture_deposit(tx)
-        if deposit.success
-          SyncCompletion.new(result)
-        else
-          SyncCompletion.new(deposit)
-        end
-      else
-        SyncCompletion.new(result)
-      end
+      SyncCompletion.new(result)
     end
 
     def get_payment_details(tx:)
