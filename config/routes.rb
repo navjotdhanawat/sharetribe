@@ -310,7 +310,12 @@ Rails.application.routes.draw do
         end
       end
       resource :plan, only: [:show]
-      resources :redprofile_users, only: :create
+      resources :redprofile_users, only: :create do
+        collection do
+          get :reference_package
+          post :import
+        end
+      end
     end
 
     resources :invitations, only: [:new, :create ] do

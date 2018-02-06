@@ -270,7 +270,12 @@ en:
         given_name: "Given name"
         family_name: "Family name"
         username: "Username"
-
+        import: "Import CSV"
+        download_xlsx: "Download reference XLSX"
+        csv_file: "CSV file"
+        import_total: "Total Imported - Users: %{users}, Listings: %{listings}, Errors: %{errors}"
+        import_errors: "Import Errors:"
+        import_row: "CSV Line #%{row}: "
       new_layout:
         new_layout: "New layout"
         description_roadmap_new: "When new layout components are made available for your marketplace, you can choose whether you want to start using the new component or continue using the old one. You can toggle the selection at any point from this page. It's recommended to always be using the new version, as the old components might be phased out at some point. In case a component you're currently using is going to be phased out, you will be contacted in advance."

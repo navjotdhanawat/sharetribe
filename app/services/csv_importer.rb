@@ -1,7 +1,7 @@
 require 'csv'
 
 class CSVImporter
-  attr_accessor :errors
+  attr_accessor :errors, :total_users, :listings, :people
 
   def initialize(community, file)
     @community = community
@@ -11,14 +11,18 @@ class CSVImporter
     @custom_fields = CustomField.all.each_with_object({}){|row, result| result[row.name] = row }
     @categories = Category.all.each_with_object({}){|row, result| result[row.display_name(I18n.locale)] = row }
     @shapes = ListingShape.all.to_a
+    @listings = []
+    @people = []
   end
 
   def process
-    CSV.parse(IO.read(@file), headers: true).each_with_index do |row, index|
-      row = row.to_h.with_indifferent_access
-      puts row.inspect
-      import_row(row, index)
-      # @errors << [index, [e.inspect, e.message, e.backtrace[0]].join(" ")]
+    CSV.parse(@file.read, headers: true).each_with_index do |row, index|
+      begin
+        row = row.to_h.with_indifferent_access
+        import_row(row, index)
+      rescue => e
+        @errors << [index, [e.inspect, e.message, e.backtrace[0]].join(" ")]
+      end
     end
   end
 
@@ -26,7 +30,9 @@ class CSVImporter
     return unless row['Email'].present?
     person = create_person(row, index)
     return unless person
-    make_listing(person, row, index) if row['Listing Title'].present?
+    @people << person
+    listing = make_listing(person, row, index) if row['Listing Title'].present?
+    @listings << listing if listing
   end
 
   # Given Name,Family Name,Email,Username,Password,Profile Type
@@ -49,7 +55,7 @@ class CSVImporter
 
     username_exists = Person.where(community_id: @community.id, username: params['Username']).exists?
     if username_exists
-      @errors << [index, "The email #{params['Username']} is already in use"]
+      @errors << [index, "The username #{params['Username']} is already in use"]
       return nil
     end
 
@@ -105,13 +111,15 @@ class CSVImporter
 
     if params["Images"].present?
       params["Images"].split("|").each_with_index do |url, index|
-        ListingImage.create(image: open(url), listing: listing, position: index)
+        ListingImage.create(image: open(url), listing: listing, position: index, image_downloaded: 1, author_id: author.id)
       end
     end
 
-    ['List Filter','Seller Type','Condition','Pickup/Dropoff Options'].each do |cf_name|
+    ['List Filter','Seller Type','Condition','Pick-up/Drop-off Options'].each do |cf_name|
       add_custom_field_options(listing, cf_name, params[cf_name], index)
     end
+
+    listing
   end
 
   def find_shape(name)
@@ -130,18 +138,60 @@ class CSVImporter
       return
     end
 
-    values.split("|").each do |value|
-      if option = custom_field.options.detect{|opt| opt.title.strip == value.strip }
-        if field_value = listing.custom_field_value_factory(custom_field.id, [option.id]) 
-          field_value.save
-        end
-      else
-        @errors << [index, "Missing option #{value} for #{name}"]
-      end
+    options = values.split("|").map do |value|
+      custom_field.options.detect{|opt| opt.title.strip == value.strip }
+    end.compact.map(&:id)
+    if field_value = listing.custom_field_value_factory(custom_field.id, options)
+      field_value.save
     end
   end
 
   def find_unit(shape, name)
     shape.listing_units.detect{|u| u.unit_type.to_s == name || @translations[u.name_tr_key] == name }
   end
+
+
+  IMPORT_HEADERS = "Given Name,Family Name,Email,Username,Password,Profile Type,Listing Type,Listing Title,Price,Description,Category,Unit Type,List Filter,Seller Type,Condition,Pick-up/Drop-off Options,Address,Images".split(",")
+  SAMPLE_DATA = 'John,Smith,jsmith+02@mailinator.com,jsmith02,123123,Vendor/Business,For Rent,Import me!,123.45,Demo import http://goo.gl,RAFTING,2 hours,Tours & Guides,Vendor/Business,Excellent (New)|Fair,Store/Business Location|Home Location,13705 NE 12th Ave North Miami FL 33161 USA,https://d2hxfhf337f2kp.cloudfront.net/ownoutdoors/ownOutDoors_category-Boating_BG.jpg'.split(",")
+
+  def reference_package(p = nil)
+    p ||= Axlsx::Package.new
+    p.workbook.add_worksheet(:name => "Import Template") do |sheet|
+      sheet.add_row(IMPORT_HEADERS)
+      sheet.add_row(SAMPLE_DATA)
+    end
+
+    p.workbook.add_worksheet(:name => "Listing Shapes (Types)") do |sheet|
+      ListingShape.all.each do |shape|
+        sheet.add_row([@translations[shape.name_tr_key], "Unit Types"])
+        shape.listing_units.each do |unit|
+          type_name = unit.unit_type == 'custom' ? @translations[unit.name_tr_key] : unit.unit_type 
+          sheet.add_row(["", type_name])
+        end
+        sheet.add_row([])
+      end
+    end
+    
+    p.workbook.add_worksheet(:name => "Categories") do |sheet|
+      Category.where(community_id: @community.id, parent: nil).each do |category|
+        sheet.add_row([category.display_name(I18n.locale), ''])
+        category.subcategories.each do |subcat|
+          sheet.add_row(["", subcat.display_name(I18n.locale)])
+        end
+        sheet.add_row([])
+      end
+    end
+    
+    p.workbook.add_worksheet(:name => "Checkbox Fields") do |sheet|
+      CheckboxField.where(community_id: @community.id).each do |custom_field|
+        sheet.add_row([custom_field.name, ''])
+        custom_field.options.each do |option|
+          sheet.add_row(["", option.title])
+        end
+        sheet.add_row([])
+      end
+    end
+    p
+  end
+
 end

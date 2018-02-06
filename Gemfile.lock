@@ -19,6 +19,17 @@ GIT
       delayed_job
       thinking-sphinx (>= 1.5.0)
 
+GIT
+  remote: https://github.com/randym/axlsx.git
+  revision: c8ac844572b25fda358cc01d2104720c4c42f450
+  ref: c8ac844
+  specs:
+    axlsx (2.1.0.pre)
+      htmlentities (~> 4.3.4)
+      mimemagic (~> 0.3)
+      nokogiri (>= 1.6.6)
+      rubyzip (>= 1.2.1)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -617,6 +628,7 @@ DEPENDENCIES
   annotate (~> 2.7.1)
   awesome_print (~> 1.7.0)
   aws-sdk (~> 2.9.25)
+  axlsx!
   better_errors (~> 2.1.1)
   binding_of_caller
   biz
@@ -695,6 +707,7 @@ DEPENDENCIES
   rspec-rails (~> 3.6.0)
   rspec_junit_formatter
   rubocop (~> 0.49.1)
+  rubyzip (>= 1.2.1)
   sass (~> 3.4.24)
   sass-rails (~> 5.0.6)
   selenium-webdriver (~> 2.53.4)
