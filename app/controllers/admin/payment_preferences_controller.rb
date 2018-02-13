@@ -299,9 +299,11 @@ class Admin::PaymentPreferencesController < Admin::AdminBaseController
 
   StripeApiKeysForm = FormUtils.define_form("StripeApiKeysForm",
     :api_private_key,
-    :api_publishable_key).with_validations do
+    :api_publishable_key,
+    :api_client_id).with_validations do
     validates_format_of :api_private_key, with: Regexp.new(APP_CONFIG.stripe_private_key_pattern)
     validates_format_of :api_publishable_key, with: Regexp.new(APP_CONFIG.stripe_publishable_key_pattern)
+    validates_format_of :api_client_id, with: Regexp.new(APP_CONFIG.stripe_client_id_pattern)
   end
 
   def process_update_stripe_keys
@@ -312,14 +314,16 @@ class Admin::PaymentPreferencesController < Admin::AdminBaseController
                                     payment_process: :preauthorize,
                                     payment_gateway: :stripe,
                                     api_private_key: api_form.api_private_key,
-                                    api_publishable_key: api_form.api_publishable_key
+                                    api_publishable_key: api_form.api_publishable_key,
+                                    api_client_id: api_form.api_client_id
                                    })
       else
         tx_settings_api.update({ community_id: @current_community.id,
                                  payment_process: :preauthorize,
                                  payment_gateway: :stripe,
                                  api_private_key: api_form.api_private_key,
-                                 api_publishable_key: api_form.api_publishable_key
+                                 api_publishable_key: api_form.api_publishable_key,
+                                 api_client_id: api_form.api_client_id
                                 })
       end
       if stripe_api.check_balance(community: @current_community.id)

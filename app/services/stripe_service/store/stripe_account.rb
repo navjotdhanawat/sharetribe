@@ -13,7 +13,8 @@ module StripeService::Store::StripeAccount
   StripeAccountCreate = EntityUtils.define_builder(
     [:community_id, :mandatory, :fixnum],
     [:person_id, :optional, :string],
-    [:stripe_seller_id, :string, :mandatory]
+    [:stripe_seller_id, :string, :mandatory],
+    [:account_type, :string]
   )
 
   StripeAccountUpdate = EntityUtils.define_builder(
@@ -39,17 +40,40 @@ module StripeService::Store::StripeAccount
     [:person_id, :string],
     [:stripe_seller_id, :string],
     [:stripe_bank_id, :string],
-    [:stripe_customer_id, :string]
+    [:stripe_customer_id, :string],
+    [:access_token, :string],
+    [:refresh_token, :string],
+    [:account_type, :string]
   )
 
   StripeBankAccount = EntityUtils.define_builder(
     [:stripe_bank_id, :string]
   )
 
+  StripeConnectedAccount = EntityUtils.define_builder(
+    [:community_id, :mandatory, :fixnum],
+    [:person_id, :mandatory, :string],
+    [:stripe_seller_id, :mandatory, :string],
+    [:access_token, :string],
+    [:refresh_token, :string],
+    [:account_type, :string]
+  )
+
   module_function
 
   def create(opts:)
-    entity = StripeAccountCreate.call(opts)
+    entity = StripeAccountCreate.call(opts.merge(account_type: 'managed'))
+    account_model = StripeAccountModel.where(community_id: entity[:community_id], person_id: entity[:person_id]).first
+    if account_model
+      account_model.update_attributes(entity)
+    else
+      account_model = StripeAccountModel.create!(entity)
+    end
+    from_model(account_model)
+  end
+
+  def create_connected(opts:)
+    entity = StripeConnectedAccount.call(opts.merge(account_type: 'connect'))
     account_model = StripeAccountModel.where(community_id: entity[:community_id], person_id: entity[:person_id]).first
     if account_model
       account_model.update_attributes(entity)
@@ -60,7 +84,7 @@ module StripeService::Store::StripeAccount
   end
 
   def create_customer(opts:)
-    account_model = StripeAccountModel.create!(opts)
+    account_model = StripeAccountModel.create!(opts.merge(account_type: 'customer'))
     from_model(account_model)
   end
 
