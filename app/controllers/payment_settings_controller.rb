@@ -56,6 +56,30 @@ class PaymentSettingsController < ApplicationController
     index
   end
 
+  def stripe_connect
+    if params[:error].present?
+      flash[:error] = params[:error_description]
+    else
+      token = stripe_api.connect_account_callback(@current_community.id, params[:code])
+      connect_attrs = {
+        access_token:     token.token,
+        refresh_token:    token.refresh_token,
+        stripe_seller_id: token.params['stripe_user_id']
+      }
+      result = stripe_accounts_api.create_connected(community_id: @current_community.id, person_id: @current_user.id, body: connect_attrs)
+      if result[:success]
+        redirect_to person_payment_settings_path(@current_user)
+        return
+      else
+        flash[:error] = result[:error_msg]
+      end
+    end
+    redirect_to person_payment_settings_path(@current_user)
+  rescue => e
+    flash[:error] = e.message
+    redirect_to person_payment_settings_path(@current_user)
+  end
+
   private
 
   def ensure_payments_enabled
@@ -95,7 +119,7 @@ class PaymentSettingsController < ApplicationController
     need_verification = false
     if @stripe_account[:stripe_seller_id].present?
       seller_account = stripe_api.get_seller_account(community: @current_community.id, account_id: @stripe_account[:stripe_seller_id])
-      need_verification = seller_account && seller_account.verification.fields_needed.present? && seller_account.verification.due_by.present?
+      need_verification = seller_account && seller_account[:type] != 'standard' && seller_account.verification.fields_needed.present? && seller_account.verification.due_by.present?
     end
 
     {
@@ -122,7 +146,9 @@ class PaymentSettingsController < ApplicationController
       stripe_bank_form: StripeBankForm.new(@parsed_seller_account),
       stripe_verification_form: StripeVerificationForm.new(@parsed_seller_account),
       stripe_mode: stripe_api.charges_mode(@current_community.id),
-      stripe_test_mode: stripe_api.test_mode?(@current_community.id)
+      stripe_test_mode: stripe_api.test_mode?(@current_community.id),
+      stripe_connect_url: stripe_connect_url,
+      stripe_use_connect: APP_CONFIG.stripe_accounts_mode == :connect,
     }
   end
 
@@ -359,21 +385,34 @@ class PaymentSettingsController < ApplicationController
   end
 
   def parse_stripe_seller_account(account)
-    bank_record = account.external_accounts.select{|x| x["default_for_currency"] }.first || {}
-    bank_number = if bank_record.present?
-      [bank_record["country"], bank_record["bank_name"], bank_record["currency"], "****#{bank_record['last4']}"].join(", ").upcase
+    if account[:type] == 'standard'
+      {
+        legal_name: account.business_name,
+      }
+    else
+      bank_record = account.external_accounts.select{|x| x["default_for_currency"] }.first || {}
+      bank_number = if bank_record.present?
+        [bank_record["country"], bank_record["bank_name"], bank_record["currency"], "****#{bank_record['last4']}"].join(", ").upcase
+      end
+      {
+        legal_name: [account.legal_entity.first_name,  account.legal_entity.last_name].join(" "),
+
+        address_city: account.legal_entity.address.city,
+        address_state: account.legal_entity.address.state,
+        address_country: account.legal_entity.address.country,
+        address_line1: account.legal_entity.address.line1,
+        address_postal_code: account.legal_entity.address.postal_code,
+
+        bank_number_info: bank_number,
+        bank_currency: bank_record ? bank_record["currency"] : nil
+      }
     end
-    {
-      legal_name: [account.legal_entity.first_name,  account.legal_entity.last_name].join(" "),
-
-      address_city: account.legal_entity.address.city,
-      address_state: account.legal_entity.address.state,
-      address_country: account.legal_entity.address.country,
-      address_line1: account.legal_entity.address.line1,
-      address_postal_code: account.legal_entity.address.postal_code,
-
-      bank_number_info: bank_number,
-      bank_currency: bank_record ? bank_record["currency"] : nil
-    }
   end
+
+  def stripe_connect_url
+    if APP_CONFIG.stripe_accounts_mode == :connect
+      stripe_api.stripe_connect_url(@current_community.id, person_stripe_connect_url(locale: nil))
+    end
+  end
+
 end
