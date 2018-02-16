@@ -720,7 +720,7 @@ class PreauthorizeTransactionsController < ApplicationController
   end
 
   def create_guest_record
-    @current_user.store_guest_info(params)
+    @current_user.store_guest_info(params, @current_community)
     session[:guest_user] = @current_user.id.to_s
   end
 end
