@@ -632,7 +632,7 @@ class Person < ApplicationRecord
     guest
   end
 
-  def store_guest_info(params)
+  def store_guest_info(params, community = nil)
     username = Devise.friendly_token[0,20].tr('-','X')
     self.given_name = params[:user][:first_name]
     self.family_name = params[:user][:last_name]
@@ -642,7 +642,7 @@ class Person < ApplicationRecord
     self.locale = I18n.locale
     self.password = Devise.friendly_token[0,20].tr('-','X')
     self.phone_number = params[:user][:phone]
-    self.consent = @current_community.consent
+    self.consent = community.consent
     self.save!
     self
   end
