@@ -407,8 +407,10 @@ window.ST = window.ST || {};
     var toggleCallForPrice = function() {
       if($("#listing_call_for_price").is(":checked")) {
         $("#listing_price").attr('disabled', true);
+        $(".price-container").hide();
       } else {
         $("#listing_price").attr('disabled', false);
+        $(".price-container").show();
       }
     }
     toggleCallForPrice();
