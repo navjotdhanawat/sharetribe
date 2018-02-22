@@ -1568,6 +1568,7 @@ en:
     call_for_price:
       title: Call for price
       note: "Please check here if you do not want to publish a price and/or would rather buyers contact you for pricing information."
+      contact: "Contact"
     bubble_listing_not_visible:
       listing_not_visible: "You do not have permission to view this listing."
     comment:

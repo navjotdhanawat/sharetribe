@@ -17,8 +17,9 @@
   - else
 
     = form_tag @listing_presenter.form_path, :method => :get, :id => "booking-dates" do
+      - if @listing.call_for_price
 
-      - if @listing_presenter.quantity_per_day_or_night?
+      - elsif @listing_presenter.quantity_per_day_or_night?
         - @listing_presenter.blocked_dates_result.on_success do |blocked_dates|
           - content_for :extra_javascript do
             :javascript
@@ -81,12 +82,18 @@
               = ListingViewUtils.translate_quantity(@listing.unit_type, @listing.unit_selector_tr_key)
           .quantity-input.input-sm.required
             %input#quantity{type: 'number', placeholder: t("listings.quantity_placeholder"), name: 'quantity', value: 1, min: 1, step: 1}
-
-      = render partial: "delivery_opts", locals: { delivery_opts: @listing_presenter.delivery_opts, is_author: @listing_presenter.is_author }
+      
+      - if !@listing.call_for_price
+        = render partial: "delivery_opts", locals: { delivery_opts: @listing_presenter.delivery_opts, is_author: @listing_presenter.is_author }
 
       = hidden_field_tag(:listing_id, @listing.id)
 
-      - if @listing_presenter.quantity_per_day_or_night?
+      - if @listing.call_for_price
+        %button.enabled-book-button
+          .content
+            = t("listings.call_for_price.contact")
+
+      - elsif @listing_presenter.quantity_per_day_or_night?
         - @listing_presenter.blocked_dates_result.on_success do
           %button.enabled-book-button
             .content
@@ -102,10 +109,10 @@
             = action_button_label(@listing)
 
 
-
-    .row
-      .col-12
-        = render :partial => "listing_conversations/payment_methods", locals: { stripe_in_use: @listing_presenter.stripe_in_use, paypal_in_use: @listing_presenter.paypal_in_use }
+    - if !@listing.call_for_price
+      .row
+        .col-12
+          = render :partial => "listing_conversations/payment_methods", locals: { stripe_in_use: @listing_presenter.stripe_in_use, paypal_in_use: @listing_presenter.paypal_in_use }
 
   - if @listing_presenter.is_authorized
     .listing-view-admin-links
