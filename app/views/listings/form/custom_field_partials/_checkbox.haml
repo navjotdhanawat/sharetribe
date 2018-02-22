@@ -4,7 +4,7 @@
       - column.each do |opt|
         .checkbox-container
           - selected_stored = custom_field_value ? custom_field_value.selected_options.include?(opt) : false
-          - must_be_radio = @preselected_custom_field_values && @preselected_custom_field_values[custom_field.id]
+          - must_be_radio = custom_field.name == 'Seller Type'
           - preselected = @preselected_custom_field_values && @preselected_custom_field_values[custom_field.id]&.include?(opt.id)
           - selected = selected_stored || preselected 
           - if must_be_radio
