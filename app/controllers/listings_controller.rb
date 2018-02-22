@@ -333,6 +333,7 @@ class ListingsController < ApplicationController
 
     @listing.transaction_process_id = shape[:transaction_process_id]
     @listing.listing_shape_id = shape[:id]
+    set_listing_seller_type
 
     payment_type = MarketplaceService::Community::Query.payment_type(@current_community.id)
     allow_posting, error_msg = payment_setup_status(
@@ -493,5 +494,18 @@ class ListingsController < ApplicationController
 
   def availability_per_hour_enabled
     FeatureFlagHelper.feature_enabled?(:availability_per_hour)
+  end
+
+  def set_listing_seller_type
+    return unless @listing.new_record?
+    
+    seller_type_custom_field = CustomField.all.detect{|cf| cf.name == 'Seller Type'}
+    return unless seller_type_custom_field
+    
+    value = @current_user.is_vendor? ? "Vendor/Business" : "Individual"
+    option = seller_type_custom_field.options.detect{|opt| opt.title.strip == value }
+    return unless option
+
+    @preselected_custom_field_values = {seller_type_custom_field.id => [option.id]}
   end
 end
