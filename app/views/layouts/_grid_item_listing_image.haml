@@ -18,7 +18,8 @@
 
     .fluid-thumbnail-grid-image-price-container{:class => "#{modifier_class}"}
       - if listing.call_for_price
-        = t("listings.call_for_price.title")
+        %span.fluid-thumbnail-grid-image-type{:class => "#{modifier_class}"}
+          = t("listings.call_for_price.title")
       - elsif listing.price
         %span.fluid-thumbnail-grid-image-price
           = MoneyViewUtils.to_humanized(listing.price)
