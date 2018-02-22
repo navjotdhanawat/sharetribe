@@ -402,7 +402,11 @@ class TransactionsController < ApplicationController
         Result::Success.new(listing_model.author)
       },
       ->(_, listing_model, *rest) {
-        TransactionService::API::Api.processes.get(community_id: @current_community.id, process_id: listing_model.transaction_process_id)
+        if listing_model.call_for_price
+          Result::Success.new({process: :none})
+        else
+          TransactionService::API::Api.processes.get(community_id: @current_community.id, process_id: listing_model.transaction_process_id)
+        end
       },
       ->(*) {
         Result::Success.new(MarketplaceService::Community::Query.payment_type(@current_community.id))
@@ -419,7 +423,7 @@ class TransactionsController < ApplicationController
   end
 
   def price_break_down_locals(tx)
-    if tx[:payment_process] == :none && tx[:listing_price].cents == 0
+    if tx[:payment_process] == :none 
         nil
     else
       localized_unit_type = tx[:unit_type].present? ? ListingViewUtils.translate_unit(tx[:unit_type], tx[:unit_tr_key]) : nil
@@ -481,7 +485,7 @@ class TransactionsController < ApplicationController
 
     total_label = t("transactions.price")
 
-    m_price_break_down = Maybe(listing_model).select { |l_model| l_model.price.present? }.map { |l_model|
+    m_price_break_down = Maybe(listing_model).select { |l_model| l_model.price.present? && !l_model.call_for_price }.map { |l_model|
       TransactionViewUtils.price_break_down_locals(
         {
           listing_price: l_model.price,
