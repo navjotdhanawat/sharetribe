@@ -18,6 +18,11 @@
     = link_to(t("settings.profile.profile_page"), target_user) + "."
 
   = form_for target_user do |form|
+
+    -# Seller type
+    = label_tag t("homepage.filters.seller_type.title")
+    = target_user.is_vendor ? t("homepage.filters.seller_type.vendor") : t("homepage.filters.seller_type.individual")
+
     = form.label :given_name, t("settings.profile.given_name")
     = form.text_field :given_name, :class => "text_field", :maxlength => "30"
     .inline-label-container

@@ -31,6 +31,7 @@ module ListingIndexService::DataTypes
     [:include_closed, :to_bool, default: false],
     [:locale, :symbol, :optional],
     [:bounds, :array, :optional],
+    [:vendor, :array, :optional],
   )
 
   AvatarImage = EntityUtils.define_builder(

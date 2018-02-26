@@ -1337,6 +1337,10 @@ en:
       list_button: List
       all_listing_types: "All listing types"
       all_categories: "All categories"
+      seller_type: 
+        title: "Seller Type"
+        vendor: "Vendor/Business"
+        individual: "Individual"
     errors:
       search_engine_not_responding: "Search is currently unavailable. Try searching again soon."
     sorting:
