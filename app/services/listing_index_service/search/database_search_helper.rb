@@ -49,7 +49,8 @@ module ListingIndexService::Search::DatabaseSearchHelper
       :categories,
       :fields,
       :price_cents,
-      :bounds
+      :bounds,
+      :vendor
     ].any? { |field| search[field].present? } || need_sort
   end
 
