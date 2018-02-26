@@ -99,6 +99,10 @@ module ListingIndexService::Search
           order = nil
         end
 
+        if search[:vendor].present?
+          with[:author_vendor] = search[:vendor].map(&:to_i)
+        end
+
         order ||= 'sort_date DESC'
 
         final_search_params = {
@@ -110,6 +114,9 @@ module ListingIndexService::Search
           with_all: with_all,
           order: order,
           sort_mode: :extended,
+          sql: {
+            include: included_models
+          },
           max_query_time: 1000 # Timeout and fail after 1s
         }
 
