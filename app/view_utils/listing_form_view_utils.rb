@@ -28,9 +28,10 @@ module ListingFormViewUtils
 
   def validate(params:, shape:, unit:, valid_until_enabled: false)
     errors = []
+    need_price = shape[:price_enabled] && params[:call_for_price] != '1'
 
-    errors << :price_required if shape[:price_enabled] && params[:price].nil?
-    errors << :currency_required if shape[:price_enabled] && params[:currency].blank?
+    errors << :price_required if need_price && params[:price].nil? 
+    errors << :currency_required if need_price && params[:currency].blank?
     errors << :delivery_method_required if shape[:shipping_enabled] && params[:delivery_methods].empty?
     errors << :unknown_delivery_method if shape[:shipping_enabled] && params[:delivery_methods].any? { |method| !["shipping", "pickup"].include?(method) }
 

@@ -48,6 +48,7 @@
 #  shipping_price_additional_cents :integer
 #  availability                    :string(32)       default("none")
 #  featured                        :boolean          default(FALSE)
+#  call_for_price                  :boolean          default(FALSE)
 #
 # Indexes
 #
@@ -357,4 +358,5 @@ class Listing < ApplicationRecord
   def logger_metadata
     { listing_id: id }
   end
+
 end

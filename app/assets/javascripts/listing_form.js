@@ -404,6 +404,16 @@ window.ST = window.ST || {};
     };
     togglePrice(); //initialize
 
+    var toggleCallForPrice = function() {
+      if($("#listing_call_for_price").is(":checked")) {
+        $("#listing_price").attr('disabled', true);
+      } else {
+        $("#listing_price").attr('disabled', false);
+      }
+    }
+    toggleCallForPrice();
+    $(document).on("click", "#listing_call_for_price", toggleCallForPrice);
+
     var $unit = $(".js-listing-unit");
 
     if ($unit.length) {
@@ -466,7 +476,7 @@ window.ST = window.ST || {};
       rules: _.extend(numericRules, {
         "listing[title]": {required: true, minlength: 2, maxlength: 60},
         "listing[origin]": {address_validator: true},
-        "listing[price]": {required: pr, money: true, minimum_price_required: [minimum_price, subunit_to_unit]},
+        "listing[price]": {required: function() { return $("#listing_call_for_price:checked").size() == 0 }, money: true, minimum_price_required: [minimum_price, subunit_to_unit]},
         "listing[shipping_price]": {money: true},
         "listing[shipping_price_additional]": {money: true},
         "listing[valid_until(1i)]": { min_date: true, max_date: true }

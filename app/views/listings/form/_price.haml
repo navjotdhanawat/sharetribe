@@ -90,3 +90,7 @@
       :javascript
         $('#payment_fee_info_link').click(function() { $('#payment_fee_info_content').lightbox_me({centered: true, zIndex: 1000000}); ; return false});
 
+= form.label :call_for_price, :class => "input" do
+  = form.check_box :call_for_price
+  = t('listings.call_for_price.title') 
+= render partial: "layouts/info_text", locals: { text: t("listings.call_for_price.note") }

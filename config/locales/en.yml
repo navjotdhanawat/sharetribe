@@ -1565,6 +1565,9 @@ en:
       stripe_payments: "Stripe Payments"
       payments: Payments
   listings:
+    call_for_price:
+      title: Call for price
+      note: "(if you do not want to publish a price and buyers should contact you to get a quote)"
     bubble_listing_not_visible:
       listing_not_visible: "You do not have permission to view this listing."
     comment:
