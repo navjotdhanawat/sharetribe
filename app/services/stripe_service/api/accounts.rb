@@ -34,6 +34,13 @@ module StripeService::API
       Result::Error.new(e.message)
     end
 
+    def create_connected(community_id:, person_id:, body:)
+      data = body.merge({ community_id: community_id, person_id: person_id})
+      Result::Success.new(stripe_accounts_store.create_connected(opts: data))
+    rescue => e
+      Result::Error.new(e.message)
+    end
+
     def update_address(community_id:, person_id:, body:)
       data = { community_id: community_id, person_id: person_id}
       account = stripe_accounts_store.get(person_id: person_id, community_id: community_id).to_hash

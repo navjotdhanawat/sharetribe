@@ -59,9 +59,18 @@ class StripeService::API::StripeApiWrapper
     def charge(community:, token:, seller_account_id:, amount:, fee:, currency:, description:, metadata: {})
       with_stripe_payment_config(community) do |payment_settings|
         case charges_mode(community)
-        when :separate
+        when :direct
           Stripe::Charge.create({
             source: token,
+            amount: amount,
+            description: description,
+            currency: currency,
+            application_fee: fee,
+            capture: false
+          }.merge(metadata: metadata), { stripe_account: seller_account_id })
+        when :separate
+          Stripe::Charge.create({
+            customer: token,
             amount: amount,
             description: description,
             currency: currency,
@@ -86,6 +95,8 @@ class StripeService::API::StripeApiWrapper
     def capture_charge(community:, charge_id:, seller_id:)
       with_stripe_payment_config(community) do |payment_settings|
         case charges_mode(community)
+        when :direct
+          charge = Stripe::Charge.retrieve(charge_id, {stripe_account: seller_id})
         when :separate, :destination
           charge = Stripe::Charge.retrieve(charge_id)
         end
@@ -105,7 +116,7 @@ class StripeService::API::StripeApiWrapper
         when :separate
           # platform holds captured funds until completion, up to 90 days, then makes transfer
           payout_mode = {}
-        when :destination
+        when :direct, :destination
           # managed accounts, make payout after completion om funds availability date
           payout_mode = {
             payout_schedule: {
@@ -212,10 +223,11 @@ class StripeService::API::StripeApiWrapper
       return nil
     end
 
-    DESTINATION_TYPES = [:separate, :destination]
+    DESTINATION_TYPES = [:separate, :direct, :destination]
     # System supports different payment modes, see https://stripe.com/docs/connect/charges for details
     #
     # :separate    - Separate charges and transfers, payment goes to admin account, with delayed transfer to seller
+    # :direct      - Direct charges, payment goes to seller account, with application fee to admin account
     # :destination - Destination charges, payment goes to admin account, with instant partial transfer to seller
     #
     # By default :destination mode is used
@@ -254,8 +266,12 @@ class StripeService::API::StripeApiWrapper
         reason_data = reason.present? ? {reason: reason} : {}
         amount_data = amount.present? ? {amount: amount} : {}
         case charges_mode(community)
-        when :separate, :destination
+        when :separate
           Stripe::Refund.create({charge: charge_id}.merge(amount_data).merge(reason_data).merge(metadata: metadata))
+        when :destination
+          Stripe::Refund.create({charge: charge_id, reverse_transfer: true}.merge(amount_data).merge(reason_data).merge(metadata: metadata))
+        when :direct
+          Stripe::Refund.create({charge: charge_id}.merge(reason_data).merge(amount_data).merge(metadata: metadata), {stripe_account: account_id})
         end
       end
     end
@@ -265,6 +281,8 @@ class StripeService::API::StripeApiWrapper
         case charges_mode(community)
         when :separate, :destination
           Stripe::BalanceTransaction.retrieve(balance_txn_id)
+        when :direct
+          Stripe::BalanceTransaction.retrieve(balance_txn_id, {stripe_account: account_id})
         end
       end
     end
@@ -301,5 +319,31 @@ class StripeService::API::StripeApiWrapper
         Stripe.api_key =~ /^sk_test/
       end
     end
+
+    def with_stripe_oauth_config(community, &block)
+      with_stripe_payment_config(community) do |payment_settings|
+        options = {
+          site: 'https://connect.stripe.com',
+          authorize_url: '/oauth/authorize',
+          token_url: '/oauth/token'
+        }
+        client_id = payment_settings[:api_client_id]
+        api_key = Stripe.api_key
+        yield OAuth2::Client.new(client_id, api_key, options)
+      end
+    end
+
+    def stripe_connect_url(community, redirect_uri)
+      with_stripe_oauth_config(community) do |oauth_client|
+        oauth_client.auth_code.authorize_url(scope: 'read_write', redirect_uri: redirect_uri)
+      end
+    end
+
+    def connect_account_callback(community, auth_code)
+      with_stripe_oauth_config(community) do |oauth_client|
+        oauth_client.auth_code.get_token(auth_code, :params => {:scope => 'read_write'})
+      end
+    end
+
   end
 end
