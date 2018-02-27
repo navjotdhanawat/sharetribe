@@ -517,7 +517,7 @@ class TransactionsController < ApplicationController
   end
 
   def date_selector?(listing)
-    [:day, :night].include?(listing.quantity_selector&.to_sym)
+    [:day, :night].include?(listing.quantity_selector&.to_sym) && !listing.call_for_price
   end
 
   def calculate_quantity(tx_params:, is_booking:, unit:)
