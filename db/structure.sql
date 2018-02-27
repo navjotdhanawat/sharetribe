@@ -755,7 +755,6 @@ CREATE TABLE `listings` (
   `shipping_price_additional_cents` int(11) DEFAULT NULL,
   `availability` varchar(32) DEFAULT 'none',
   `featured` tinyint(1) DEFAULT 0,
-  `deposit_cents` int(11) DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `index_listings_on_uuid` (`uuid`),
   KEY `index_listings_on_new_category_id` (`category_id`) USING BTREE,
@@ -1277,7 +1276,6 @@ CREATE TABLE `stripe_payments` (
   `available_on` datetime DEFAULT NULL,
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
-  `is_deposit` tinyint(1) DEFAULT 0,
   `is_refunded` tinyint(1) DEFAULT 0,
   `refund_amount_cents` int(11) DEFAULT NULL,
   `refund_id` varchar(255) DEFAULT NULL,
@@ -1391,7 +1389,6 @@ CREATE TABLE `transactions` (
   `availability` varchar(32) DEFAULT 'none',
   `booking_uuid` binary(16) DEFAULT NULL,
   `deleted` tinyint(1) DEFAULT 0,
-  `deposit_cents` int(11) DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `index_transactions_on_listing_id` (`listing_id`) USING BTREE,
   KEY `index_transactions_on_conversation_id` (`conversation_id`) USING BTREE,
@@ -2269,5 +2266,7 @@ INSERT INTO `schema_migrations` (version) VALUES
 ('20180119062156'),
 ('20180122092240'),
 ('20180130070456'),
-('20180130070652');
+('20180130070652'),
+('20180205074723');
+
 

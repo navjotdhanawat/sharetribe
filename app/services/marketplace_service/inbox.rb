@@ -92,7 +92,6 @@ module MarketplaceService
         [:last_message_content, :string, :optional],
 
         [:payment_total, :money, :optional],
-        [:deposit, :money, :optional],
 
         [:author, :hash, :mandatory],
         [:waiting_feedback, :mandatory, transform_with: @tiny_int_to_bool],
@@ -224,7 +223,6 @@ module MarketplaceService
             Maybe(stripe_payments.payment_details(transaction))[:payment_total].or_else(nil)
           end
 
-        deposit = ::Transaction.where(id: transaction[:transaction_id]).first.deposit
 
         should_notify =
           !@tiny_int_to_bool.call(transaction[:current_is_read]) ||
@@ -236,8 +234,7 @@ module MarketplaceService
           transitions: transitions,
           should_notify: should_notify,
           last_transition_at: transaction[:last_transition_at],
-          payment_total: payment_total,
-          deposit: deposit
+          payment_total: payment_total
         )
       end
 
