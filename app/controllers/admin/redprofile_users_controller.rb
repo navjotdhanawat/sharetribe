@@ -38,4 +38,17 @@ class Admin::RedprofileUsersController < Admin::AdminBaseController
     end
     redirect_to admin_community_community_memberships_path(@current_community)
   end
+
+  def import
+    @csv_importer = CSVImporter.new(@current_community, params[:file])
+    @csv_importer.process
+  end
+
+  def reference_package
+    @csv_importer = CSVImporter.new(@current_community, nil)
+    send_data @csv_importer.reference_package.to_stream.read, 
+      filename: 'reference-data.xlsx', 
+      content_type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+      disposition: 'attachment'
+  end
 end
