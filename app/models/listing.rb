@@ -72,6 +72,7 @@ class Listing < ApplicationRecord
   include ManageAvailabilityPerHour
 
   belongs_to :author, :class_name => "Person", :foreign_key => "author_id"
+  belongs_to :community
 
   has_many :listing_images, -> { where("error IS NULL").order("position") }, :dependent => :destroy
 
@@ -238,6 +239,12 @@ class Listing < ApplicationRecord
   # The price symbol based on this listing's price or community default, if no price set
   def price_symbol
     price ? price.symbol : MoneyRails.default_currency.symbol
+  end
+
+  def answers_for_field_name(custom_field_name)
+    custom_field = community.custom_fields.detect{|cf| cf.name == custom_field_name }
+    return [] unless custom_field
+    answer_for(custom_field)&.text_value
   end
 
   def answer_for(custom_field)
