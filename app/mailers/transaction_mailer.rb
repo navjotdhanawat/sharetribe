@@ -16,6 +16,7 @@ class TransactionMailer < ActionMailer::Base
   layout 'email'
 
   add_template_helper(EmailTemplateHelper)
+  add_template_helper(TranslationHelper)
 
   def transaction_preauthorized(transaction)
     @transaction = transaction
@@ -106,6 +107,7 @@ class TransactionMailer < ActionMailer::Base
                    shipping_total: MoneyViewUtils.to_humanized(transaction[:shipping_price]),
                    payment_service_fee: MoneyViewUtils.to_humanized(-service_fee),
                    payment_gateway_fee: MoneyViewUtils.to_humanized(-gateway_fee),
+                   payment_gateway_fee_value: gateway_fee,
                    payment_seller_gets: MoneyViewUtils.to_humanized(you_get),
                    payer_full_name: buyer_model.name(community),
                    payer_given_name: PersonViewUtils.person_display_name_for_type(buyer_model, "first_name_only"),
@@ -121,6 +123,8 @@ class TransactionMailer < ActionMailer::Base
     seller_model ||= Person.find(transaction[:listing_author_id])
     buyer_model ||= Person.find(transaction[:starter_id])
     community ||= Community.find(transaction[:community_id])
+    transaction_model = Transaction.find(transaction[:id])
+    listing_image = transaction_model.listing.listing_images.select{|li| li.image_ready? }.first
 
     prepare_template(community, buyer_model, "email_about_new_payments")
     with_locale(buyer_model.locale, community.locales.map(&:to_sym), community.id) do
@@ -155,7 +159,9 @@ class TransactionMailer < ActionMailer::Base
                    automatic_confirmation_days: nil,
                    show_money_will_be_transferred_note: false,
                    gateway: transaction[:payment_gateway],
-
+                   listing: transaction_model.listing,
+                   listing_image: listing_image,
+                   booking: transaction_model.booking,
                  }
         }
       }

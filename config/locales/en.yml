@@ -1030,7 +1030,7 @@ en:
       you_have_received_new_payment: "You have been paid <b>%{payment_sum}</b> for <b>%{listing_title}</b> by %{payer_full_name}. Here is your receipt."
     payment_receipt_to_payer:
       receipt_of_payment: "Receipt of payment"
-      you_have_made_new_payment: "You have paid <b>%{payment_sum}</b> for <b>%{listing_title}</b> to %{recipient_full_name}. Here is a receipt of the payment."
+      you_have_made_new_payment: "%{recipient_full_name} has accepted your request<br/><br/>You have paid <b>%{payment_sum}</b> for <b>%{listing_title}</b> to %{recipient_full_name}. Here is a receipt of the payment."
       product: Product
       price_per_unit_type: "Price per %{unit_type}"
       duration: Duration
@@ -1042,6 +1042,7 @@ en:
       stripe_gateway_fee: "Stripe's fee:"
       paypal_gateway_fee: "PayPal's fee:"
       money_will_be_transferred: "The money will be transferred to %{recipient_name} when a) you have marked the request completed or b) %{automatic_confirmation_days} days have passed since you paid."
+
     paypal_new_payment:
       paypal_gateway_fee: "PayPal's fee:"
       shipping_total: "Shipping:"
@@ -1052,7 +1053,7 @@ en:
       you_will_get: "Total:"
     receipt_to_payer:
       receipt_of_payment: "Receipt of payment"
-      you_have_made_new_payment: "You have paid <b>%{payment_sum}</b> for <b>%{listing_title}</b> to %{recipient_full_name}. Here is a receipt of the payment."
+      you_have_made_new_payment: "%{recipient_full_name} has accepted your request<br/>You have paid <b>%{payment_sum}</b> for <b>%{listing_title}</b> to %{recipient_full_name}. Here is a receipt of the payment."
       product: Product
       price_per_unit_type: "Price per %{unit_type}"
       duration: Duration
@@ -1065,6 +1066,9 @@ en:
       paypal_gateway_fee: "PayPal's fee:"
       money_will_be_transferred: "The money will be transferred to %{recipient_name} when a) you have marked the request completed or b) %{automatic_confirmation_days} days have passed since you paid."
       listing_per_unit_title: "%{title}, per %{unit_type}"
+      pickup_location: "Pickup Location"
+      return_instructions: "Return/Drop-off instructions"
+
     new_testimonial:
       has_given_you_feedback_in_kassi: "%{name} has given you feedback in %{service_name}"
       you_can_give_feedback_to: "You haven't yet given feedback to %{name}."
