@@ -10,6 +10,7 @@ class Admin::RedprofileUsersController < Admin::AdminBaseController
         password: params[:password],
         is_vendor: params[:is_vendor]
       })
+    @person.skip_phone_validation = true
     email_address = params[:email].downcase.strip
     allowed_and_available = @current_community.email_allowed?(email_address) && Email.email_available?(email_address, @current_community.id)
     unless allowed_and_available

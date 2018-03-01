@@ -158,6 +158,9 @@ class Person < ApplicationRecord
   validates_length_of :family_name, :within => 1..255, :allow_nil => true, :allow_blank => true
   validates_length_of :display_name, :within => 1..30, :allow_nil => true, :allow_blank => true
 
+  attr_accessor :skip_phone_validation
+  validates_presence_of :phone_number, unless: :skip_phone_validation
+
   validates_format_of :username,
                        :with => /\A[A-Z0-9_]*\z/i
 
