@@ -20,8 +20,8 @@
   = form_for target_user do |form|
 
     -# Seller type
-    = label_tag t("homepage.filters.seller_type.title")
-    = target_user.is_vendor ? t("homepage.filters.seller_type.vendor") : t("homepage.filters.seller_type.individual")
+    = form.label :is_vendor, t("people.new.is_vendor")
+    = form.select :is_vendor, [[t("people.new.vendor_business"), true], [t("people.new.vendor_individual"), false]]
 
     = form.label :given_name, t("settings.profile.given_name")
     = form.text_field :given_name, :class => "text_field", :maxlength => "30"

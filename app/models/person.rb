@@ -665,10 +665,11 @@ class Person < ApplicationRecord
   end
 
   def reindex_listings
-    return unless is_confirmed_changed?
-    listings.each do |listing|
-      listing.delta = true
-      listing.save
+    if is_confirmed_changed? || is_vendor_changed? || sort_priority_changed?
+      listings.each do |listing|
+        listing.delta = true
+        listing.save
+      end
     end
   end
 
