@@ -370,6 +370,7 @@ function initialize_signup_form(locale, username_in_use_message, invalid_usernam
   });
   var form_id = "#new_person";
   //name_required = (name_required == 1) ? true : false
+  jQuery.validator.addMethod("phoneNumber", function(value, element) { return Inputmask.isValid(value, {alias: 'phone'}); }, "Phone number is ivalid");
   $(form_id).validate({
     errorPlacement: function(error, element) {
       if (element.attr("name") == "person[terms]") {
@@ -384,6 +385,7 @@ function initialize_signup_form(locale, username_in_use_message, invalid_usernam
       "person[family_name]": {required: name_required, maxlength: 30},
       "person[email]": {required: true, email: true, remote: "/people/check_email_availability_and_validity"},
       "person[terms]": "required",
+      "person[phone_number]": {required: true, phoneNumber: true},
       "person[password]": { required: true, minlength: 4 },
       "person[password2]": { required: true, minlength: 4, equalTo: "#person_password1" },
       "invitation_code": {required: invitation_required, remote: "/people/check_invitation_code"}
@@ -412,12 +414,13 @@ function initialize_update_profile_info_form(locale, person_id, name_required) {
   auto_resize_text_areas("update_profile_description_text_area");
   $('input.text_field:first').focus();
   var form_id = "#edit_person_" + person_id;
+  jQuery.validator.addMethod("phoneNumber", function(value, element) { return Inputmask.isValid(value, {alias: 'phone'}); }, "Phone number is ivalid");
   $(form_id).validate({
     rules: {
       "person[street_address]": {required: false, address_validator: true},
       "person[given_name]": {required: name_required, maxlength: 30},
       "person[family_name]": {required: name_required, maxlength: 30},
-      "person[phone_number]": {required: false, maxlength: 25},
+      "person[phone_number]": {required: true, maxlength: 25, phoneNumber: true},
       "person[image]": { accept: "(jpe?g|gif|png)" }
     },
     onkeyup: false,

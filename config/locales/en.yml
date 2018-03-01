@@ -2022,6 +2022,7 @@ en:
       create_account_with_facebook: "Sign up with Facebook"
       OR: OR
       signup_with_email: "Sign up with email"
+      phone_number: "Phone Number"
     profile_feedback:
       grade: "grade:"
       and_gave_following_feedback: "and gave the following feedback"

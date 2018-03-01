@@ -182,7 +182,9 @@ class PeopleController < Devise::RegistrationsController
     }
 
     ActiveRecord::Base.transaction do
-      @person = Person.create!(person_hash)
+      @person = Person.new(person_hash)
+      @person.skip_phone_validation = true
+      @person.save!
       # We trust that Facebook has already confirmed these and save the user few clicks
       Email.create!(:address => session["devise.facebook_data"]["email"], :send_notifications => true, :person => @person, :confirmed_at => Time.now, community_id: @current_community.id)
 

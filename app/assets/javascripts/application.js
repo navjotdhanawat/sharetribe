@@ -40,6 +40,8 @@
 //= require jquery.raty
 //= require ratyrate
 //= require oms
+//= require jquery.inputmask.bundle.min.js
+//= require jquery.inputmask.phone.js
 
 //= require selectize-standalone.js
 //= require datepicker/bootstrap-datepicker.js

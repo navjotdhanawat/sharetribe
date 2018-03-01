@@ -41,7 +41,7 @@
 
     -# Email
     = form.label :email, t('.email')
-    = form.text_field :email, :class => :text_field, :maxlenght => "255"
+    = form.text_field :email, :class => :text_field, :maxlength => "255"
 
     -# Name
     = form.label :given_name, t('.given_name')
@@ -61,6 +61,9 @@
 
     = form.label :is_vendor, t(".is_vendor")
     = form.select :is_vendor, [[t(".vendor_business"), 1], [t(".vendor_individual"), 0]]
+    -# Phone
+    = form.label :phone_number, t('.phone_number')
+    = form.text_field :phone_number, :class => :text_field, :maxlength => "255"
 
     -# Terms
     .outer-checkbox-container
@@ -75,3 +78,6 @@
     = button_tag t('.create_new_account')
 
 = render :partial => "help_texts", :collection => ["terms", "help_invitation_code"], :as => :field
+- content_for :extra_javascript do
+  :javascript
+    $("#person_phone_number").inputmask({alias: 'phone'});
