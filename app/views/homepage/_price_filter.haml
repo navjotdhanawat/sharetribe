@@ -1,27 +1,27 @@
+- min = MoneyUtil.to_units(MoneyUtil.to_money(@current_community.price_filter_min, @current_community.currency))
+- max = MoneyUtil.to_units(MoneyUtil.to_money(@current_community.price_filter_max, @current_community.currency))
+- range = [min, max]
+- start = [params["price_min"] || min, params["price_max"] || max]
+- is_default = min == start.first.to_i && max = start.last.to_i
+- is_filtered = params[:price_min].present? && !is_default
 .auto-col.toggle-container.home-toolbar-toggle-container
-  .toggle.with-borders{data: {toggle: "#home-toolbar-filter-menu-price"}, class: (params[:price_min].present? ? 'inverted' : '')}
+  .toggle.with-borders{data: {toggle: "#home-toolbar-filter-menu-price"}, class: ( is_filtered ? 'inverted' : '')}
     .toggle-header-container
       .toggle-header
         = t("listings.form.price.price")
-        - if params[:price_min].present?
+        - if is_filtered
           = "(#{params[:price_min]} - #{params[:price_max]})"
           - content_for :selected_filters do 
             %span.filter-value
               = "Price: (#{params[:price_min]} - #{params[:price_max]})"
-
       = icon_tag("dropdown", ["icon-dropdown"])
 
     .toggle-menu.hidden{id: "home-toolbar-filter-menu-price"}
       .filter-width
         - id = ["range-slider", "price"].join("-")
         .range-slider{id: id}
-          - min = MoneyUtil.to_units(MoneyUtil.to_money(@current_community.price_filter_min, @current_community.currency))
-          - max = MoneyUtil.to_units(MoneyUtil.to_money(@current_community.price_filter_max, @current_community.currency))
-          - range = [min, max]
-          - start = [params["price_min"] || min, params["price_max"] || max]
           - labels = ["#price-filter-min-value", "#price-filter-max-value"]
           - fields = ["#price_min", "#price_max"]
-
           - content_for :extra_javascript do
             :javascript
               window.ST.rangeFilter("##{id}", #{range.to_json.html_safe}, #{start.to_json.html_safe}, #{labels.to_json.html_safe}, #{fields.to_json.html_safe}, false, refreshSearchResults)

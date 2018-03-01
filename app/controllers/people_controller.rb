@@ -403,7 +403,8 @@ class PeopleController < Devise::RegistrationsController
           :email_about_new_payments,
           :email_about_new_listings_by_followed_people,
           :empty_notification
-        ] }
+        ] },
+        :is_vendor
       )
   end
 
