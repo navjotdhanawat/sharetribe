@@ -243,7 +243,7 @@ class Listing < ApplicationRecord
 
   def answers_for_field_name(custom_field_name)
     custom_field = community.custom_fields.detect{|cf| cf.name == custom_field_name }
-    return [] unless custom_field
+    return "" unless custom_field
     answer_for(custom_field)&.text_value
   end
 
