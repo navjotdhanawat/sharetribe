@@ -276,6 +276,7 @@ en:
         import_total: "Total Imported - Users: %{users}, Listings: %{listings}, Errors: %{errors}"
         import_errors: "Import Errors:"
         import_row: "CSV Line #%{row}: "
+        website_url: "Website URL"
       new_layout:
         new_layout: "New layout"
         description_roadmap_new: "When new layout components are made available for your marketplace, you can choose whether you want to start using the new component or continue using the old one. You can toggle the selection at any point from this page. It's recommended to always be using the new version, as the old components might be phased out at some point. In case a component you're currently using is going to be phased out, you will be contacted in advance."
@@ -1564,6 +1565,7 @@ en:
         one: "The website will be offline for maintenance in %{count} minute"
         other: "The website will be offline for maintenance in %{count} minutes"
       automatically_logged_out_please_sign_in: "You have been automatically logged out. Please log in again."
+      website_url: "Website URL is required"
     settings:
       account: Account
       notifications: Notifications
@@ -2023,6 +2025,7 @@ en:
       OR: OR
       signup_with_email: "Sign up with email"
       phone_number: "Phone Number"
+      website_url: "Website URL"
     profile_feedback:
       grade: "grade:"
       and_gave_following_feedback: "and gave the following feedback"
@@ -2044,6 +2047,7 @@ en:
       hide_description: "Show less"
       less_than_expected: "Worse than expected"
       phone_number: "Phone number:"
+      website_url: "Website URL:"
       show_all_feedback: "Show all feedback"
       show_all_testimonials: "Show all feedback"
       show_full_description: "Show more"
@@ -2185,6 +2189,7 @@ en:
       default_in_listing: "(used only as a default when creating a new listing)"
       invisible: "(not shown to other users)"
       image_is_processing: "Hang on tight. We are processing your profile picture. It will be ready in a minute or two."
+      website_url: "Website URL"
     save_information: "Save information"
   shipping_address:
     shipping_address: "Shipping address"

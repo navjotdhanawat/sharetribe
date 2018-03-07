@@ -6,6 +6,7 @@ class TransactionsController < ApplicationController
   end
 
   before_action :ensure_logged_in_or_guest
+  before_action :ensure_author_is_confirmed
 
   before_action only: [:new] do |controller|
     fetch_data(params[:listing_id]).on_success do |listing_id, listing_model, _, process|
@@ -571,4 +572,10 @@ class TransactionsController < ApplicationController
     session[:guest_user] = @current_user.id.to_s
   end
 
+  def ensure_author_is_confirmed
+    listing = @current_community.listings.where(id: params[:listing_id]).first
+    if !listing.author.is_confirmed? && listing.author.website_url.present?
+      redirect_to listing.author.website_url
+    end
+  end
 end

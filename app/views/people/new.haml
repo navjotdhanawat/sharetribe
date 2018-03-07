@@ -65,6 +65,10 @@
     = form.label :phone_number, t('.phone_number')
     = form.text_field :phone_number, :class => :text_field, :maxlength => "255"
 
+    %div.website-url
+      = form.label :website_url, t('.website_url')
+      = form.text_field :website_url, :class => :text_field, :maxlength => "255"
+
     -# Terms
     .outer-checkbox-container
       .checkbox-container
@@ -78,6 +82,3 @@
     = button_tag t('.create_new_account')
 
 = render :partial => "help_texts", :collection => ["terms", "help_invitation_code"], :as => :field
-- content_for :extra_javascript do
-  :javascript
-    $("#person_phone_number").inputmask({alias: 'phone'});

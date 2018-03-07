@@ -7,6 +7,9 @@ class PersonMessagesController < ApplicationController
   before_action :fetch_recipient
 
   def new
+    if !@recipient.is_confirmed? && @recipient.website_url.present?
+      redirect_to @recipient.website_url
+    end
     @conversation = Conversation.new
   end
 

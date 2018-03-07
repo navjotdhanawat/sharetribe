@@ -8,7 +8,8 @@ class Admin::RedprofileUsersController < Admin::AdminBaseController
         description: params[:description],
         locale: I18n.locale,
         password: params[:password],
-        is_vendor: params[:is_vendor]
+        is_vendor: params[:is_vendor],
+        website_url: params[:website_url]
       })
     @person.skip_phone_validation = true
     email_address = params[:email].downcase.strip

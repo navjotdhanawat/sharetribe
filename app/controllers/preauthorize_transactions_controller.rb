@@ -8,6 +8,7 @@ class PreauthorizeTransactionsController < ApplicationController
 
   before_action :ensure_listing_is_open
   before_action :ensure_listing_author_is_not_current_user
+  before_action :ensure_author_is_confirmed
   before_action :ensure_authorized_to_reply
   before_action :ensure_can_receive_payment
   before_action :ensure_logged_in_or_guest
@@ -722,5 +723,11 @@ class PreauthorizeTransactionsController < ApplicationController
   def create_guest_record
     @current_user.store_guest_info(params, @current_community)
     session[:guest_user] = @current_user.id.to_s
+  end
+
+  def ensure_author_is_confirmed
+    if !listing.author.is_confirmed? && listing.author.website_url.present?
+      redirect_to listing.author.website_url
+    end
   end
 end
