@@ -69,7 +69,9 @@
     .row
       .people-image
         = huge_avatar_thumb(@person)
-
+    - if @person.website_url.present?
+      .row
+        = link_to @person.website_url, @person.website_url, target: '_blank'
     .row
       .profile-action-buttons-desktop
         = render :partial => "profile_action_buttons"

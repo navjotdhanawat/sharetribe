@@ -44,7 +44,8 @@ class CSVImporter
         family_name: params['Family Name'],
         locale: 'en',
         password: params['Password'],
-        is_vendor: params['Profile Type'] == 'Vendor/Business'
+        is_vendor: params['Profile Type'] == 'Vendor/Business',
+        website_url: params['Website URL']
       })
     email_address = params['Email'].downcase.strip
     allowed_and_available = @community.email_allowed?(email_address) && Email.email_available?(email_address, @community.id)
@@ -63,6 +64,7 @@ class CSVImporter
     person.emails << email
     person.inherit_settings_from(@community)
     person.set_default_preferences
+    person.skip_phone_validation = true
     person.save!
     membership = CommunityMembership.new(:person => person, :community => @community, :consent => @community.consent, status: 'pending_email_confirmation')
     membership.save!
@@ -115,7 +117,7 @@ class CSVImporter
       end
     end
 
-    ['List Filter','Condition','Pick-up/Drop-off Options'].each do |cf_name|
+    ['Category Type','Condition','Pick-up/Drop-off Options'].each do |cf_name|
       add_custom_field_options(listing, cf_name, params[cf_name], index)
     end
 
@@ -151,8 +153,8 @@ class CSVImporter
   end
 
 
-  IMPORT_HEADERS = "Given Name,Family Name,Email,Username,Password,Profile Type,Listing Type,Listing Title,Price,Description,Category,Unit Type,List Filter,Condition,Pick-up/Drop-off Options,Address,Images".split(",")
-  SAMPLE_DATA = 'John,Smith,jsmith+02@mailinator.com,jsmith02,123123,Vendor/Business,For Rent,Import me!,123.45,Demo import http://goo.gl,RAFTING,2 hours,Tours & Guides,Excellent (New)|Fair,Store/Business Location|Home Location,13705 NE 12th Ave North Miami FL 33161 USA,https://d2hxfhf337f2kp.cloudfront.net/ownoutdoors/ownOutDoors_category-Boating_BG.jpg'.split(",")
+  IMPORT_HEADERS = "Given Name,Family Name,Email,Username,Password,Profile Type,Website URL,Listing Type,Listing Title,Price,Description,Category,Unit Type,Category Type,Condition,Pick-up/Drop-off Options,Address,Images".split(",")
+  SAMPLE_DATA = 'John,Smith,jsmith+02@mailinator.com,jsmith02,123123,Vendor/Business,http://google.com/,For Rent,Import me!,123.45,Demo import http://goo.gl,RAFTING,2 hours,Tours & Guides,Excellent (New)|Fair,Store/Business Location|Home Location,13705 NE 12th Ave North Miami FL 33161 USA,https://d2hxfhf337f2kp.cloudfront.net/ownoutdoors/ownOutDoors_category-Boating_BG.jpg'.split(",")
 
   def reference_package(p = nil)
     p ||= Axlsx::Package.new
@@ -191,6 +193,17 @@ class CSVImporter
         sheet.add_row([])
       end
     end
+
+    p.workbook.add_worksheet(:name => "Dropdown Fields") do |sheet|
+      DropdownField.where(community_id: @community.id).each do |custom_field|
+        sheet.add_row([custom_field.name, ''])
+        custom_field.options.each do |option|
+          sheet.add_row(["", option.title])
+        end
+        sheet.add_row([])
+      end
+    end
+
     p
   end
 

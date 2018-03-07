@@ -48,6 +48,7 @@
 #  guest                              :boolean          default(FALSE)
 #  is_vendor                          :boolean          default(FALSE)
 #  sort_priority                      :integer          default(3)
+#  website_url                        :string(255)
 #
 # Indexes
 #
@@ -186,6 +187,8 @@ class Person < ApplicationRecord
     self.id = SecureRandom.urlsafe_base64
     set_default_preferences unless self.preferences
   end
+
+  validates_format_of :website_url, with: /\Ahttps?:\/\/[\w.+]/, if: :is_vendor
 
   before_save :set_sort_priority
 

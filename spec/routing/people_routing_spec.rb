@@ -48,6 +48,7 @@
 #  guest                              :boolean          default(FALSE)
 #  is_vendor                          :boolean          default(FALSE)
 #  sort_priority                      :integer          default(3)
+#  website_url                        :string(255)
 #
 # Indexes
 #
