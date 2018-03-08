@@ -653,6 +653,17 @@ class Person < ApplicationRecord
     self
   end
 
+  def reset_password(new_password, new_password_confirmation)
+    if new_password.present?
+      self.password = new_password
+      self.password_confirmation = new_password_confirmation
+      self.skip_phone_validation = true
+      save
+    else
+      errors.add(:password, :blank)
+      false
+    end
+  end
   private
 
   def digest(password, salt)
