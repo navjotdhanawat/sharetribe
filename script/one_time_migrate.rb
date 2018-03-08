@@ -73,7 +73,8 @@ class OwnoutdoorsOneTimeDataBatchMigration
   end
 
   def move_listings(listing_shape, community)
-    Listing.where(community_id: community.id).update_all(listing_shape_id: listing_shape.id)
+    Listing.where(community_id: community.id)
+      .update_all(listing_shape_id: listing_shape.id, shape_name_tr_key: listing_shape.name_tr_key, action_button_tr_key: listing_shape.action_button_tr_key)
   end
 
   def rename_item_to_activity(community)
@@ -100,7 +101,7 @@ class OwnoutdoorsOneTimeDataBatchMigration
       puts "Step 3. Mark `call_for_price`"
       mark_call_for_price(community)
 
-      puts "Step 4. Mark `call_for_price`"
+      puts "Step 4. Move listings to new shape"
       move_listings(listing_shape, community)
 
       puts "Step 5. Rename `item` to `activity`"
