@@ -16,6 +16,7 @@ class TransactionMailer < ActionMailer::Base
   layout 'email'
 
   add_template_helper(EmailTemplateHelper)
+  add_template_helper(TranslationHelper)
 
   def transaction_preauthorized(transaction)
     @transaction = transaction
@@ -75,7 +76,6 @@ class TransactionMailer < ActionMailer::Base
     payment_total = transaction[:payment_total]
     service_fee = Maybe(transaction[:charged_commission]).or_else(Money.new(0, payment_total.currency))
     gateway_fee = transaction[:payment_gateway_fee]
-    deposit = transaction[:deposit] && transaction[:deposit] > 0 ? transaction[:deposit] : nil
 
     prepare_template(community, seller_model, "email_about_new_payments")
     with_locale(seller_model.locale, community.locales.map(&:to_sym), community.id) do
@@ -107,11 +107,11 @@ class TransactionMailer < ActionMailer::Base
                    shipping_total: MoneyViewUtils.to_humanized(transaction[:shipping_price]),
                    payment_service_fee: MoneyViewUtils.to_humanized(-service_fee),
                    payment_gateway_fee: MoneyViewUtils.to_humanized(-gateway_fee),
+                   payment_gateway_fee_value: gateway_fee,
                    payment_seller_gets: MoneyViewUtils.to_humanized(you_get),
                    payer_full_name: buyer_model.name(community),
                    payer_given_name: PersonViewUtils.person_display_name_for_type(buyer_model, "first_name_only"),
                    gateway: transaction[:payment_gateway],
-                   deposit: (deposit ? MoneyViewUtils.to_humanized(deposit) : nil)
                  }
         }
       end
@@ -123,9 +123,10 @@ class TransactionMailer < ActionMailer::Base
     seller_model ||= Person.find(transaction[:listing_author_id])
     buyer_model ||= Person.find(transaction[:starter_id])
     community ||= Community.find(transaction[:community_id])
+    transaction_model = Transaction.find(transaction[:id])
+    listing_image = transaction_model.listing.listing_images.select{|li| li.image_ready? }.first
 
     prepare_template(community, buyer_model, "email_about_new_payments")
-    deposit = transaction[:deposit] && transaction[:deposit] > 0 ? transaction[:deposit] : nil
     with_locale(buyer_model.locale, community.locales.map(&:to_sym), community.id) do
 
       unit_type = Maybe(transaction).select { |t| t[:unit_type].present? }.map { |t| ListingViewUtils.translate_unit(t[:unit_type], t[:unit_tr_key]) }.or_else(nil)
@@ -135,8 +136,10 @@ class TransactionMailer < ActionMailer::Base
       else
         transaction[:listing_title]
       end
+      
+      recipient_emails = buyer_model.guest? ? [buyer_model.primary_email.address] : buyer_model.confirmed_notification_emails_to
 
-      premailer_mail(:to => buyer_model.confirmed_notification_emails_to,
+      premailer_mail(:to => recipient_emails,
                      :from => community_specific_sender(community),
                      :subject => t("emails.receipt_to_payer.receipt_of_payment")) { |format|
         format.html {
@@ -156,8 +159,9 @@ class TransactionMailer < ActionMailer::Base
                    automatic_confirmation_days: nil,
                    show_money_will_be_transferred_note: false,
                    gateway: transaction[:payment_gateway],
-                   deposit: (deposit ? MoneyViewUtils.to_humanized(deposit) : nil)
-
+                   listing: transaction_model.listing,
+                   listing_image: listing_image,
+                   booking: transaction_model.booking,
                  }
         }
       }

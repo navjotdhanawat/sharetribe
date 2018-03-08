@@ -126,7 +126,9 @@
             = render :partial => "comment_form"
 
   %aside.col-4
-    - if @listing.price
+    - if @listing.call_for_price
+
+    - elsif @listing.price
       .row
         .col-12
           .listing-price

@@ -368,8 +368,16 @@ function initialize_signup_form(locale, username_in_use_message, invalid_usernam
     link.preventDefault();
     $('#terms').lightbox_me({ centered: true, zIndex: 1000000 });
   });
+  $("#person_phone_number").inputmask({alias: 'phone'});
+  $("#person_website_url").inputmask({alias: 'url'});
+  $("#person_is_vendor").change(function(){
+    if($(this).val() == '1') $(".website-url").show(); else $(".website-url").hide();
+  });
+  $("#person_is_vendor").trigger("change")
   var form_id = "#new_person";
   //name_required = (name_required == 1) ? true : false
+  jQuery.validator.addMethod("phoneNumber", function(value, element) { return Inputmask.isValid(value, {alias: 'phone'}); }, "Phone number is invalid");
+  jQuery.validator.addMethod("websiteUrl", function(value, element) { return !$(".website-url").is(":visible") || Inputmask.isValid(value, {alias: 'url'}); }, "Website URL is invalid");
   $(form_id).validate({
     errorPlacement: function(error, element) {
       if (element.attr("name") == "person[terms]") {
@@ -384,8 +392,10 @@ function initialize_signup_form(locale, username_in_use_message, invalid_usernam
       "person[family_name]": {required: name_required, maxlength: 30},
       "person[email]": {required: true, email: true, remote: "/people/check_email_availability_and_validity"},
       "person[terms]": "required",
+      "person[phone_number]": {required: true, phoneNumber: true},
       "person[password]": { required: true, minlength: 4 },
       "person[password2]": { required: true, minlength: 4, equalTo: "#person_password1" },
+      "person[website_url]": { websiteUrl: true},
       "invitation_code": {required: invitation_required, remote: "/people/check_invitation_code"}
     },
     messages: {
@@ -412,12 +422,21 @@ function initialize_update_profile_info_form(locale, person_id, name_required) {
   auto_resize_text_areas("update_profile_description_text_area");
   $('input.text_field:first').focus();
   var form_id = "#edit_person_" + person_id;
+  $("#person_phone_number").inputmask({alias: 'phone'});
+  $("#person_website_url").inputmask({alias: 'url'});
+  $("#person_is_vendor").change(function(){
+    if($(this).val() == 'true') $(".website-url").show(); else $(".website-url").hide();
+  });
+  $("#person_is_vendor").trigger("change")
+  jQuery.validator.addMethod("websiteUrl", function(value, element) { return !$(".website-url").is(":visible") || Inputmask.isValid(value, {alias: 'url'}); }, "Website URL is invalid");
+  jQuery.validator.addMethod("phoneNumber", function(value, element) { return Inputmask.isValid(value, {alias: 'phone'}); }, "Phone number is ivalid");
   $(form_id).validate({
     rules: {
       "person[street_address]": {required: false, address_validator: true},
       "person[given_name]": {required: name_required, maxlength: 30},
       "person[family_name]": {required: name_required, maxlength: 30},
-      "person[phone_number]": {required: false, maxlength: 25},
+      "person[phone_number]": {required: true, maxlength: 25, phoneNumber: true},
+      "person[website_url]": {websiteUrl: true},
       "person[image]": { accept: "(jpe?g|gif|png)" }
     },
     onkeyup: false,
@@ -471,7 +490,6 @@ function initialize_update_account_info_form(locale, change_text, cancel_text, e
 
     changeLinkVisible = !changeLinkVisible;
   });
-
   var email_form_id = "#email_form";
   $(email_form_id).validate({
     errorPlacement: function(error, element) {

@@ -48,7 +48,7 @@
 #  shipping_price_additional_cents :integer
 #  availability                    :string(32)       default("none")
 #  featured                        :boolean          default(FALSE)
-#  deposit_cents                   :integer          default(0)
+#  call_for_price                  :boolean          default(FALSE)
 #
 # Indexes
 #
@@ -72,6 +72,7 @@ class Listing < ApplicationRecord
   include ManageAvailabilityPerHour
 
   belongs_to :author, :class_name => "Person", :foreign_key => "author_id"
+  belongs_to :community
 
   has_many :listing_images, -> { where("error IS NULL").order("position") }, :dependent => :destroy
 
@@ -101,7 +102,6 @@ class Listing < ApplicationRecord
   monetize :price_cents, :allow_nil => true, with_model_currency: :currency
   monetize :shipping_price_cents, allow_nil: true, with_model_currency: :currency
   monetize :shipping_price_additional_cents, allow_nil: true, with_model_currency: :currency
-  monetize :deposit_cents, allow_nil: true, with_model_currency: :currency
 
   before_validation :set_valid_until_time
 
@@ -241,6 +241,12 @@ class Listing < ApplicationRecord
     price ? price.symbol : MoneyRails.default_currency.symbol
   end
 
+  def answers_for_field_name(custom_field_name)
+    custom_field = community.custom_fields.detect{|cf| cf.name == custom_field_name }
+    return "" unless custom_field
+    answer_for(custom_field)&.text_value
+  end
+
   def answer_for(custom_field)
     custom_field_values.find { |value| value.custom_field_id == custom_field.id }
   end
@@ -359,4 +365,5 @@ class Listing < ApplicationRecord
   def logger_metadata
     { listing_id: id }
   end
+
 end

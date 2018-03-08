@@ -6,6 +6,7 @@ class TransactionsController < ApplicationController
   end
 
   before_action :ensure_logged_in_or_guest
+  before_action :ensure_author_is_confirmed
 
   before_action only: [:new] do |controller|
     fetch_data(params[:listing_id]).on_success do |listing_id, listing_model, _, process|
@@ -160,7 +161,6 @@ class TransactionsController < ApplicationController
     tx_model = Transaction.where(id: tx[:id]).first
     conversation = transaction_conversation[:conversation]
     listing = Listing.where(id: tx[:listing_id]).first
-    transaction_conversation[:deposit] = tx[:deposit]
 
     messages_and_actions = TransactionViewUtils.merge_messages_and_transitions(
       TransactionViewUtils.conversation_messages(conversation[:messages], @current_community.name_display_type),
@@ -286,24 +286,6 @@ class TransactionsController < ApplicationController
     PaypalService::API::Api.process
   end
 
-  def refund
-    tx_model = Transaction.where(community_id: @current_community.id, listing_author_id: @current_user.id, id: params[:id]).first
-    amount = (params[:amount].to_f * 100).to_i # cents
-    if tx_model.can_refund? && tx_model.deposit_cents >= amount
-      result = StripeService::API::Api.payments.cancel_deposit(tx_model, nil, amount)
-      logger.error result
-      if result.success
-        message = Message.new(
-          conversation_id: tx_model.conversation_id,
-          sender_id: @current_user.id,
-          content: "Refunded deposit of " + MoneyViewUtils.to_humanized(result.data[:refund_amount]))
-        message.save
-        Delayed::Job.enqueue(MessageSentJob.new(message.id, @current_community.id))
-      end
-    end
-    redirect_to person_transaction_path(person_id: @current_user.id, id: tx_model[:id])
-  end
-
   private
 
   def handle_finalize_proc_result(response)
@@ -421,7 +403,11 @@ class TransactionsController < ApplicationController
         Result::Success.new(listing_model.author)
       },
       ->(_, listing_model, *rest) {
-        TransactionService::API::Api.processes.get(community_id: @current_community.id, process_id: listing_model.transaction_process_id)
+        if listing_model.call_for_price
+          Result::Success.new({process: :none})
+        else
+          TransactionService::API::Api.processes.get(community_id: @current_community.id, process_id: listing_model.transaction_process_id)
+        end
       },
       ->(*) {
         Result::Success.new(MarketplaceService::Community::Query.payment_type(@current_community.id))
@@ -438,7 +424,7 @@ class TransactionsController < ApplicationController
   end
 
   def price_break_down_locals(tx)
-    if tx[:payment_process] == :none && tx[:listing_price].cents == 0
+    if tx[:payment_process] == :none 
         nil
     else
       localized_unit_type = tx[:unit_type].present? ? ListingViewUtils.translate_unit(tx[:unit_type], tx[:unit_tr_key]) : nil
@@ -468,7 +454,6 @@ class TransactionsController < ApplicationController
         per_hour: booking_per_hour,
         start_time: booking_per_hour ? tx[:booking][:start_time] : nil,
         end_time: booking_per_hour ? tx[:booking][:end_time] : nil,
-        deposit: tx[:deposit]
       })
     end
   end
@@ -501,7 +486,7 @@ class TransactionsController < ApplicationController
 
     total_label = t("transactions.price")
 
-    m_price_break_down = Maybe(listing_model).select { |l_model| l_model.price.present? }.map { |l_model|
+    m_price_break_down = Maybe(listing_model).select { |l_model| l_model.price.present? && !l_model.call_for_price }.map { |l_model|
       TransactionViewUtils.price_break_down_locals(
         {
           listing_price: l_model.price,
@@ -533,7 +518,7 @@ class TransactionsController < ApplicationController
   end
 
   def date_selector?(listing)
-    [:day, :night].include?(listing.quantity_selector&.to_sym)
+    [:day, :night].include?(listing.quantity_selector&.to_sym) && !listing.call_for_price
   end
 
   def calculate_quantity(tx_params:, is_booking:, unit:)
@@ -583,8 +568,14 @@ class TransactionsController < ApplicationController
   end
 
   def create_guest_record
-    @current_user.store_guest_info(params)
+    @current_user.store_guest_info(params, @current_community)
     session[:guest_user] = @current_user.id.to_s
   end
 
+  def ensure_author_is_confirmed
+    listing = @current_community.listings.where(id: params[:listing_id]).first
+    if !listing.author.is_confirmed? && listing.author.website_url.present?
+      redirect_to listing.author.website_url
+    end
+  end
 end

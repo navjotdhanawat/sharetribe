@@ -8,6 +8,7 @@ class FreeTransactionsController < ApplicationController
   before_action :ensure_listing_is_open
   before_action :ensure_listing_author_is_not_current_user
   before_action :ensure_authorized_to_reply
+  before_action :ensure_author_is_confirmed
 
   ContactForm = FormUtils.define_form("ListingConversation", :content, :sender_id, :listing_id, :community_id)
     .with_validations { validates_presence_of :content, :listing_id }
@@ -105,6 +106,12 @@ class FreeTransactionsController < ApplicationController
 
   def new_contact_form(conversation_params = {})
     ContactForm.new(conversation_params.merge({sender_id: @current_user.id, listing_id: @listing.id, community_id: @current_community.id}))
+  end
+
+  def ensure_author_is_confirmed
+    if !@listing.author.is_confirmed? && @listing.author.website_url.present?
+      redirect_to @listing.author.website_url
+    end
   end
 
 end

@@ -48,6 +48,7 @@
 #  guest                              :boolean          default(FALSE)
 #  is_vendor                          :boolean          default(FALSE)
 #  sort_priority                      :integer          default(3)
+#  website_url                        :string(255)
 #
 # Indexes
 #
@@ -158,6 +159,9 @@ class Person < ApplicationRecord
   validates_length_of :family_name, :within => 1..255, :allow_nil => true, :allow_blank => true
   validates_length_of :display_name, :within => 1..30, :allow_nil => true, :allow_blank => true
 
+  attr_accessor :skip_phone_validation
+  validates_presence_of :phone_number, unless: :skip_phone_validation
+
   validates_format_of :username,
                        :with => /\A[A-Z0-9_]*\z/i
 
@@ -183,6 +187,8 @@ class Person < ApplicationRecord
     self.id = SecureRandom.urlsafe_base64
     set_default_preferences unless self.preferences
   end
+
+  validates_format_of :website_url, with: /\Ahttps?:\/\/[\w.+]/, if: :is_vendor
 
   before_save :set_sort_priority
 
@@ -632,7 +638,7 @@ class Person < ApplicationRecord
     guest
   end
 
-  def store_guest_info(params)
+  def store_guest_info(params, community = nil)
     username = Devise.friendly_token[0,20].tr('-','X')
     self.given_name = params[:user][:first_name]
     self.family_name = params[:user][:last_name]
@@ -642,7 +648,7 @@ class Person < ApplicationRecord
     self.locale = I18n.locale
     self.password = Devise.friendly_token[0,20].tr('-','X')
     self.phone_number = params[:user][:phone]
-    self.consent = @current_community.consent
+    self.consent = community.consent
     self.save!
     self
   end
@@ -665,10 +671,11 @@ class Person < ApplicationRecord
   end
 
   def reindex_listings
-    return unless is_confirmed_changed?
-    listings.each do |listing|
-      listing.delta = true
-      listing.save
+    if is_confirmed_changed? || is_vendor_changed? || sort_priority_changed?
+      listings.each do |listing|
+        listing.delta = true
+        listing.save
+      end
     end
   end
 

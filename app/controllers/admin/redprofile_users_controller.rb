@@ -8,8 +8,10 @@ class Admin::RedprofileUsersController < Admin::AdminBaseController
         description: params[:description],
         locale: I18n.locale,
         password: params[:password],
-        is_vendor: params[:is_vendor]
+        is_vendor: params[:is_vendor],
+        website_url: params[:website_url]
       })
+    @person.skip_phone_validation = true
     email_address = params[:email].downcase.strip
     allowed_and_available = @current_community.email_allowed?(email_address) && Email.email_available?(email_address, @current_community.id)
     unless allowed_and_available
@@ -37,5 +39,18 @@ class Admin::RedprofileUsersController < Admin::AdminBaseController
       @person.save
     end
     redirect_to admin_community_community_memberships_path(@current_community)
+  end
+
+  def import
+    @csv_importer = CSVImporter.new(@current_community, params[:file])
+    @csv_importer.process
+  end
+
+  def reference_package
+    @csv_importer = CSVImporter.new(@current_community, nil)
+    send_data @csv_importer.reference_package.to_stream.read, 
+      filename: 'reference-data.xlsx', 
+      content_type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 
+      disposition: 'attachment'
   end
 end

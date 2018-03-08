@@ -151,6 +151,7 @@ class HomepageController < ApplicationController
       locale: I18n.locale,
       include_closed: false,
       sort: params[:sort_order],
+      vendor: params[:vendor],
     }
 
     if location_search_in_use

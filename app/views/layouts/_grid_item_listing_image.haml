@@ -17,7 +17,10 @@
       = listing.title
 
     .fluid-thumbnail-grid-image-price-container{:class => "#{modifier_class}"}
-      - if listing.price
+      - if listing.call_for_price
+        %span.fluid-thumbnail-grid-image-type{:class => "#{modifier_class}"}
+          = t("listings.call_for_price.title")
+      - elsif listing.price
         %span.fluid-thumbnail-grid-image-price
           = MoneyViewUtils.to_humanized(listing.price)
           - price_unit = price_quantity_slash_unit(listing)

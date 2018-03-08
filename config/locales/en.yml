@@ -270,7 +270,13 @@ en:
         given_name: "Given name"
         family_name: "Family name"
         username: "Username"
-
+        import: "Import CSV"
+        download_xlsx: "Download reference XLSX"
+        csv_file: "CSV file"
+        import_total: "Total Imported - Users: %{users}, Listings: %{listings}, Errors: %{errors}"
+        import_errors: "Import Errors:"
+        import_row: "CSV Line #%{row}: "
+        website_url: "Website URL"
       new_layout:
         new_layout: "New layout"
         description_roadmap_new: "When new layout components are made available for your marketplace, you can choose whether you want to start using the new component or continue using the old one. You can toggle the selection at any point from this page. It's recommended to always be using the new version, as the old components might be phased out at some point. In case a component you're currently using is going to be phased out, you will be contacted in advance."
@@ -631,6 +637,7 @@ en:
         how_to_get_these: "How to get these?"
         publishable_key_example: "For example: %{api_publishable_key_example}"
         secret_key_example: "For example: %{api_secret_key_example}"
+        client_id_example: "For example: %{client_id_example}"
         save_api_keys: "Save Stripe API keys"
         invalid_secret: "That doesn't look like a correct %{secret_key}"
         invalid_publishable: "That doesn't look like a correct %{publishable_key}"
@@ -761,7 +768,6 @@ en:
       payment_fee_info: "* Excludes <a id='%{fee_info_link_id}' href='#'>payment processing fee</a>"
       shipping_price_label: "Shipping:"
       stripe-fee_label: "Payment processing fee"
-      deposit: "Refundable deposit:"
     confirm:
       confirm_description: "If your order has been fulfilled you should confirm it as done. Then you can give feedback to the other party."
       cancel_description: "If your order was not fulfilled, you can mark it as 'disputed'. You can still give feedback to the other party and describe what happened."
@@ -798,7 +804,6 @@ en:
     message:
       accepted_request: "accepted the request"
       received_payment: "accepted the request, received payment for %{sum}"
-      received_payment_and_deposit: "accepted the request, received payment for %{sum}, secured deposit for %{deposit}"
       accepted_offer: "accepted the offer"
       rejected_request: "rejected the request, canceled the payment"
       rejected_offer: "rejected the offer"
@@ -1024,10 +1029,9 @@ en:
       price_per_unit_type: "Price per %{unit_type}"
       quantity: "Quantity:"
       you_have_received_new_payment: "You have been paid <b>%{payment_sum}</b> for <b>%{listing_title}</b> by %{payer_full_name}. Here is your receipt."
-      deposit: "Refundable deposit:"
     payment_receipt_to_payer:
       receipt_of_payment: "Receipt of payment"
-      you_have_made_new_payment: "You have paid <b>%{payment_sum}</b> for <b>%{listing_title}</b> to %{recipient_full_name}. Here is a receipt of the payment."
+      you_have_made_new_payment: "%{recipient_full_name} has accepted your request<br/><br/>You have paid <b>%{payment_sum}</b> for <b>%{listing_title}</b> to %{recipient_full_name}. Here is a receipt of the payment."
       product: Product
       price_per_unit_type: "Price per %{unit_type}"
       duration: Duration
@@ -1035,11 +1039,11 @@ en:
       subtotal: Subtotal
       total: Total
       price: Price
-      deposit: "Refundable deposit:"
       service_fee: "Service fee"
       stripe_gateway_fee: "Stripe's fee:"
       paypal_gateway_fee: "PayPal's fee:"
       money_will_be_transferred: "The money will be transferred to %{recipient_name} when a) you have marked the request completed or b) %{automatic_confirmation_days} days have passed since you paid."
+
     paypal_new_payment:
       paypal_gateway_fee: "PayPal's fee:"
       shipping_total: "Shipping:"
@@ -1049,8 +1053,8 @@ en:
       service_fee: "%{service_name} service fee:"
       you_will_get: "Total:"
     receipt_to_payer:
-      receipt_of_payment: "Receipt of payment"
-      you_have_made_new_payment: "You have paid <b>%{payment_sum}</b> for <b>%{listing_title}</b> to %{recipient_full_name}. Here is a receipt of the payment."
+      receipt_of_payment: "Your order is confirmed"
+      you_have_made_new_payment: "%{recipient_full_name} has accepted your request.<br/>You have paid <b>%{payment_sum}</b> for <b>%{listing_title}</b> to %{recipient_full_name}. Here is a receipt of the payment and your order details."
       product: Product
       price_per_unit_type: "Price per %{unit_type}"
       duration: Duration
@@ -1063,6 +1067,9 @@ en:
       paypal_gateway_fee: "PayPal's fee:"
       money_will_be_transferred: "The money will be transferred to %{recipient_name} when a) you have marked the request completed or b) %{automatic_confirmation_days} days have passed since you paid."
       listing_per_unit_title: "%{title}, per %{unit_type}"
+      pickup_location: "Pickup Location"
+      return_instructions: "Return/Drop-off instructions"
+
     new_testimonial:
       has_given_you_feedback_in_kassi: "%{name} has given you feedback in %{service_name}"
       you_can_give_feedback_to: "You haven't yet given feedback to %{name}."
@@ -1335,6 +1342,10 @@ en:
       list_button: List
       all_listing_types: "All listing types"
       all_categories: "All categories"
+      seller_type: 
+        title: "Seller Type"
+        vendor: "Vendor/Business"
+        individual: "Individual"
     errors:
       search_engine_not_responding: "Search is currently unavailable. Try searching again soon."
     sorting:
@@ -1554,6 +1565,7 @@ en:
         one: "The website will be offline for maintenance in %{count} minute"
         other: "The website will be offline for maintenance in %{count} minutes"
       automatically_logged_out_please_sign_in: "You have been automatically logged out. Please log in again."
+      website_url: "Website URL is required"
     settings:
       account: Account
       notifications: Notifications
@@ -1563,6 +1575,10 @@ en:
       stripe_payments: "Stripe Payments"
       payments: Payments
   listings:
+    call_for_price:
+      title: Call for price
+      note: "Please check here if you do not want to publish a price and/or would rather buyers contact you for pricing information."
+      contact: "Contact"
     bubble_listing_not_visible:
       listing_not_visible: "You do not have permission to view this listing."
     comment:
@@ -1650,7 +1666,6 @@ en:
         location: Location
       price:
         price: Price
-        deposit: Refundable deposit
         per: per
         per_day: "per day"
         mass: "piece, kg, l, m2, ..."
@@ -2009,6 +2024,8 @@ en:
       create_account_with_facebook: "Sign up with Facebook"
       OR: OR
       signup_with_email: "Sign up with email"
+      phone_number: "Phone Number"
+      website_url: "Website URL"
     profile_feedback:
       grade: "grade:"
       and_gave_following_feedback: "and gave the following feedback"
@@ -2030,6 +2047,7 @@ en:
       hide_description: "Show less"
       less_than_expected: "Worse than expected"
       phone_number: "Phone number:"
+      website_url: "Website URL:"
       show_all_feedback: "Show all feedback"
       show_all_testimonials: "Show all feedback"
       show_full_description: "Show more"
@@ -2171,6 +2189,7 @@ en:
       default_in_listing: "(used only as a default when creating a new listing)"
       invisible: "(not shown to other users)"
       image_is_processing: "Hang on tight. We are processing your profile picture. It will be ready in a minute or two."
+      website_url: "Website URL"
     save_information: "Save information"
   shipping_address:
     shipping_address: "Shipping address"
@@ -2340,17 +2359,6 @@ en:
       first_name: "First Name"
       email: "Email"
       phone: "Phone"
-    deposit: "Refundable deposit:"
-    refund_actions:
-      perform_refund: "Perform partial or full refund"
-      refund_button: "Refund deposit"
-      performed_refund: "Refunded amount:"
-    guest:
-      title: "Guest Checkout"
-      last_name: "Last Name"
-      first_name: "First Name"
-      email: "Email"
-      phone: "Phone"
 
   unit:
     day: day
@@ -2457,6 +2465,11 @@ en:
     you_are_ready_to_accept_payments: "You are ready to accept payments!"
     commission: "%{commission} %"
     pay_with_stripe: "Pay with Stripe using %{card}"
+    connect_with_stripe: "Connect with Stripe"
+    connected: "Stripe Connected"
+    connect_account: "In order to accept payments, you need to connect your existing Stripe account or create a new one."
+    business_name: "Business name:"
+    business_email: "Email:"
     add_and_pay: "Confirm payment"
     card_not_stored: "Your payment is securely processed by Stripe. %{service_name} does not store your credit/debit card information."
     missing_payment: "You have open listings but your account is not set up to receive money. To configure your payment preferences, visit %{settings_link}"

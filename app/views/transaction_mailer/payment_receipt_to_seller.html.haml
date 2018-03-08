@@ -46,7 +46,7 @@
               = t("emails.payment_receipt_to_seller.shipping_total")
             %td= shipping_total
 
-        - if payment_gateway_fee.present? && gateway.to_s != 'stripe'
+        - if payment_gateway_fee.present? && payment_gateway_fee_value > 0
           %tr
             %td
               = t("emails.payment_receipt_to_seller.payment_gateway_fee")
@@ -58,10 +58,4 @@
           %td
             %b= payment_seller_gets
 
-        - if deposit.present?
-          %tr{:style => "border-top: 1px solid black"}
-            %td
-              %b=t("emails.payment_receipt_to_seller.deposit")
-            %td
-              %b= deposit
 = render :partial => "person_mailer/action_button", :locals => { :text => t("emails.conversation_status_changed.view_thread"), :url => conversation_url}

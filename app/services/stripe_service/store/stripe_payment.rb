@@ -13,8 +13,7 @@ module StripeService::Store::StripePayment
     [:commission_cents, :fixnum],
     [:fee_cents, :fixnum],
     [:subtotal_cents, :fixnum],
-    [:stripe_charge_id, :string],
-    [:is_deposit, :to_bool]
+    [:stripe_charge_id, :string]
   )
 
   StripePayment = EntityUtils.define_builder(
@@ -32,7 +31,6 @@ module StripeService::Store::StripePayment
     [:stripe_transfer_id, :string],
     [:transfered_at, :time],
     [:available_on, :time],
-    [:is_deposit, :to_bool],
     [:refund_amount, :money],
     [:is_refunded, :to_bool],
     [:refund_id, :string]
@@ -50,18 +48,16 @@ module StripeService::Store::StripePayment
     update_payment!(payment, opts[:data])
   end
 
-  def create(community_id, transaction_id, order, is_deposit=false)
-    payment_data = InitialPaymentData.call(order.merge({community_id: community_id, transaction_id: transaction_id, is_deposit: is_deposit}))
+  def create(community_id, transaction_id, order)
+    payment_data = InitialPaymentData.call(order.merge({community_id: community_id, transaction_id: transaction_id}))
     model = StripePaymentModel.create!(payment_data)
     from_model(model)
   end
 
-  def get(community_id, transaction_id, is_deposit=false)
+  def get(community_id, transaction_id)
     Maybe(StripePaymentModel.where(
         community_id: community_id,
-        transaction_id: transaction_id,
-        is_deposit: is_deposit
-        ).first)
+        transaction_id: transaction_id).first)
       .map { |model| from_model(model) }
       .or_else(nil)
   end
@@ -81,10 +77,9 @@ module StripeService::Store::StripePayment
 
   def find_payment(opts)
     StripePaymentModel.where(
-      "(community_id = ? and transaction_id = ? and is_deposit = ?)",
+      "(community_id = ? and transaction_id = ?)",
       opts[:community_id],
-      opts[:transaction_id],
-      opts[:is_deposit] || false
+      opts[:transaction_id]
     ).first
   end
 

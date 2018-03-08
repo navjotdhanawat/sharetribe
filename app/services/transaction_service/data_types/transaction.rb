@@ -32,8 +32,8 @@ module TransactionService::DataTypes::Transaction
     [:charged_commission, :money],
     [:payment_gateway_fee, :money],
     [:shipping_address, :hash],
-    [:booking, :hash],
-    [:deposit, :money])
+    [:booking, :hash]
+    )
 
   TransactionResponse = EntityUtils.define_builder(
     [:transaction, :hash, :optional],

@@ -52,7 +52,7 @@ class ConfirmationsController < Devise::ConfirmationsController
       if person.image.present? && person.image_file_name == 'gray_shop_logo.png'
         person.image = File.new(Rails.root+"app/assets/images/red_shop_logo.png")
       end
-      person.save
+      person.save(validate: false)
 
       record_event(flash, "AccountConfirmed")
 

@@ -24,7 +24,7 @@ class InboxesController < ApplicationController
         path: path_to_conversation_or_transaction(inbox_row),
         other: person_entity_with_url(inbox_row[:other]),
         last_activity_ago: time_ago(inbox_row[:last_activity_at]),
-        title: inbox_title(inbox_row, inbox_payment(inbox_row), inbox_deposit(inbox_row))
+        title: inbox_title(inbox_row, inbox_payment(inbox_row))
       )
 
       if inbox_row[:type] == :transaction
@@ -56,7 +56,7 @@ class InboxesController < ApplicationController
 
   private
 
-  def inbox_title(inbox_item, payment_sum, deposit_sum = nil)
+  def inbox_title(inbox_item, payment_sum)
     title = if MarketplaceService::Inbox::Entity.last_activity_type(inbox_item) == :message
       inbox_item[:last_message_content]
     else
@@ -64,8 +64,7 @@ class InboxesController < ApplicationController
         inbox_item[:transitions],
         inbox_item[:other],
         inbox_item[:starter],
-        payment_sum,
-        deposit_sum
+        payment_sum
       )
 
       action_messages.last[:content]
@@ -74,10 +73,6 @@ class InboxesController < ApplicationController
 
   def inbox_payment(inbox_item)
     Maybe(inbox_item)[:payment_total].or_else(nil)
-  end
-
-  def inbox_deposit(inbox_item)
-    Maybe(inbox_item)[:deposit].or_else(nil)
   end
 
   def path_to_conversation_or_transaction(inbox_item)

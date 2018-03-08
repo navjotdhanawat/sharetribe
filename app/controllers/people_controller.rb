@@ -178,11 +178,14 @@ class PeopleController < Devise::RegistrationsController
       :locale => I18n.locale,
       :test_group_number => 1 + rand(4),
       :password => Devise.friendly_token[0,20],
+      :website_url => session["devise.facebook_data"]["link"],
       community_id: @current_community.id
     }
 
     ActiveRecord::Base.transaction do
-      @person = Person.create!(person_hash)
+      @person = Person.new(person_hash)
+      @person.skip_phone_validation = true
+      @person.save!
       # We trust that Facebook has already confirmed these and save the user few clicks
       Email.create!(:address => session["devise.facebook_data"]["email"], :send_notifications => true, :person => @person, :confirmed_at => Time.now, community_id: @current_community.id)
 
@@ -260,7 +263,7 @@ class PeopleController < Devise::RegistrationsController
             flash[:notice] = t("layouts.notifications.email_confirmation_sent_to_new_address")
         end
       else
-        flash[:error] = t("layouts.notifications.#{target_user.errors.first}")
+        flash[:error] = t("layouts.notifications.#{target_user.errors.first&.first}")
       end
     rescue RestClient::RequestFailed => e
       flash[:error] = t("layouts.notifications.update_error")
@@ -371,7 +374,8 @@ class PeopleController < Devise::RegistrationsController
         :username,
         :test_group_number,
         :community_id,
-        :is_vendor
+        :is_vendor,
+        :website_url
     ).permit!
   end
 
@@ -382,6 +386,7 @@ class PeopleController < Devise::RegistrationsController
         :display_name,
         :street_address,
         :phone_number,
+        :website_url,
         :image,
         :description,
         { location: [:address, :google_address, :latitude, :longitude] },
@@ -403,7 +408,8 @@ class PeopleController < Devise::RegistrationsController
           :email_about_new_payments,
           :email_about_new_listings_by_followed_people,
           :empty_notification
-        ] }
+        ] },
+        :is_vendor
       )
   end
 

@@ -36,7 +36,22 @@
 
   - if params[:q].blank?
     #export-as-csv.right= link_to(" " + t("admin.communities.manage_members.export_all_as_csv"), {format: :csv}, {class: "js-users-csv-export " + icon_class("download")})
-  
+
+  %a.button.import-user-form{onclick: '$(".import-user-form").toggle()', href: '#'}= t("admin.communities.redprofile_users.import")
+  .row.paypal-wizard.connect-row.import-user-form.hidden
+    %div
+      .paypal-wizard-content.connect-row
+        .col-12
+          = form_tag import_admin_redprofile_users_path, method: :post, multipart: true do
+            .row
+              = label_tag t("admin.communities.redprofile_users.csv_file")
+              = file_field_tag :file
+              = link_to reference_package_admin_redprofile_users_path(format: :xlsx) do
+                %i.ss-download
+                = t("admin.communities.redprofile_users.download_xlsx")
+            .row
+              = submit_tag t("admin.communities.redprofile_users.import"), class: 'button'
+
   %a.button.new-user-form{onclick: '$(".new-user-form").toggle()', href: '#'}= t("admin.communities.redprofile_users.create")
   .row.paypal-wizard.connect-row.new-user-form.hidden
     %div
@@ -73,6 +88,11 @@
                 %label= t("people.new.is_vendor")
               .col-6
                 =  select_tag :is_vendor, options_for_select([[t("people.new.vendor_business"), 1], [t("people.new.vendor_individual"), 0]])
+            .row
+              .col-6
+                %label= t("admin.communities.redprofile_users.website_url")
+              .col-6
+                = text_field_tag 'website_url'
 
             .row
               = submit_tag t("admin.communities.redprofile_users.create"), class: 'button'

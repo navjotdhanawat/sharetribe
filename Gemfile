@@ -174,6 +174,9 @@ gem 'biz'
 
 gem 'twilio-ruby'
 
+gem 'rubyzip', '>= 1.2.1'
+gem 'axlsx', git: 'https://github.com/randym/axlsx.git', ref: 'c8ac844'
+
 # Capistrano
 gem 'foreman', '>= 0.84.0'
 gem 'capistrano', '>= 3.1.0', require: false

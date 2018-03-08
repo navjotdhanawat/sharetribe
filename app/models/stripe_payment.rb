@@ -20,7 +20,6 @@
 #  available_on        :datetime
 #  created_at          :datetime         not null
 #  updated_at          :datetime         not null
-#  is_deposit          :boolean          default(FALSE)
 #  is_refunded         :boolean          default(FALSE)
 #  refund_amount_cents :integer
 #  refund_id           :string(255)

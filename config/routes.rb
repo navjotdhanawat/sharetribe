@@ -98,6 +98,8 @@ Rails.application.routes.draw do
 
   devise_for :people, only: :omniauth_callbacks, controllers: { omniauth_callbacks: "sessions" }
 
+  get '/stripe_connect' => 'payment_settings#stripe_connect', as: :person_stripe_connect
+
   # Adds locale to every url right after the root path
   scope "(/:locale)", :constraints => { :locale => locale_matcher } do
 
@@ -310,7 +312,12 @@ Rails.application.routes.draw do
         end
       end
       resource :plan, only: [:show]
-      resources :redprofile_users, only: :create
+      resources :redprofile_users, only: :create do
+        collection do
+          get :reference_package
+          post :import
+        end
+      end
     end
 
     resources :invitations, only: [:new, :create ] do

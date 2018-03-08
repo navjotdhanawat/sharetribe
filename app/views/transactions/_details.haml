@@ -14,5 +14,4 @@
 
       %div{:id => "transaction_status"}
         = render :partial => "transactions/status/status", :locals => { :__transaction_model => transaction_model, role: role, is_author: is_author }
-        - if transaction_model.deposit.present? && transaction_model.deposit > 0 && is_author
-          = render partial: "transactions/refund_actions", locals: {transaction_model: transaction_model}
+

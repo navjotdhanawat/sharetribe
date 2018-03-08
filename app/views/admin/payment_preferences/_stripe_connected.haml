@@ -9,6 +9,15 @@
       .paypal-connected-email.paypal-account-connected
         -# Not a subject of I18n, forced fixed text
         .col-6
+          Client ID:
+        .col-6
+          %strong
+            = stripe_account[:api_client_id]
+  .row
+    .col-12
+      .paypal-connected-email.paypal-account-connected
+        -# Not a subject of I18n, forced fixed text
+        .col-6
           Publishable key:
         .col-6
           %strong

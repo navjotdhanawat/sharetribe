@@ -8,6 +8,7 @@ class PreauthorizeTransactionsController < ApplicationController
 
   before_action :ensure_listing_is_open
   before_action :ensure_listing_author_is_not_current_user
+  before_action :ensure_author_is_confirmed
   before_action :ensure_authorized_to_reply
   before_action :ensure_can_receive_payment
   before_action :ensure_logged_in_or_guest
@@ -353,7 +354,6 @@ class PreauthorizeTransactionsController < ApplicationController
                  start_time: tx_params[:start_time],
                  end_time:   tx_params[:end_time],
                  per_hour:   tx_params[:per_hour],
-                 deposit: listing.deposit.present? && listing.deposit > 0 ? listing.deposit : nil
                 )
              }
     }
@@ -689,7 +689,6 @@ class PreauthorizeTransactionsController < ApplicationController
           payment_process: :preauthorize,
           booking_fields: opts[:booking_fields],
           delivery_method: opts[:delivery_method],
-          deposit: opts[:listing].deposit
     }
 
     if(opts[:delivery_method] == :shipping)
@@ -722,7 +721,13 @@ class PreauthorizeTransactionsController < ApplicationController
   end
 
   def create_guest_record
-    @current_user.store_guest_info(params)
+    @current_user.store_guest_info(params, @current_community)
     session[:guest_user] = @current_user.id.to_s
+  end
+
+  def ensure_author_is_confirmed
+    if !listing.author.is_confirmed? && listing.author.website_url.present?
+      redirect_to listing.author.website_url
+    end
   end
 end

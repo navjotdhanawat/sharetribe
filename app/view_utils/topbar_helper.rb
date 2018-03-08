@@ -26,6 +26,7 @@ module TopbarHelper
 
     given_name, family_name = *PersonViewUtils.person_display_names(user, community)
 
+    suffix = user && user.is_vendor ? "_vendor" : ""
     {
       logo: {
         href: PathHelpers.landing_page_path(
@@ -50,7 +51,7 @@ module TopbarHelper
       locales: landing_page ? nil : locale_props(community, I18n.locale, path_after_locale_change, user.present?),
       avatarDropdown: {
         avatar: {
-          image: user&.image.present? ? { url: user.image.url(:thumb) } : nil,
+          image: user&.image.present? ? { url: user.image.url(:thumb) } : { url: ActionController::Base.helpers.image_path("profile_image/thumb/missing#{suffix}.png") },
           givenName: given_name,
           familyName: family_name,
         },

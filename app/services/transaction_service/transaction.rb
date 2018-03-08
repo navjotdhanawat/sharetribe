@@ -274,8 +274,7 @@ module TransactionService::Transaction
         charged_commission: payment[:charged_commission],
         payment_gateway_fee: payment[:payment_gateway_fee],
         shipping_address: tx[:shipping_address],
-        booking: tx[:booking],
-        deposit: tx[:deposit]})
+        booking: tx[:booking]})
   end
 
   def calculate_commission(item_total, commission_from_seller, minimum_commission)

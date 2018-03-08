@@ -452,6 +452,7 @@ default: &default_settings
   # Key pattern to ensure production keys
   stripe_private_key_pattern: "\\Ask_test_.{24}\\z"
   stripe_publishable_key_pattern: "\\Apk_test_.{24}\\z"
+  stripe_client_id_pattern: "\\Aca_.{32}\\z"
 
   # Stripe allows to hold funds up to 90 days
   # (85 and not 90 or 89 as a security, also because timezones are not 
@@ -459,13 +460,14 @@ default: &default_settings
   stripe_max_booking_date: 85
 
   # System supports different payment modes, see https://stripe.com/docs/connect/charges for details
-  # Sharetribe supports only managed accounts, and two payment modes:
   #
   # :separate    - Separate charges and transfers, payment goes to admin account, with delayed transfer to seller
+  # :direct      - Direct charges, payment goes to seller account, with application fee to admin account
   # :destination - Destination charges, payment goes to admin account, with instant partial transfer to seller  
   #
   # By default :destination mode is used
-  stripe_charges_mode: :destination
+  stripe_charges_mode: :direct
+  stripe_accounts_mode: :connect
 
   # Used to encrypt Stripe api keys
   app_encryption_key:

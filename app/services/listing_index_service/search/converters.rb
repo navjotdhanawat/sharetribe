@@ -18,6 +18,7 @@ module ListingIndexService::Search::Converters
       listing_shape_id: l.listing_shape_id,
       distance: (l.respond_to?(:distance) && l.distance ? l.distance / 1609.0 : nil),
       distance_unit: "miles",
+      call_for_price: l.call_for_price
     }.merge(meta)
       .merge(location_hash(l, includes))
       .merge(author_hash(l, includes))

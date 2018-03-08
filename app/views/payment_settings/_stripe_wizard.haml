@@ -1,4 +1,26 @@
-- if stripe_account[:stripe_seller_id].present? 
+- if stripe_use_connect
+  %p= t("stripe_accounts.connect_account")
+  - if stripe_account.present? && stripe_account[:stripe_seller_id].present? && stripe_account[:account_type] == 'connect'
+    .row
+      .col-12
+        %h3.paypal-account-connected
+          =icon_tag("check", ["icon-fix"])
+          =t("stripe_accounts.connected")
+        %p
+          = t("stripe_accounts.business_name")
+          %strong= seller_account[:business_name] || "N/A"
+        %p
+          = t("stripe_accounts.business_email")
+          = seller_account[:email] || "N/A"
+        %p
+          =t("stripe_accounts.stripe_can_accept")
+
+  - else
+    = link_to stripe_connect_url, class: 'stripe-connect' do
+      %span
+        = t("stripe_accounts.connect_with_stripe")
+
+- if stripe_account[:stripe_seller_id].present?  && !stripe_use_connect
   - if stripe_account[:stripe_bank_id].present?
     .row
       .col-12
@@ -21,6 +43,7 @@
 
 
   %div.hidden#stripe_forms
+ 
     .row.paypal-wizard.connect-row
       .col-12
         .paypal-wizard-content.connect-row
@@ -56,7 +79,7 @@
         $("#edit-stripe-info").hide();
         $("#stripe_forms").toggleClass("hidden");
       }})
-- else
+- elsif !stripe_use_connect
   %p
     = t("stripe_accounts.form_new.need_info")
   .row.paypal-wizard.connect-row

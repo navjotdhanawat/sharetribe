@@ -494,4 +494,5 @@ class ListingsController < ApplicationController
   def availability_per_hour_enabled
     FeatureFlagHelper.feature_enabled?(:availability_per_hour)
   end
+
 end

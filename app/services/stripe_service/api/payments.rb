@@ -11,16 +11,17 @@ module StripeService::API
           return Result::Error.new("No Seller Account")
         end
 
-        seller_id  = seller_account[:stripe_seller_id]
-        customer = stripe_api.register_customer(
-              community: tx[:community_id],
-              email: gateway_fields[:stripe_email],
-              card_token: gateway_fields[:stripe_token],
-              metadata: {sharetribe_person_id: tx[:starter_id]}
-           )
+        payer_account = create_or_update_payer(tx[:community_id], tx[:starter_id], gateway_fields)
 
-        source_id  = customer.id
-        gateway_fields[:stripe_customer_id] = source_id
+        customer_id   = payer_account[:stripe_customer_id]
+        seller_id     = seller_account[:stripe_seller_id]
+
+        case stripe_api.charges_mode(tx[:community_id])
+        when :separate, :destination
+          source_id  = payer_account[:stripe_customer_id]
+        when :direct
+          source_id  = stripe_api.create_token(community: tx[:community_id], customer_id: customer_id, account_id: seller_id).id
+        end
 
         subtotal   = order_total(tx)
         total      = subtotal
@@ -114,9 +115,12 @@ module StripeService::API
         end
 
         # in case of :destination payments, gateway fee is always charged from admin account, we cannot know it upfront, as transfer to seller = total - commission, is immediate
+        # in case of :direct payments, gateway fee is charged from seller account, and visible in balance transaction
         # in case of :separate payments, gateway fee is charged from admin account, but then deducted from seller on delayed transfer
         gateway_fee = if stripe_api.charges_mode(tx[:community_id]) == :destination
             Money.new(0, payment[:sum].currency)
+          elsif stripe_api.charges_mode(tx[:community_id]) == :direct
+            payment[:real_fee] ? payment[:real_fee] - payment[:commission] : Money.new(0, payment[:sum].currency)
           else
             payment[:real_fee]
           end
@@ -146,6 +150,16 @@ module StripeService::API
               initial_amount: payment[:subtotal].cents,
               charge_id: payment[:stripe_charge_id],
               metadata: {sharetribe_transaction_id: tx[:id]}
+            )
+          end
+        when :direct
+          if seller_gets > 0 && seller_account[:account_type] != 'connect'
+            result = stripe_api.perform_payout(
+              community: tx[:community_id],
+              account_id: seller_account[:stripe_seller_id],
+              amount_cents: seller_gets.cents,
+              currency: payment[:sum].currency,
+              metadata: {shretribe_order_id: tx[:id]}
             )
           end
         when :destination
@@ -181,6 +195,32 @@ module StripeService::API
         StripeService::API::Api.accounts
       end
 
+      def create_or_update_payer(community_id, person_id, gateway_fields)
+        payer_account     = accounts_api.get(community_id: community_id, person_id: person_id).data
+        if gateway_fields[:stripe_token].present?
+          unless payer_account
+            payer_account = accounts_api.create_customer(community_id: community_id, person_id: person_id, body: {}).data
+          end
+
+          if payer_account[:stripe_customer_id].present?
+            stripe_customer = stripe_api.update_customer(
+              community: community_id,
+              customer_id: payer_account[:stripe_customer_id],
+              token: gateway_fields[:stripe_token]
+            )
+          else
+            stripe_customer = stripe_api.register_customer(
+              community: community_id,
+              email: gateway_fields[:stripe_email],
+              card_token: gateway_fields[:stripe_token],
+              metadata: {sharetribe_person_id: person_id}
+            )
+            accounts_api.update_field(community_id: community_id, person_id: person_id, field: :stripe_customer_id, value: stripe_customer.id)
+          end
+        end
+        accounts_api.get(community_id: community_id, person_id: person_id).data
+      end
+
       def order_total(tx)
         shipping_total = Maybe(tx[:shipping_price]).or_else(0)
         tx[:unit_price] * tx[:listing_quantity] + shipping_total
@@ -190,94 +230,6 @@ module StripeService::API
         TransactionService::Transaction.calculate_commission(tx[:unit_price] * tx[:listing_quantity], tx[:commission_from_seller], tx[:minimum_commission])
       end
 
-      def cancel_deposit(tx, reason, amount = nil)
-        payment = PaymentStore.get(tx[:community_id], tx[:id], true)
-        return Result::Success.new("No deposit") if payment.nil?
-        return Result::Success.new("Already refunded") if payment[:is_refunded]
-
-        seller_account = accounts_api.get(community_id: tx[:community_id], person_id: tx[:listing_author_id]).data
-        refund = stripe_api.cancel_charge(
-          community: tx[:community_id],
-          charge_id: payment[:stripe_charge_id],
-          account_id: seller_account[:stripe_seller_id],
-          reason: reason,
-          metadata: {sharetribe_transaction_id: tx[:id]},
-          amount: amount
-        )
-        payment = PaymentStore.update(transaction_id: tx[:id], community_id: tx[:community_id], is_deposit: true,
-                                      data: {status: 'refunded', is_refunded: true, refund_id: refund.id, refund_amount_cents: refund.amount})
-        Result::Success.new(payment)
-      rescue => e
-        Result::Error.new(e.message)
-      end
-
-      def capture_deposit(tx)
-        payment = PaymentStore.get(tx[:community_id], tx[:id], true)
-        return Result::Success.new("No deposit") if payment.nil?
-
-        seller_account = accounts_api.get(community_id: tx[:community_id], person_id: tx[:listing_author_id]).data
-        charge = stripe_api.capture_charge(community: tx[:community_id], charge_id: payment[:stripe_charge_id], seller_id: seller_account[:stripe_seller_id])
-        balance_txn = stripe_api.get_balance_txn(community: tx[:community_id], balance_txn_id: charge.balance_transaction, account_id: seller_account[:stripe_seller_id])
-        payment = PaymentStore.update(transaction_id: tx[:id], community_id: tx[:community_id], is_deposit: true,
-                                      data: {
-                                        status: 'paid',
-                                        real_fee_cents: balance_txn.fee,
-                                        available_on: Time.zone.at(balance_txn.available_on)
-                                      })
-        Result::Success.new(payment)
-      rescue => e
-        Result::Error.new(e.message)
-      end
-
-      def create_preauth_deposit(tx, gateway_fields)
-        seller_account = accounts_api.get(community_id: tx[:community_id], person_id: tx[:listing_author_id]).data
-        if !seller_account || !seller_account[:stripe_seller_id].present?
-          return Result::Error.new("No Seller Account")
-        end
-        unless tx[:deposit].present? && tx[:deposit] > 0
-          return Result::Success.new("No deposit")
-        end
-
-        seller_id  = seller_account[:stripe_seller_id]
-        source_id  = gateway_fields[:stripe_customer_id]
-
-        subtotal   = tx[:deposit]
-        total      = subtotal
-        commission = Money.new(0, subtotal.currency)
-        fee        = Money.new(0, subtotal.currency)
-
-        description = "Deposit #{tx[:id]} for #{tx[:listing_title]} via #{gateway_fields[:service_name]} "
-        metadata = {
-          sharetribe_transaction_id: tx[:id],
-          sharetribe_seller_id: tx[:listing_author_id],
-          sharetribe_payer_id: tx[:starter_id],
-          sharetribe_mode: stripe_api.charges_mode(tx[:community_id])
-        }
-        stripe_charge = stripe_api.charge(
-          community: tx[:community_id],
-          token: source_id,
-          seller_account_id: seller_id,
-          amount: total.cents,
-          fee: commission.cents,
-          currency: total.currency.iso_code,
-          description: description,
-          metadata: metadata)
-
-        payment = PaymentStore.create(tx[:community_id], tx[:id], {
-          payer_id: tx[:starter_id],
-          receiver_id: tx[:listing_author_id],
-          currency: tx[:unit_price].currency.iso_code,
-          sum_cents: total.cents,
-          commission_cents: commission.cents,
-          fee_cents: fee.cents,
-          subtotal_cents: subtotal.cents,
-          stripe_charge_id: stripe_charge.id
-        }, true)
-
-        Result::Success.new(payment)
-      rescue => e
-        Result::Error.new(e.message)
-      end
     end
   end
 end
