@@ -92,6 +92,7 @@ class OwnoutdoorsOneTimeDataBatchMigration
       
       puts "Step 1. Create listing shape"
       listing_shape = create_listing_shape(community)
+      listing_shape.assign_to_categories!
       
       puts "Step 2. Create unit types"
       create_unit_types(listing_shape, community)
