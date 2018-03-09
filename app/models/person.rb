@@ -196,6 +196,7 @@ class Person < ApplicationRecord
   URL_REGEXP = /\A(?:(?:https?):\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[\/?#]\S*)?\z/i
 
   validates_format_of :website_url, with: URL_REGEXP, if: :is_vendor
+  validate :website_really_exists
 
   before_save :set_sort_priority
 
@@ -716,6 +717,17 @@ class Person < ApplicationRecord
       self.sort_priority = 3
     else
       self.sort_priority = 4
+    end
+  end
+
+  def website_really_exists
+    if new_record? || website_url_changed?
+      begin
+        domain = URI.parse(website_url).host
+        Socket.gethostbyname(domain)
+      rescue SocketError
+        errors.add(:website_url_no_dns, "Website URL does not exist")
+      end
     end
   end
 
