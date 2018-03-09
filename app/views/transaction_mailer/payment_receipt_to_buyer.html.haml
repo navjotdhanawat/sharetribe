@@ -90,7 +90,8 @@
         %tr
           %td{colspan: 2}
             %font{body_font}
-              = listing.origin_loc&.address
+              - if listing.origin_loc
+                = link_to listing.origin_loc&.address, "https://maps.google.com/maps?q=#{Rack::Utils.escape listing.origin_loc&.address}", target: "_blank"
 
         %tr{:height => '10'}
         %tr
