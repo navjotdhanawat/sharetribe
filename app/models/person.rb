@@ -665,8 +665,7 @@ class Person < ApplicationRecord
     if new_password.present?
       self.password = new_password
       self.password_confirmation = new_password_confirmation
-      self.skip_phone_validation = true
-      save
+      save(validate: false)
     else
       errors.add(:password, :blank)
       false
