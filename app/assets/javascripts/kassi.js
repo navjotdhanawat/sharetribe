@@ -358,7 +358,13 @@ function initialize_give_feedback_form(locale, grade_error_message, text_error_m
     }
   });
 }
+var URL_PATTERN = /^(?:(?:https?):\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:[\/?#]\S*)?$/i;
 
+function url_regexp_check(value) {
+  if(!value) return false;
+  var fixed_value = value.match(/^http/) ? value : "http://"+value;
+  return value.match(URL_PATTERN);
+}
 function initialize_signup_form(locale, username_in_use_message, invalid_username_message, email_in_use_message, invalid_invitation_code_message, name_required, invitation_required) {
   $('#help_invitation_code_link').click(function(link) {
     //link.preventDefault();
@@ -377,7 +383,7 @@ function initialize_signup_form(locale, username_in_use_message, invalid_usernam
   var form_id = "#new_person";
   //name_required = (name_required == 1) ? true : false
   jQuery.validator.addMethod("phoneNumber", function(value, element) { return Inputmask.isValid(value, {alias: 'phone'}); }, "Phone number is invalid");
-  jQuery.validator.addMethod("websiteUrl", function(value, element) { return !$(".website-url").is(":visible") || Inputmask.isValid(value, {alias: 'url'}); }, "Website URL is invalid");
+  jQuery.validator.addMethod("websiteUrl", function(value, element) { return !$(".website-url").is(":visible") || url_regexp_check(value); }, "Website URL is invalid");
   $(form_id).validate({
     errorPlacement: function(error, element) {
       if (element.attr("name") == "person[terms]") {
@@ -428,7 +434,7 @@ function initialize_update_profile_info_form(locale, person_id, name_required) {
     if($(this).val() == 'true') $(".website-url").show(); else $(".website-url").hide();
   });
   $("#person_is_vendor").trigger("change")
-  jQuery.validator.addMethod("websiteUrl", function(value, element) { return !$(".website-url").is(":visible") || Inputmask.isValid(value, {alias: 'url'}); }, "Website URL is invalid");
+  jQuery.validator.addMethod("websiteUrl", function(value, element) { return !$(".website-url").is(":visible") || url_regexp_check(value); }, "Website URL is invalid");
   jQuery.validator.addMethod("phoneNumber", function(value, element) { return Inputmask.isValid(value, {alias: 'phone'}); }, "Phone number is ivalid");
   $(form_id).validate({
     rules: {
