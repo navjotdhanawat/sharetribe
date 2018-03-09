@@ -721,7 +721,7 @@ class Person < ApplicationRecord
   end
 
   def website_really_exists
-    if new_record? || website_url_changed?
+    if (new_record? || website_url_changed?) && website_url.to_s =~ URL_REGEXP
       begin
         domain = URI.parse(website_url).host
         Socket.gethostbyname(domain)
