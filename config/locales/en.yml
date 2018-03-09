@@ -1565,7 +1565,8 @@ en:
         one: "The website will be offline for maintenance in %{count} minute"
         other: "The website will be offline for maintenance in %{count} minutes"
       automatically_logged_out_please_sign_in: "You have been automatically logged out. Please log in again."
-      website_url: "Website URL is required"
+      website_url: "Valid website URL is required"
+      website_url_no_dns: "Website URL is invalid - domain does not exist"
     settings:
       account: Account
       notifications: Notifications
