@@ -1,10 +1,14 @@
 %section#hero__hero__0.hero__section--light
   .hero__content
     .hero__content-container
-      %h1.hero__title Rent | Buy | OwnOutdoors
+      %h1.hero__title= @community_customization.try(:slogan) || 'Rent | Buy | OwnOutdoors'
       %h3.hero__subtitle
-        Outdoor Experiences, Adventure & Gear
-        %span{:style => "white-space: nowrap"} - Anywhere!
+        - description = @community_customization.try(:description)
+        - if description
+          = description
+        - else
+          Outdoor Experiences, Adventure & Gear
+          %span{:style => "white-space: nowrap"} - Anywhere!
       .hero__search-bar-padding
         %form#hero__hero__0__search-form.hero__search-bar--combined{:action => "/s", :method => "get"}
           .hero__search-input-container--combined
@@ -13,7 +17,8 @@
                 %g#icon_search{:fill => "none", "fill-rule" => "evenodd", :stroke => "none", "stroke-linecap" => "round", "stroke-linejoin" => "round", "stroke-width" => "1", :transform => "translate(38.000000, 30.000000) scale(-1, 1) translate(-38.000000, -30.000000) translate(28.000000, 20.000000)"}
                   %path#line{:d => "M14.6666667,14.6666667 L19.3254458,19.3254458", :stroke => "#525961", "stroke-width" => "2"}
                   %circle#Oval{:cx => "8", :cy => "8", :r => "8", :stroke => "#525961", "stroke-width" => "2"}
-            %input.hero__keyword-search-input--combined{:name => "q", :placeholder => "Keyword (e.g. Kayak)", :type => "search"}/
+            - search_placeholder = @community_customization.try(:search_placeholder) || 'Keyword (e.g. Kayak)'
+            %input.hero__keyword-search-input--combined{:name => "q", :placeholder => search_placeholder, :type => "search"}/
             %input.hero__location-search-input--combined{:name => "lq", :placeholder => "Location", :type => "search"}/
           %button.hero__search-button.hero__search-button--combined{:type => "submit"} Search
           %input{:name => "ls", :type => "hidden"}/
