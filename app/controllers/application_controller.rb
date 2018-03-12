@@ -480,7 +480,8 @@ class ApplicationController < ActionController::Base
   end
 
   def display_branding_info?
-    !params[:controller].starts_with?("admin") && !@current_plan[:features][:whitelabel]
+    # !params[:controller].starts_with?("admin") && !@current_plan[:features][:whitelabel]
+    false
   end
   helper_method :display_branding_info?
 

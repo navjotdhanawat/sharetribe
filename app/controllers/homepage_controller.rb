@@ -30,7 +30,7 @@ class HomepageController < ApplicationController
 
     # This assumes that we don't never ever have communities with only 1 main share type and
     # only 1 sub share type, as that would make the listing type menu visible and it would look bit silly
-    listing_shape_menu_enabled = all_shapes.size > 1
+    listing_shape_menu_enabled = false # all_shapes.size > 1
     @show_categories = @categories.size > 1
     show_price_filter = @current_community.show_price_filter && all_shapes.any? { |s| s[:price_enabled] }
 
