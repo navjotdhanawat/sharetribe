@@ -363,7 +363,7 @@ var URL_PATTERN = /^(?:(?:https?):\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d
 function url_regexp_check(value) {
   if(!value) return false;
   var fixed_value = value.match(/^http/) ? value : "http://"+value;
-  return value.match(URL_PATTERN);
+  return fixed_value.match(URL_PATTERN);
 }
 function initialize_signup_form(locale, username_in_use_message, invalid_username_message, email_in_use_message, invalid_invitation_code_message, name_required, invitation_required) {
   $('#help_invitation_code_link').click(function(link) {
@@ -375,7 +375,6 @@ function initialize_signup_form(locale, username_in_use_message, invalid_usernam
     $('#terms').lightbox_me({ centered: true, zIndex: 1000000 });
   });
   $("#person_phone_number").inputmask({alias: 'phone'});
-  $("#person_website_url").inputmask({alias: 'url'});
   $("#person_is_vendor").change(function(){
     if($(this).val() == '1') $(".website-url").show(); else $(".website-url").hide();
   });
@@ -428,7 +427,6 @@ function initialize_update_profile_info_form(locale, person_id, name_required) {
   auto_resize_text_areas("update_profile_description_text_area");
   $('input.text_field:first').focus();
   var form_id = "#edit_person_" + person_id;
-  $("#person_website_url").inputmask({alias: 'url'});
   $("#person_is_vendor").change(function(){
     if($(this).val() == 'true') $(".website-url").show(); else $(".website-url").hide();
   });
