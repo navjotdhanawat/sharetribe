@@ -985,6 +985,10 @@
                                     var newPos = seekNext(lastPosition);
                                     (clickPosition >= newPos || clickPosition === lastPosition) && (lastPosition = newPos);
                                 }
+                                var unmaskedValue = unmaskedvalue(input);
+                                if (opts.alias === 'url' && unmaskedValue.length === 0) {
+                                  lastPosition = 7;
+                                }
                                 caret(input, lastPosition);
                             }
                         }
