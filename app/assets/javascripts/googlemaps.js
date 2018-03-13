@@ -500,7 +500,13 @@ function initialize_listing_map(listings, community_location_lat, community_loca
   var myOptions = {
     zoom: 16,
     maxZoom: 17,
-    mapTypeId: google.maps.MapTypeId.ROADMAP
+    mapTypeId: google.maps.MapTypeId.ROADMAP,
+    zoomControl: true,
+    mapTypeControl: true,
+    scaleControl: false,
+    streetViewControl: false,
+    rotateControl: false,
+    fullscreenControl: false
   };
   if (!map) {
     map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
