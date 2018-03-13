@@ -116,9 +116,9 @@
                   = t("homepage.sorting.#{sort_option}")
 
         .auto-col.filters-enabled.home-toolbar-button-group.mob-visible
-          %a.home-toolbar-button-group-button.selected.view-toggle{data: {mode: 'grid-mode'}, href: '#'}
+          %a.home-toolbar-button-group-button.view-toggle{data: {mode: 'grid-mode'}, href: '#', class: @listing_view_mode == 'grid' ? 'selected' : ''}
             %i.ss-thumbnails
-          %a.home-toolbar-button-group-button.view-toggle{data: {mode: 'list-mode'}, href: '#'}
+          %a.home-toolbar-button-group-button.view-toggle{data: {mode: 'list-mode'}, href: '#', class: @listing_view_mode == 'list' ? 'selected' : ''}
             %i.ss-list
 
       .row
@@ -129,7 +129,7 @@
       = render :partial => "map", locals: { viewport: viewport }
   .listings-column
     = render :partial => "layouts/notifications"
-    .row.grid-mode#search-results
+    .row#search-results{class: "#{@listing_view_mode}-mode"}
       = render partial: 'grid_item_map_content', locals: {show_distance: location_search_in_use, shape_name_map: shape_name_map}
 
 .filter-overlay
