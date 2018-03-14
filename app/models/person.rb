@@ -189,7 +189,7 @@ class Person < ApplicationRecord
   end
 
   before_validation do 
-    self.website_url = self.website_url.present? && !self.website_url =~ /^http/ ? "http://"+self.website_url : self.website_url
+    self.website_url = self.website_url.present? && self.website_url !~ /^http/ ? "http://"+self.website_url : self.website_url
   end
 
   # same as in kassi.js 

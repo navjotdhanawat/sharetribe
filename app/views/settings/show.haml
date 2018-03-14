@@ -69,7 +69,7 @@
     -# Website URL
     .website-url
       = form.label :website_url, t("settings.profile.website_url"), :class => "inline"
-      = form.text_field :website_url, :class => "text_field"
+      = form.text_field :website_url, :class => "text_field", placeholder: "http://www.yoursite.com"
 
     -# Profile picture
     = form.label :image, t("settings.profile.profile_picture")

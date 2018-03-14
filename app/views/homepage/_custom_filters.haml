@@ -1,5 +1,6 @@
 - filters.each do |field|
 
+  - next if field.id == 13442
   - field.with_type do |type|
     - if [:dropdown, :checkbox].include?(type)
       - count_selected = 0

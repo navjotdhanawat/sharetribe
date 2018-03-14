@@ -4,7 +4,7 @@ class HomepageController < ApplicationController
   before_action :save_current_path, :except => :sign_in
 
   APP_DEFAULT_VIEW_TYPE = "grid"
-  VIEW_TYPES = ["grid", "list", "map"]
+  VIEW_TYPES = ["grid", "list"]
 
   # rubocop:disable AbcSize
   def index
@@ -21,7 +21,7 @@ class HomepageController < ApplicationController
     filter_params[:categories] = m_selected_category.own_and_subcategory_ids.or_nil
     selected_category = m_selected_category.or_nil
     relevant_filters = select_relevant_filters(m_selected_category.own_and_subcategory_ids.or_nil)
-
+    @listing_view_mode = SearchPageHelper.selected_view_type(nil, @current_community.default_browse_view, APP_DEFAULT_VIEW_TYPE, VIEW_TYPES)
     @view_type = "map"
     @big_cover_photo = !(@current_user || CustomLandingPage::LandingPageStore.enabled?(@current_community.id)) || params[:big_cover_photo]
 
@@ -30,7 +30,7 @@ class HomepageController < ApplicationController
 
     # This assumes that we don't never ever have communities with only 1 main share type and
     # only 1 sub share type, as that would make the listing type menu visible and it would look bit silly
-    listing_shape_menu_enabled = all_shapes.size > 1
+    listing_shape_menu_enabled = false # all_shapes.size > 1
     @show_categories = @categories.size > 1
     show_price_filter = @current_community.show_price_filter && all_shapes.any? { |s| s[:price_enabled] }
 

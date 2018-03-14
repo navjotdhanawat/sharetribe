@@ -6,5 +6,6 @@ class LandingController < ApplicationController
     @no_top_search = true
     flash.clear
     @featured_listings = Listing.where(community_id: @current_community.id, deleted: false, featured: true).order('rand()')
+    @community_customization = @current_community.community_customizations.where(locale: I18n.locale).first
   end
 end
