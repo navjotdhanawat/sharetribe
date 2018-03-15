@@ -6,7 +6,7 @@ class TransactionsController < ApplicationController
   end
 
   before_action :ensure_logged_in_or_guest
-  before_action :ensure_author_is_confirmed
+  before_action :ensure_author_is_confirmed, only: [:new, :create]
 
   before_action only: [:new] do |controller|
     fetch_data(params[:listing_id]).on_success do |listing_id, listing_model, _, process|
