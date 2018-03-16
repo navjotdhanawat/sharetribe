@@ -595,6 +595,9 @@ $home-list-avatar-padding: lines(0.25);
 }
 .home-fluid-thumbnail-grid-details-author-name {
   color: #db1414;
+  line-height: 1.1;
+  height: 2em;
+  margin-top: -3px;
 }
 .grid-mode .home-listings {
   display: block;
@@ -810,7 +813,7 @@ $home-list-avatar-padding: lines(0.25);
 @media (min-width: 1440px) {
   .homepage {
     .home-fluid-thumbnail-grid-wide .home-fluid-thumbnail-grid-item {
-      width: 25%;
+      width: 33%;
     }
   }
 }
