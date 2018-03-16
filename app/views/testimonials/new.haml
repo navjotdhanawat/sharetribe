@@ -15,7 +15,7 @@
     = form.label :grade, t(".grade")
     .row
       .col-12
-        = stars_rating_tag 0, disable_after_rate: false, readonly: false, averageAsDefault: false, cancel: false, targetScore: "#testimonial_grade", scoreName: "testimonial[grade]", star_off: 'star-3c.png', star_on: 'star-66.png'
+        = stars_rating_tag 0, disable_after_rate: false, readonly: false, averageAsDefault: false, cancel: false, targetScore: "#testimonial_grade", scoreName: "testimonial[grade]", star_off: 'star-c3.png', star_on: 'star-66.png'
         = form.hidden_field :grade
         #testimonial-grade-error
     = form.button t(".send_feedback"), :class => "send_button", :id => "send_testimonial_button"
