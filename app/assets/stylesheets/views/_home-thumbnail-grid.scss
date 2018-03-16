@@ -13,7 +13,7 @@ $home-thumbnail-grid-author: $home-thumbnail-grid-avatar + ($home-thumbnail-grid
 }
 
 .home-fluid-thumbnail-grid-wide {
-  @include create-fluid-thumbnail-grid(home, 1, 1, 2, 3, 4, 4, 4, 4);
+  @include create-fluid-thumbnail-grid(home, 1, 1, 2, 3, 3, 3, 3, 3);
 }
 
 .home-fluid-thumbnail-grid-author {
@@ -56,7 +56,7 @@ $home-thumbnail-grid-author: $home-thumbnail-grid-avatar + ($home-thumbnail-grid
 .home-fluid-thumbnail-grid-details-author-name {
   display: inline-block;
   float: left;
-  width: 50%;
+  width: 75%;
   height: 100%;
   @include small-type;
   // Vertical centering
@@ -65,7 +65,7 @@ $home-thumbnail-grid-author: $home-thumbnail-grid-avatar + ($home-thumbnail-grid
 }
 .home-fluid-thumbnail-grid-details-distance {
   float:left;
-  width: 50%;
+  width: 25%;
   height:100%;
   text-align:right;
   color:$body;
