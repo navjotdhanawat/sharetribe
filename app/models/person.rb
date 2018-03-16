@@ -160,7 +160,7 @@ class Person < ApplicationRecord
   validates_length_of :display_name, :within => 1..30, :allow_nil => true, :allow_blank => true
 
   attr_accessor :skip_phone_validation
-  validates_presence_of :phone_number, unless: :skip_phone_validation
+  validates_presence_of :phone_number, unless: :skip_phone_validation, on: :create
 
   validates_format_of :username,
                        :with => /\A[A-Z0-9_]*\z/i
@@ -665,8 +665,7 @@ class Person < ApplicationRecord
     if new_password.present?
       self.password = new_password
       self.password_confirmation = new_password_confirmation
-      self.skip_phone_validation = true
-      save
+      save(validate: false)
     else
       errors.add(:password, :blank)
       false
