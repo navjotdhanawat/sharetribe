@@ -25,7 +25,6 @@ var markersArr = [];   // Array for keeping track of markers on map
 var showingMarker = "";
 var markerCluster = null;
 var icounter = 0;
-var oms = null;
 
 $.validator.
 addMethod("address_validator",
@@ -510,7 +509,6 @@ function initialize_listing_map(listings, community_location_lat, community_loca
   };
   if (!map) {
     map = new google.maps.Map(document.getElementById("map-canvas"), myOptions);
-    oms = new OverlappingMarkerSpiderfier(map);
   } else {
     init_drag = false;
   }
@@ -616,7 +614,6 @@ function addListingMarkers(listings, viewport, keep_bounds, init_drag) {
             $(".highlighted").removeClass("highlighted");
             $('#listing_'+marker.listingId+", #listing_list_"+marker.listingId).addClass('highlighted');
             showingMarker = marker.listingId;
-            $("#map_bubble").remove();
             infowindow.setContent("<div id='map_bubble'><img class='bubble-loader-gif' src='https://s3.amazonaws.com/sharetribe/assets/ajax-loader-grey.gif'></div>");
             infowindow.setMaxHeight(150);
             infowindow.setMinHeight(150);
@@ -625,7 +622,9 @@ function addListingMarkers(listings, viewport, keep_bounds, init_drag) {
               url: '/' + locale + '/listing_bubble/' + entry.id,
               dataType: "html",
               success: function(data) {
-                $('#map_bubble').html(data);
+                infowindow.close();
+                infowindow.setContent("<div id='map_bubble'>"+data+"</div>");
+                infowindow.open(map,marker);
               }
             });
           }
@@ -652,11 +651,7 @@ function addListingMarkers(listings, viewport, keep_bounds, init_drag) {
           marker.setIcon(icon1);
         });
 
-        if(oms) {
-          oms.trackMarker(marker, showMarkerBubble);
-        } else {
-          google.maps.event.addListener(marker, 'click', showMarkerBubble);
-        }
+        google.maps.event.addListener(marker, 'click', showMarkerBubble);
       }
     })();
   }
@@ -665,7 +660,8 @@ function addListingMarkers(listings, viewport, keep_bounds, init_drag) {
   var longitudes = _(listings).pluck("longitude").filter().map(Number).value();
 
   if (keep_bounds) {
-    //markerCluster = new MarkerClusterer(map, markers, markerContents, infowindow, showingMarker, locale, {});
+    console.log("RELOAD MC");
+    markerCluster = new MarkerClusterer(map, markers, markerContents, infowindow, showingMarker, locale, {});
     return;
   }
 
@@ -705,7 +701,7 @@ function addListingMarkers(listings, viewport, keep_bounds, init_drag) {
     });
   }
 
-  //markerCluster = new MarkerClusterer(map, markers, markerContents, infowindow, showingMarker, locale, {});
+  markerCluster = new MarkerClusterer(map, markers, markerContents, infowindow, showingMarker, locale, {});
 }
 
 function setBounds(coords) {
@@ -719,9 +715,6 @@ function setBounds(coords) {
 }
 
 function clearMarkers() {
-    if (oms) {
-      oms.removeAllMarkers();
-    }
     if (markersArr) {
         for (i in markersArr) {
             markersArr[i].setMap(null);
@@ -729,15 +722,19 @@ function clearMarkers() {
     }
     directionsDisplay.setMap(null);
     flagMarker.setOptions({map:null});
+    if (markers) {
+        for (n in markers) {
+            markers[n].setMap(null);
+        }
+    }
+    clearMarkerCluster();
+}
+function clearMarkerCluster() {
     if (markerCluster) {
         markerCluster.resetViewport(true);
         markerCluster.clearMarkers();
         delete markerCluster;
         markerCluster = null;
     }
-    if (markers) {
-        for (n in markers) {
-            markers[n].setMap(null);
-        }
-    }
 }
+
