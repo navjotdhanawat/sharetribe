@@ -1,5 +1,5 @@
 import { PropTypes } from 'react';
-import { a, div, img } from 'r-dom';
+import { a, div, img, span } from 'r-dom';
 import classNames from 'classnames';
 import * as propTypeUtils from '../../../utils/PropTypes';
 import { Image } from '../../../models/ImageModel';
@@ -11,14 +11,23 @@ export default function Avatar({ image, imageHeight, className, url, givenName, 
   const initials = [givenName, familyName].filter((n) => typeof n === 'string')
     .map((n) => n.substring(0, 1))
     .join('');
-  const height = imageHeight ? imageHeight : '100%';
-  const imageEl = (image && image.url) ? img({
-    src: image.url,
-    className: classNames('Avatar', className, css.avatar),
-    style: { height },
-    title: displayName,
-    alt: displayName,
-  }) : null;
+  const height = imageHeight ? imageHeight : '80%';
+  const imageEl = (image && image.url) ? div({
+    className: css.link,
+    title: displayName
+  },[
+    img({
+      src: image.url,
+      className: classNames('Avatar', className, css.avatar),
+      style: { height },
+      title: displayName,
+      alt: displayName,
+    }), 
+    div({
+      className: classNames('Avatar', className, css.avatarName)
+    }, displayName)
+  ]) : null;
+
   const textEl = div({
     className: classNames('Avatar', className, css.textAvatar),
     style: { height, width: height, backgroundColor: color },
