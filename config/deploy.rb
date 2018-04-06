@@ -1,7 +1,7 @@
 # require 'whenever/capistrano'
 
 # config valid only for current version of Capistrano
-lock '3.7.1'
+lock '3.10.1'
 
 set :rvm_ruby_version, '2.3.4'
 set :application, 'ownoutdoors'
@@ -11,6 +11,7 @@ set :linked_files, %W{config/database.yml config/config.yml config/#{fetch(:stag
 set :linked_dirs, %w{log public/system public/assets db/sphinx tmp/cache tmp/pids tmp/binlog}
 
 set :passenger_restart_with_touch, true
+set :keep_releases, 2
 
 # set :whenever_identifier, ->{ "#{fetch(:application)}_#{fetch(:stage)}" }
 
