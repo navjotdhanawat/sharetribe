@@ -91,18 +91,17 @@
         = Date.today.year 
         OwnOutdoors Marketplace. All rights reserved.
 
-:javascript
-  window.ST=window.ST||{},function(e){e.initializeLocationSearch=function(e){function t(){i.value=null,c.value=null,r.value=null,s.value=null}function n(e){return e*(Math.PI/180)}function o(e,t){var o=e.lat(),a=t.lat(),l=e.lng(),u=t.lng(),i=n(o),c=n(a),r=n(a-o),s=n(u-l),e=Math.sin(r/2)*Math.sin(r/2)+Math.cos(i)*Math.cos(c)*Math.sin(s/2)*Math.sin(s/2);return 2*Math.atan2(Math.sqrt(e),Math.sqrt(1-e))*6371/2}function a(e){if(e){var t=o(e.getNorthEast(),e.getSouthWest());s.value=t,r.value=e.toUrlValue()}else s.value=null}function l(e){return 32==e||13==e||8==e||e>47&&e<112||e>185&&e<193||e>218&&e<223}var u=document.querySelector(e.search),i=document.querySelector(e.status),c=document.querySelector(e.coordinate),r=document.querySelector(e.boundingbox),s=document.querySelector(e.maxDistance),v=document.querySelector(e.form),d=new window.google.maps.places.Autocomplete(u,{bounds:{north:-90,east:-180,south:90,west:180}}),g=!1;d.setTypes(["geocode"]),window.google.maps.event.addListener(d,"place_changed",function(){var e=d.getPlace();null!=e&&(null!=e.geometry?(c.value=e.geometry.location.toUrlValue(),i.value=window.google.maps.places.PlacesServiceStatus.OK,g=!0,a(e.geometry.viewport),v.submit()):(c.value="",m(e.name,w)))}),v.addEventListener("submit",function(e){""===u.value||g?""===u.value&&t():(e.preventDefault(),m(u.value,w))}),u.addEventListener("keypress",function(e){13===e.keyCode&&e.preventDefault(),l(e.keyCode)&&(g=!1,t())});var m=function(e,t){(new window.google.maps.places.AutocompleteService).getQueryPredictions({input:e},t)},w=function(e,t){var n=window.google.maps.places.PlacesServiceStatus;if(t===n.OK){var o=new window.google.maps.Map(document.createElement("div"));new window.google.maps.places.PlacesService(o).getDetails({placeId:e[0].place_id},function(e,t){t===n.OK&&(c.value=e.geometry.location.toUrlValue(),a(e.geometry.viewport)),i.value=t,g=!0,v.submit()})}else i.value=t,g=!0,v.submit()}}}(window.ST);
-  window.ST.initializeLocationSearch({
-    form: '#hero__hero__0__search-form',
-    search: '#hero__hero__0__search-form [name=lq]',
-    status: '#hero__hero__0__search-form [name=ls]',
-    coordinate: '#hero__hero__0__search-form [name=lc]',
-    boundingbox: '#hero__hero__0__search-form [name=boundingbox]',
-    maxDistance: '#hero__hero__0__search-form [name=distance_max]'
-  })
 - content_for :extra_javascript do
   :javascript
+    window.ST.initializeLocationSearch({
+      form: '#hero__hero__0__search-form',
+      search: '#hero__hero__0__search-form [name=lq]',
+      status: '#hero__hero__0__search-form [name=ls]',
+      coordinate: '#hero__hero__0__search-form [name=lc]',
+      boundingbox: '#hero__hero__0__search-form [name=boundingbox]',
+      maxDistance: '#hero__hero__0__search-form [name=distance_max]'
+    })
+
     $(document).ready(function($) {
       $('.owl-carousel').owlCarousel({
         items: 3,

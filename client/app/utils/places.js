@@ -89,6 +89,8 @@ export const coordinates = (place) => {
   return null;
 };
 
+export const TWENTY_MILES = 20 * 1.609 ;
+export const TWENTY_MILES_DELTA = TWENTY_MILES * 1000 / 111111 ;
 /**
  * Get the viewport of a place.
  *
@@ -100,8 +102,12 @@ export const coordinates = (place) => {
  */
 export const viewport = (place) => {
   if (place && place.geometry) {
+    const distance = place.geometry.viewport ? getDistance(place.geometry.viewport.getNorthEast(),place.geometry.viewport.getSouthWest()) / 2 : 0;
     // distance in miles per degree
-    const delta = 20 * 1609.0 / 111111 ; // eslint-disable-line no-magic-numbers
+    if (distance > TWENTY_MILES) {
+      return place.geometry.viewport.toUrlValue();
+    }
+    const delta = TWENTY_MILES_DELTA ; // eslint-disable-line no-magic-numbers
     const north = delta ;
     const p = place.geometry.location;
     const east  = delta * Math.cos(p.lat() * (Math.PI / 180)); // eslint-disable-line no-magic-numbers
@@ -126,8 +132,12 @@ export const viewport = (place) => {
  */
 export const maxDistance = (place) => {
   if (place && place.geometry) {
+    const distance = place.geometry.viewport ? getDistance(place.geometry.viewport.getNorthEast(),place.geometry.viewport.getSouthWest()) / 2 : 0;
+    if (distance > TWENTY_MILES) {
+      return distance;
+    }
     // distance in miles per degree
-    const delta = 20 * 1609.0 / 111111 ; // eslint-disable-line no-magic-numbers
+    const delta = TWENTY_MILES_DELTA;
     const north = delta ;
     const p = place.geometry.location;
     const east  = delta * Math.cos(p.lat() * (Math.PI / 180)); // eslint-disable-line no-magic-numbers
