@@ -51,8 +51,9 @@ window.ST = window.ST || {};
 
     function updateViewportData(viewport) {
       if (viewport) {
+        var TWENTY_MILES = 20 * 1.609 ;
         var boundingboxRadius = computeScale(viewport.getNorthEast(), viewport.getSouthWest());
-        maxDistanceInput.value = boundingboxRadius;
+        maxDistanceInput.value = boundingboxRadius < TWENTY_MILES ? TWENTY_MILES : boundingboxRadius;
         boundingboxInput.value = viewport.toUrlValue();
       } else {
         maxDistanceInput.value = null;
