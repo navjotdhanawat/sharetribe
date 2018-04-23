@@ -49,12 +49,25 @@ window.ST = window.ST || {};
       return d/2;
     };
 
-    function updateViewportData(viewport) {
+    function updateViewportData(viewport, place) {
       if (viewport) {
         var TWENTY_MILES = 20 * 1.609 ;
+        var TWENTY_MILES_DELTA = TWENTY_MILES * 1000 / 111111 ;
+
         var boundingboxRadius = computeScale(viewport.getNorthEast(), viewport.getSouthWest());
-        maxDistanceInput.value = boundingboxRadius < TWENTY_MILES ? TWENTY_MILES : boundingboxRadius;
-        boundingboxInput.value = viewport.toUrlValue();
+        if(boundingboxRadius > TWENTY_MILES) {
+          maxDistanceInput.value = boundingboxRadius;
+          boundingboxInput.value = viewport.toUrlValue();
+        } else {
+          boundingboxRadius = TWENTY_MILES;
+          var delta = TWENTY_MILES_DELTA ;
+          var north = delta ;
+          var p = place.geometry.location;
+          var east  = delta * Math.cos(p.lat() * (Math.PI / 180));
+          var vp = new google.maps.LatLngBounds(new google.maps.LatLng(p.lat() - east, p.lng()-north), new google.maps.LatLng(p.lat()+east, p.lng()+north));
+          maxDistanceInput.value = computeScale(vp.getNorthEast(), vp.getSouthWest());
+          boundingboxInput.value = vp.toUrlValue();
+        }
       } else {
         maxDistanceInput.value = null;
       }
@@ -74,7 +87,7 @@ window.ST = window.ST || {};
           coordinateInput.value = place.geometry.location.toUrlValue();
           statusInput.value = window.google.maps.places.PlacesServiceStatus.OK;
           locationQueryMade = true;
-          updateViewportData(place.geometry.viewport);
+          updateViewportData(place.geometry.viewport, place);
           form.submit();
         } else {
           coordinateInput.value = ""; // clear previous coordinates
@@ -127,7 +140,7 @@ window.ST = window.ST || {};
 
           if(placeServiceStatus === serviceStatus.OK) {
             coordinateInput.value = place.geometry.location.toUrlValue();
-            updateViewportData(place.geometry.viewport);
+            updateViewportData(place.geometry.viewport, place);
           }
           // Save received service status for logging
           statusInput.value = placeServiceStatus;
