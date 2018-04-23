@@ -185,7 +185,7 @@ default: &default_settings
   feedback_mailer_recipients:  'admins@example.com'
 
   grid_listings_limit: 24
-  map_listings_limit: 150
+  map_listings_limit: 24
 
   # DEPRECATED, use Google Tag Manager instead
   # Google Analytics can be used to track traffic on the site
@@ -455,7 +455,7 @@ default: &default_settings
   stripe_client_id_pattern: "\\Aca_.{32}\\z"
 
   # Stripe allows to hold funds up to 90 days
-  # (85 and not 90 or 89 as a security, also because timezones are not 
+  # (85 and not 90 or 89 as a security, also because timezones are not
   # managed and transactions are automatically marked as completed)
   stripe_max_booking_date: 85
 
@@ -463,7 +463,7 @@ default: &default_settings
   #
   # :separate    - Separate charges and transfers, payment goes to admin account, with delayed transfer to seller
   # :direct      - Direct charges, payment goes to seller account, with application fee to admin account
-  # :destination - Destination charges, payment goes to admin account, with instant partial transfer to seller  
+  # :destination - Destination charges, payment goes to admin account, with instant partial transfer to seller
   #
   # By default :destination mode is used
   stripe_charges_mode: :direct
