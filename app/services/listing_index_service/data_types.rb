@@ -95,8 +95,8 @@ module ListingIndexService::DataTypes
    'sort_date_desc' => 'author_sort_priority ASC, sort_date DESC',
    'distance_asc' => 'geodist ASC',
    'score_desc' => 'wght DESC',
-   'price_asc' => 'price_cents ASC',
-   'price_desc' => 'price_cents DESC',
+   'price_asc' => 'call_for_price ASC, price_cents ASC',
+   'price_desc' => 'call_for_price ASC, price_cents DESC',
    'rating_avg_desc' => 'rating_average DESC',
    'rating_count_desc' => 'rating_count DESC',
    'rating_count_asc' => 'rating_count ASC'
