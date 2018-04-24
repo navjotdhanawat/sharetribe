@@ -19,7 +19,9 @@ class CSVImporter
     CSV.parse(@file.read, headers: true).each_with_index do |row, index|
       begin
         row = row.to_h.with_indifferent_access
-        import_row(row, index)
+        Person.transaction do
+          import_row(row, index)
+        end
       rescue => e
         @errors << [index, [e.inspect, e.message, e.backtrace[0]].join(" ")]
       end
@@ -40,11 +42,12 @@ class CSVImporter
     person = Person.new({
         username: params['Username'],
         community_id: @community.id,
-        given_name: params['Business Name'],
+        display_name: params['Business Name'],
         locale: 'en',
         password: params['Password'],
         is_vendor: params['Profile Type'] == 'Business',
-        website_url: params['Website URL']
+        website_url: params['Website URL'],
+        phone_number: params['Phone'],
       })
     email_address = params['Email'].downcase.strip
     allowed_and_available = @community.email_allowed?(email_address) && Email.email_available?(email_address, @community.id)
@@ -65,12 +68,19 @@ class CSVImporter
     person.set_default_preferences
     person.skip_phone_validation = true
     person.save!
+
     membership = CommunityMembership.new(:person => person, :community => @community, :consent => @community.consent, status: 'pending_email_confirmation')
     membership.save!
     if person.is_vendor
       person.image = File.new(Rails.root+"app/assets/images/gray_shop_logo.png")
       person.save
     end
+
+    location = Location.new(address: params['Address'], location_type: 'person')
+    location.person = person
+    location.search_and_fill_latlng
+    location.save
+
     person
   end
 
@@ -116,7 +126,7 @@ class CSVImporter
       end
     end
 
-    ['Category Type','Condition','Pick-up/Drop-off Options'].each do |cf_name|
+    ['Activity Type','Condition','Pick-up/Drop-off Options'].each do |cf_name|
       add_custom_field_options(listing, cf_name, params[cf_name], index)
     end
 
@@ -151,15 +161,32 @@ class CSVImporter
     shape.listing_units.detect{|u| u.unit_type.to_s == name || @translations[u.name_tr_key] == name }
   end
 
-
-  IMPORT_HEADERS = "Business Name,Email,Username,Password,Profile Type,Website URL,Listing Type,Listing Title,Price,Description,Category,Unit Type,Category Type,Condition,Pick-up/Drop-off Options,Address,Images".split(",")
-  SAMPLE_DATA = 'ACME,acme+02@mailinator.com,acme02,123123,Business,http://google.com/,Create Listing,Import me!,123.45,Demo import http://goo.gl,CHARTERS,2 hours,Tours & Guides,Excellent (New)|Fair,Store/Business Location|Home Location,13705 NE 12th Ave North Miami FL 33161 USA,https://d2hxfhf337f2kp.cloudfront.net/ownoutdoors/ownOutDoors_category-Boating_BG.jpg'.split(",")
+  IMPORT_SAMPLE_DATA = {
+    "Business Name" => "ACME",
+    "Email" => "acme+03@mailinator.com",
+    "Username" => "acme03",
+    "Password" => "123123",
+    "Profile Type" => "Business",
+    "Website URL" => "http://google.com/",
+    "Phone" => "212-555-44-44", 
+    "Listing Type" => "Create Listing",
+    "Listing Title" => "Import me!",
+    "Price" => "123.45",
+    "Description" => "Demo import http://goo.gl",
+    "Category" => "CHARTERS",
+    "Unit Type" => "2 hours",
+    "Activity Type" => "Tours & Guides",
+    "Condition" => "Excellent (New)|Fair",
+    "Pick-up/Drop-off Options" => "Store/Business Location|Home Location",
+    "Address" => "13705 NE 12th Ave North Miami FL 33161 USA",
+    "Images" => "https://d2hxfhf337f2kp.cloudfront.net/ownoutdoors/ownOutDoors_category-Boating_BG.jpg"
+  }
 
   def reference_package(p = nil)
     p ||= Axlsx::Package.new
     p.workbook.add_worksheet(:name => "Import Template") do |sheet|
-      sheet.add_row(IMPORT_HEADERS)
-      sheet.add_row(SAMPLE_DATA)
+      sheet.add_row(IMPORT_SAMPLE_DATA.keys)
+      sheet.add_row(IMPORT_SAMPLE_DATA.values)
     end
 
     p.workbook.add_worksheet(:name => "Listing Shapes (Types)") do |sheet|
