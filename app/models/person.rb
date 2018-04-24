@@ -384,7 +384,7 @@ class Person < ApplicationRecord
   def can_delete_email(email)
     EmailService.can_delete_email(self.emails,
                                   email,
-                                  self.accepted_community.allowed_emails)[:result]
+                                  self.community.allowed_emails)[:result]
   end
 
   # Returns true if the person has global admin rights in Sharetribe.
