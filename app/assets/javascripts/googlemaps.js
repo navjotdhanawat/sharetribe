@@ -700,6 +700,7 @@ function addListingMarkers(listings, viewport, keep_bounds, init_drag) {
   }
   if(init_drag) {
     google.maps.event.addListenerOnce(map,'idle', function() {
+      dragZoomSearch(); // repeat search with actual bounds
       map.addListener('dragend', dragZoomSearch);
       map.addListener('zoom_changed', dragZoomSearch);
     });
