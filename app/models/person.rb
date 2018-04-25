@@ -372,6 +372,7 @@ class Person < ApplicationRecord
     self.preferences = {}
     EMAIL_NOTIFICATION_TYPES.each { |t| self.preferences[t] = true }
     EMAIL_NEWSLETTER_TYPES.each { |t| self.preferences[t] = true }
+    self.min_days_between_community_updates = 100_000
     save
   end
 
