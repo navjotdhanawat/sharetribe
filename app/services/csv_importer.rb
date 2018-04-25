@@ -126,7 +126,7 @@ class CSVImporter
       end
     end
 
-    ['Activity Type','Condition','Pick-up/Drop-off Options'].each do |cf_name|
+    ['Activity Types','Condition','Pick-up/Drop-off Options'].each do |cf_name|
       add_custom_field_options(listing, cf_name, params[cf_name], index)
     end
 
@@ -175,7 +175,7 @@ class CSVImporter
     "Description" => "Demo import http://goo.gl",
     "Category" => "CHARTERS",
     "Unit Type" => "2 hours",
-    "Activity Type" => "Tours & Guides",
+    "Activity Types" => "Tours & Guides",
     "Condition" => "Excellent (New)|Fair",
     "Pick-up/Drop-off Options" => "Store/Business Location|Home Location",
     "Address" => "13705 NE 12th Ave North Miami FL 33161 USA",
