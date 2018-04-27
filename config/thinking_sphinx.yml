@@ -1,6 +1,10 @@
 # The charset_table is really long because we want to allow folding of accented characters¨é ->e, ä->a etc. AND the use of cyrillic letters.
 
 production:
+  pid_file: /home/rails/production/shared/log/production.searchd.pid
+  indices_location: /home/rails/production/shared/db/sphinx
+  configuration_file: /home/rails/production/shared/config/production.sphinx.conf
+  binlog_path: /home/rails/production/shared/tmp/binlog
   version: '2.1.8'
   mysql41: 3564
   address: <%= ENV['SPHINX_HOST'] || '' %>
@@ -13,6 +17,10 @@ production:
   #mysql_ssl_ca: lib/certificates/rds-combined-ca-bundle.pem
 
 staging:
+  pid_file: /home/rails/staging/shared/log/staging.searchd.pid
+  indices_location: /home/rails/staging/shared/db/sphinx
+  configuration_file: /home/rails/staging/shared/config/staging.sphinx.conf
+  binlog_path: /home/rails/staging/shared/tmp/binlog
   version: '2.1.8'
   mysql41: 3566
   address: <%= ENV['SPHINX_HOST'] || '' %>
