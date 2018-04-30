@@ -29,7 +29,7 @@ class Location < ApplicationRecord
 
   def search_and_fill_latlng(address=nil, locale=APP_CONFIG.default_locale)
     okresponse = false
-    geocoder = "http://maps.googleapis.com/maps/api/geocode/json?address="
+    geocoder = "https://maps.googleapis.com/maps/api/geocode/json?key=#{APP_CONFIG.google_maps_key}&address="
 
     if address == nil
       address = self.address
@@ -39,6 +39,7 @@ class Location < ApplicationRecord
       url = URI.escape(geocoder+address)
       resp = RestClient.get(url)
       result = JSON.parse(resp.body)
+      logger.info("GEOCODE:#{result.inspect}")
 
       if result["status"] == "OK"
         self.latitude = result["results"][0]["geometry"]["location"]["lat"]
