@@ -22,6 +22,9 @@ class CSVImporter
         Person.transaction do
           import_row(row, index)
         end
+        listing = @listings.last
+        listing.delta = true
+        listing.save
       rescue => e
         @errors << [index, [e.inspect, e.message, e.backtrace[0]].join(" ")]
       end
