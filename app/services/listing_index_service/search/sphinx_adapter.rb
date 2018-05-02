@@ -91,7 +91,7 @@ module ListingIndexService::Search
             with[:longitude] = bounds[1]..bounds[3]
             long_cond = ""
           else
-            long_cond = ", (`longitude` > #{bounds[1]} OR `longitude` < #{bounds[1]}) longitude_match"
+            long_cond = ", (`longitude` > #{bounds[1]} OR `longitude` < #{bounds[3]}) longitude_match"
             with[:longitude_match] = 1
           end
         end
