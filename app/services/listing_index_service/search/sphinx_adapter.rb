@@ -87,7 +87,13 @@ module ListingIndexService::Search
         if search[:bounds].present?
           bounds = search[:bounds]
           with[:latitude] = bounds[0]..bounds[2]
-          with[:longitude] = bounds[1]..bounds[3]
+          if bounds[1] < bounds[3]
+            with[:longitude] = bounds[1]..bounds[3]
+            long_cond = ""
+          else
+            long_cond = ", (`longitude` > #{bounds[1]} OR `longitude` < #{bounds[3]}) longitude_match"
+            with[:longitude_match] = 1
+          end
         end
 
         if input_latitude.present? && input_longitude.present?
@@ -107,7 +113,7 @@ module ListingIndexService::Search
 
         final_search_params = {
           page: search[:page],
-          select: "*, weight() as wght",
+          select: "*, weight() as wght #{long_cond}",
           per_page: search[:per_page],
           star: true,
           with: with,
