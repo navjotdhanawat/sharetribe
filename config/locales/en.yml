@@ -1768,6 +1768,9 @@ en:
       select_one: Select one
       start_time: Start time
       end_time: End time
+      pickup_date: Booking date
+      pickup_start_time: Time from
+      pickup_end_time: Time to
     new:
       listing: listing
       selected_category: "Category: %{category}"

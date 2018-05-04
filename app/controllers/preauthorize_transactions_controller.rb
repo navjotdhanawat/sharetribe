@@ -53,6 +53,7 @@ class PreauthorizeTransactionsController < ApplicationController
   NewPerHourTransactionParams = EntityUtils.define_builder(
     [:start_time, :time, transform_with: PARSE_DATETIME],
     [:end_time, :time, transform_with: PARSE_DATETIME],
+    [:message, :string],
     [:per_hour, transform_with: ->(v) { v == "1" }]
   )
 
@@ -60,6 +61,7 @@ class PreauthorizeTransactionsController < ApplicationController
     [:start_time, :time, transform_with: PARSE_DATETIME],
     [:end_time, :time, transform_with: PARSE_DATETIME],
     [:per_hour, transform_with: ->(v) { v == "1" }],
+    [:message, :string],
     [:quantity, :to_integer, validate_with: IS_POSITIVE],
   )
 
@@ -402,7 +404,13 @@ class PreauthorizeTransactionsController < ApplicationController
   end
 
   def initiated
-    params_validator = params_per_hour? ? NewPerHourTransactionParams : NewTransactionParams
+    params_validator =
+      if params_per_hour?
+        APP_CONFIG.allow_book_everything ? NewPerHourTransactionParamsWithQuantity : NewPerHourTransactionParams
+      else
+        NewTransactionParams
+      end
+
     validation_result = params_validator.validate(params).and_then { |params_entity|
       tx_params = add_defaults(
         params: params_entity,

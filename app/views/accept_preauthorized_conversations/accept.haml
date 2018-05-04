@@ -34,7 +34,7 @@
     .conversation-totals
       - if booking
         - if booking[:per_hour] 
-          - if listing.availability != 'none'
+          - if listing.availability.to_s != 'none'
             .conversation-per-unit-wrapper
               %span.conversation-per-unit-label
                 = t("transactions.initiate.price_per_hour")
