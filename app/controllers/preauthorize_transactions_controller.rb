@@ -56,6 +56,13 @@ class PreauthorizeTransactionsController < ApplicationController
     [:per_hour, transform_with: ->(v) { v == "1" }]
   )
 
+  NewPerHourTransactionParamsWithQuantity = EntityUtils.define_builder(
+    [:start_time, :time, transform_with: PARSE_DATETIME],
+    [:end_time, :time, transform_with: PARSE_DATETIME],
+    [:per_hour, transform_with: ->(v) { v == "1" }],
+    [:quantity, :to_integer, validate_with: IS_POSITIVE],
+  )
+
   ListingQuery = MarketplaceService::Listing::Query
 
   class ItemTotal
@@ -234,7 +241,7 @@ class PreauthorizeTransactionsController < ApplicationController
       }.and_then { |res|
         timeslots = res[:body][:data].map { |v| v[:attributes] }
 
-        if all_days_available(timeslots, start_on, end_on)
+        if APP_CONFIG.allow_book_everything || all_days_available(timeslots, start_on, end_on)
           Result::Success.new(tx_params)
         else
           Result::Error.new(nil, code: :dates_not_available)
@@ -243,7 +250,7 @@ class PreauthorizeTransactionsController < ApplicationController
     end
 
     def validate_booking_per_hour_timeslots(listing:, tx_params:)
-      return Result::Success.new(tx_params) unless tx_params[:per_hour]
+      return Result::Success.new(tx_params) if APP_CONFIG.allow_book_everything || !tx_params[:per_hour]
       booking = Booking.new(tx_params.slice(:start_time, :end_time, :per_hour))
       if listing.working_hours_covers_booking?(booking) && listing.bookings.covers_another_booking(booking).empty?
         Result::Success.new(tx_params)
@@ -270,7 +277,13 @@ class PreauthorizeTransactionsController < ApplicationController
   # rubocop:disable MethodLength
   # rubocop:disable AbcSize
   def initiate
-    params_validator = params_per_hour? ? NewPerHourTransactionParams : NewTransactionParams
+    params_validator =
+      if params_per_hour?
+        APP_CONFIG.allow_book_everything ? NewPerHourTransactionParamsWithQuantity : NewPerHourTransactionParams
+      else
+        NewTransactionParams
+      end
+
     validation_result = params_validator.validate(params).and_then { |params_entity|
       tx_params = add_defaults(
         params: params_entity,
@@ -293,6 +306,7 @@ class PreauthorizeTransactionsController < ApplicationController
       is_booking = is_booking?(listing)
 
       quantity = calculate_quantity(tx_params: tx_params, is_booking: is_booking, unit: listing.unit_type)
+      duration = calculate_duration(tx_params: tx_params, is_booking: is_booking, unit: listing.unit_type)
 
       listing_entity = ListingQuery.listing(params[:listing_id])
 
@@ -339,11 +353,11 @@ class PreauthorizeTransactionsController < ApplicationController
                    marketplace_uuid: @current_community.uuid_object.to_s,
                    user_logged_in: @current_user.present? }],
                price_break_down_locals: TransactionViewUtils.price_break_down_locals(
-                 booking:  is_booking,
+                 booking:  APP_CONFIG.allow_book_everything || is_booking,
                  quantity: quantity,
                  start_on: tx_params[:start_on],
                  end_on:   tx_params[:end_on],
-                 duration: quantity,
+                 duration: duration,
                  listing_price: listing_entity[:price],
                  localized_unit_type: translate_unit_from_listing(listing_entity),
                  localized_selector_label: translate_selector_label_from_listing(listing_entity),
@@ -529,6 +543,18 @@ class PreauthorizeTransactionsController < ApplicationController
 
   def calculate_quantity(tx_params:, is_booking:, unit:)
     if is_booking
+      if tx_params[:per_hour]
+        APP_CONFIG.allow_book_everything ? (tx_params[:quantity] || 1) : DateUtils.duration_in_hours(tx_params[:start_time], tx_params[:end_time])
+      else
+        DateUtils.duration(tx_params[:start_on], tx_params[:end_on])
+      end
+    else
+      tx_params[:quantity] || 1
+    end
+  end
+
+  def calculate_duration(tx_params:, is_booking:, unit:)
+    if tx_params[:per_hour] || tx_params[:start_on]
       if tx_params[:per_hour]
         DateUtils.duration_in_hours(tx_params[:start_time], tx_params[:end_time])
       else

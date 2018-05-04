@@ -40,4 +40,12 @@ class Booking < ApplicationRecord
   def self.columns
     super.reject { |c| c.name == "end_on_exclusive" }
   end
+
+  def duration
+    if per_hour
+      DateUtils.duration_in_hours(start_time, end_time)
+    else
+      DateUtils.duration(start_on, end_on)
+    end
+  end
 end

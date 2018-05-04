@@ -97,14 +97,15 @@ module ListingAvailabilityManage
     date_to_time_utc(booking_dates_end + 1.day)
   end
 
-  def availability_per_hour_calculate_options_for_select
+  def availability_per_hour_calculate_options_for_select(full_day = false)
     return @availability_per_hour_raw_options_for_select if defined?(@availability_per_hour_raw_options_for_select)
     result = {}
     current_day = nil
     start = nil
     day_result = []
     day_slot_number = 0
-    listing.working_hours_periods(booking_per_hour_start_time, booking_per_hour_end_time).each do |working_period|
+    scope = full_day ? :working_hours_periods : :full_working_hours_periods
+    listing.send(scope, booking_per_hour_start_time, booking_per_hour_end_time).each do |working_period|
       period_day = working_period.start_time.to_date.to_s
       period_end_day = working_period.end_time.to_date.to_s
       start = working_period.start_time
@@ -137,13 +138,14 @@ module ListingAvailabilityManage
     @availability_per_hour_raw_options_for_select = result
   end
 
-  def availability_per_hour_calculate_blocked_dates
+  def availability_per_hour_calculate_blocked_dates(full_day = false)
     return @availability_per_hour_raw_blocked_dates if defined?(@availability_per_hour_raw_blocked_dates)
     all_options = availability_per_hour_calculate_options_for_select
     result = []
     start = nil
     day_options = nil
-    listing.bookings_per_hour.in_period(booking_per_hour_start_time, booking_per_hour_end_time).find_each do |booking|
+    scope = full_day ? [] : listing.bookings_per_hour.in_period(booking_per_hour_start_time, booking_per_hour_end_time)
+    scope.each do |booking|
       booking_day = booking.start_time.to_date.to_s
       day_options = all_options[booking_day]
       start = booking.start_time
@@ -176,6 +178,11 @@ module ListingAvailabilityManage
     availability_per_hour_calculate_options_for_select
   end
 
+  def full_availability_per_hour_options_for_select_grouped_by_day
+    availability_per_hour_calculate_blocked_dates(true)
+    availability_per_hour_calculate_options_for_select(true)
+  end
+
   def availability_per_hour_blocked_dates
     availability_per_hour_calculate_options_for_select
     availability_per_hour_calculate_blocked_dates
@@ -189,6 +196,17 @@ module ListingAvailabilityManage
       blocked_dates: availability_per_hour_blocked_dates.map { |d| date_to_time_utc(d).to_i },
       end_date: booking_dates_end_midnight.to_i,
       options_for_select: availability_per_hour_options_for_select_grouped_by_day,
+    }
+  end
+
+  def full_day_datepicker_per_hour_setup
+    {
+      locale: I18n.locale,
+      localized_dates: datepicker_localized_dates,
+      listing_quantity_selector: listing.quantity_selector,
+      blocked_dates: [],
+      end_date: booking_dates_end_midnight.to_i,
+      options_for_select: full_availability_per_hour_options_for_select_grouped_by_day,
     }
   end
 

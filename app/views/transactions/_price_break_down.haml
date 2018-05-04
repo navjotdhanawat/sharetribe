@@ -8,10 +8,9 @@
           = t("transactions.initiate.price_per_night")
         - elsif unit_type == :hour
           = t("transactions.initiate.price_per_hour")
-        - else
-          = t("transactions.initiate.price_per_unit")
-      %span.initiate-transaction-per-unit-value
-        = MoneyViewUtils.to_humanized(listing_price)
+      - if [:hour, :day, :night].include?(unit_type)
+        %span.initiate-transaction-per-unit-value
+          = MoneyViewUtils.to_humanized(listing_price)
 
     .initiate-transaction-booking-wrapper
       - if per_hour
@@ -40,7 +39,7 @@
             = l end_on, format: :long_with_abbr_day_name
             = "(#{pluralize(duration, t("listing_conversations.preauthorize.night"), t("listing_conversations.preauthorize.nights"))})"
 
-  - elsif quantity.present? && localized_unit_type.present?
+  - if quantity.present? && localized_unit_type.present?
     .initiate-transaction-per-unit-wrapper
       %span.initiate-transaction-per-unit-label
         = t("transactions.price_per_quantity", unit_type: localized_unit_type)

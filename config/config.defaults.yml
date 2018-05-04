@@ -477,6 +477,8 @@ default: &default_settings
   twilio_token: "TwilioAuthToken"
   twilio_from: "+15005550006"
 
+  allow_book_everything: true
+
 production: &production_settings
   <<: *default_settings
 

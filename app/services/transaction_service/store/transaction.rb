@@ -201,7 +201,7 @@ module TransactionService::Store::Transaction
     if m.booking
       booking_data = EntityUtils.model_to_hash(m.booking)
       booking_entity = booking_data[:per_hour] ? BookingPerHour : Booking
-      hash.merge(booking: booking_entity.call(booking_data.merge(duration: m.listing_quantity)))
+      hash.merge(booking: booking_entity.call(booking_data.merge(duration: m.booking.duration)))
     else
       hash
     end
