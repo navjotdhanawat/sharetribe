@@ -1,16 +1,17 @@
 .initiate-transaction-totals
   - if booking
-    .initiate-transaction-per-unit-wrapper
-      %span.initiate-transaction-per-unit-label
-        - if unit_type == :day
-          = t("transactions.initiate.price_per_day")
-        - elsif unit_type == :night
-          = t("transactions.initiate.price_per_night")
-        - elsif unit_type == :hour
-          = t("transactions.initiate.price_per_hour")
-      - if [:hour, :day, :night].include?(unit_type)
-        %span.initiate-transaction-per-unit-value
-          = MoneyViewUtils.to_humanized(listing_price)
+    - if availability != 'none'
+      .initiate-transaction-per-unit-wrapper
+        %span.initiate-transaction-per-unit-label
+          - if unit_type == :day
+            = t("transactions.initiate.price_per_day")
+          - elsif unit_type == :night
+            = t("transactions.initiate.price_per_night")
+          - elsif unit_type == :hour
+            = t("transactions.initiate.price_per_hour")
+        - if [:hour, :day, :night].include?(unit_type)
+          %span.initiate-transaction-per-unit-value
+            = MoneyViewUtils.to_humanized(listing_price)
 
     .initiate-transaction-booking-wrapper
       - if per_hour
