@@ -355,6 +355,7 @@ class PreauthorizeTransactionsController < ApplicationController
                    marketplace_uuid: @current_community.uuid_object.to_s,
                    user_logged_in: @current_user.present? }],
                price_break_down_locals: TransactionViewUtils.price_break_down_locals(
+                 availability: listing.availability,
                  booking:  APP_CONFIG.allow_book_everything || is_booking,
                  quantity: quantity,
                  start_on: tx_params[:start_on],
