@@ -54,7 +54,8 @@ class PreauthorizeTransactionsController < ApplicationController
     [:start_time, :time, transform_with: PARSE_DATETIME],
     [:end_time, :time, transform_with: PARSE_DATETIME],
     [:message, :string],
-    [:per_hour, transform_with: ->(v) { v == "1" }]
+    [:per_hour, transform_with: ->(v) { v == "1" }],
+    [:contract_agreed, transform_with: ->(v) { v == "1" }]
   )
 
   NewPerHourTransactionParamsWithQuantity = EntityUtils.define_builder(
@@ -63,6 +64,7 @@ class PreauthorizeTransactionsController < ApplicationController
     [:per_hour, transform_with: ->(v) { v == "1" }],
     [:message, :string],
     [:quantity, :to_integer, validate_with: IS_POSITIVE],
+    [:contract_agreed, transform_with: ->(v) { v == "1" }]
   )
 
   ListingQuery = MarketplaceService::Listing::Query
