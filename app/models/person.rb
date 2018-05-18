@@ -644,6 +644,7 @@ class Person < ApplicationRecord
     guest.community = community
     guest.guest = true
     guest.community_membership = CommunityMembership.new(person: guest, community: community)
+    guest.skip_phone_validation = true
     guest
   end
 
