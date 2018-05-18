@@ -33,12 +33,13 @@
   .conversation-price-info
     .conversation-totals
       - if booking
-        - if booking[:per_hour]
-          .conversation-per-unit-wrapper
-            %span.conversation-per-unit-label
-              = t("transactions.initiate.price_per_hour")
-            %span.conversation-per-unit-value
-              = MoneyViewUtils.to_humanized(listing.price)
+        - if booking[:per_hour] 
+          - if listing.availability.to_s != 'none'
+            .conversation-per-unit-wrapper
+              %span.conversation-per-unit-label
+                = t("transactions.initiate.price_per_hour")
+              %span.conversation-per-unit-value
+                = MoneyViewUtils.to_humanized(listing.price)
 
           .conversation-booking-wrapper
             %span.conversation-booking-label

@@ -40,7 +40,7 @@
                 - else
                   = l booking.end_on, format: :long_with_abbr_day_name
                   = "(#{pluralize(duration, t("listing_conversations.preauthorize.night"), t("listing_conversations.preauthorize.nights"))})"
-        - elsif duration.present?
+        - elsif duration.present? && listing.availability != 'none'
           %tr
             %td{:width => "250"}
               %font{body_font}

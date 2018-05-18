@@ -112,6 +112,7 @@ class TransactionMailer < ActionMailer::Base
                    payer_full_name: buyer_model.name(community),
                    payer_given_name: PersonViewUtils.person_display_name_for_type(buyer_model, "first_name_only"),
                    gateway: transaction[:payment_gateway],
+                   listing_availability: transaction[:availability]
                  }
         }
       end

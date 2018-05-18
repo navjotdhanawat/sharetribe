@@ -36,6 +36,10 @@ module ManageAvailabilityPerHour
     end
   end
 
+  def full_working_hours_periods(start_time, end_time)
+    full_working_hours_listing_schedule.periods.after(start_time).timeline.until(end_time).to_a
+  end
+
   private
 
   def working_hours_prepare_hash
@@ -53,6 +57,23 @@ module ManageAvailabilityPerHour
   def working_hours_listing_schedule
     @working_hours_listing_schedule ||= Biz::Schedule.new do |config|
       config.hours = working_hours_prepare_hash
+      config.breaks = {}
+      config.holidays = []
+      config.time_zone = 'Etc/UTC'
+    end
+  end
+
+  def full_working_hours_prepare_hash
+    result = {}
+    Listing::WorkingTimeSlot.week_days.keys.each do |week_day|
+      result[week_day.to_sym] = {'00:00'=>'24:00'}
+    end
+    result
+  end
+
+  def full_working_hours_listing_schedule
+    @full_working_hours_listing_schedule ||= Biz::Schedule.new do |config|
+      config.hours = full_working_hours_prepare_hash
       config.breaks = {}
       config.holidays = []
       config.time_zone = 'Etc/UTC'

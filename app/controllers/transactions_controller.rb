@@ -454,6 +454,7 @@ class TransactionsController < ApplicationController
         per_hour: booking_per_hour,
         start_time: booking_per_hour ? tx[:booking][:start_time] : nil,
         end_time: booking_per_hour ? tx[:booking][:end_time] : nil,
+        availability: tx[:availability].to_s
       })
     end
   end
