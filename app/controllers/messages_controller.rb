@@ -2,9 +2,7 @@ class MessagesController < ApplicationController
   MessageEntity = MarketplaceService::Conversation::Entity::Message
   PersonEntity = MarketplaceService::Person::Entity
 
-  before_action do |controller|
-    controller.ensure_logged_in t("layouts.notifications.you_must_log_in_to_send_a_message")
-  end
+  before_action :ensure_logged_in_or_guest
 
   before_action EnsureCanAccessPerson.new(:person_id, error_message_key: "layouts.notifications.you_are_not_authorized_to_do_this")
 
@@ -48,5 +46,21 @@ class MessagesController < ApplicationController
   def is_participant?(person, conversation_id)
     Conversation.find(conversation_id).participant?(person)
   end
+
+  def ensure_logged_in_or_guest
+    if @current_user.present?
+      return
+    elsif params[:action] == 'create'
+      if session[:guest_user].present?
+        @current_user = Person.find(session[:guest_user])
+      else
+        ensure_logged_in t("layouts.notifications.you_must_log_in_to_view_your_inbox")
+      end
+    else
+      @current_user = Person.build_guest(@current_community)
+    end
+  end
+
+
 
 end
