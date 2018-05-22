@@ -474,8 +474,12 @@ class Person < ApplicationRecord
   # Notice: If no confirmed notification emails is found, this
   # method returns the first confirmed emails
   def confirmed_notification_emails_to
-    send_message_to = EmailService.emails_to_send_message(emails)
-    EmailService.emails_to_smtp_addresses(send_message_to)
+    if guest?
+      primary_email.address
+    else
+      send_message_to = EmailService.emails_to_send_message(emails)
+      EmailService.emails_to_smtp_addresses(send_message_to)
+    end
   end
 
   # Primary email is the first email address that is
