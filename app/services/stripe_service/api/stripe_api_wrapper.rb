@@ -60,14 +60,25 @@ class StripeService::API::StripeApiWrapper
       with_stripe_payment_config(community) do |payment_settings|
         case charges_mode(community)
         when :direct
-          Stripe::Charge.create({
-            source: token,
-            amount: amount,
-            description: description,
-            currency: currency,
-            application_fee: fee,
-            capture: false
-          }.merge(metadata: metadata), { stripe_account: seller_account_id })
+          system_account = Stripe::Account.retrieve
+          if system_account.id != seller_account_id
+            Stripe::Charge.create({
+              source: token,
+              amount: amount,
+              description: description,
+              currency: currency,
+              application_fee: fee,
+              capture: false
+            }.merge(metadata: metadata), { stripe_account: seller_account_id })
+          else
+            Stripe::Charge.create({
+              customer: token,
+              amount: amount,
+              description: description,
+              currency: currency,
+              capture: false
+            }.merge(metadata: metadata))
+          end
         when :separate
           Stripe::Charge.create({
             customer: token,
@@ -106,7 +117,12 @@ class StripeService::API::StripeApiWrapper
 
     def create_token(community:, customer_id:, account_id:)
       with_stripe_payment_config(community) do |payment_settings|
-        Stripe::Token.create({customer: customer_id}, {stripe_account: account_id})
+        system_account = Stripe::Account.retrieve
+        if system_account.id == account_id
+          Stripe::Customer.retrieve(customer_id)
+        else
+          Stripe::Token.create({customer: customer_id}, {stripe_account: account_id})
+        end
       end
     end
 
