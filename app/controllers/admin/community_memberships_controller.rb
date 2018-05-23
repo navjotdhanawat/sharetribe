@@ -123,6 +123,7 @@ class Admin::CommunityMembershipsController < Admin::AdminBaseController
       is_admin
       accept_emails_from_admin
       language
+      description
     }
     header_row.push("can_post_listings") if community.require_verification_to_post_listings
     yielder << header_row.to_csv(force_quotes: true)
@@ -139,7 +140,8 @@ class Admin::CommunityMembershipsController < Admin::AdminBaseController
           membership.created_at,
           membership.status,
           membership.admin,
-          user.locale
+          user.locale,
+          user.description
         ]
         user_data.push(membership.can_post_listings) if community.require_verification_to_post_listings
         user.emails.each do |email|
