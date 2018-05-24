@@ -72,6 +72,7 @@ class TransactionMailer < ActionMailer::Base
     seller_model ||= Person.find(transaction[:listing_author_id])
     buyer_model ||= Person.find(transaction[:starter_id])
     community ||= Community.find(transaction[:community_id])
+    transaction_model = Transaction.find(transaction[:id])
 
     payment_total = transaction[:payment_total]
     service_fee = Maybe(transaction[:charged_commission]).or_else(Money.new(0, payment_total.currency))
@@ -112,7 +113,9 @@ class TransactionMailer < ActionMailer::Base
                    payer_full_name: buyer_model.name(community),
                    payer_given_name: PersonViewUtils.person_display_name_for_type(buyer_model, "first_name_only"),
                    gateway: transaction[:payment_gateway],
-                   listing_availability: transaction[:availability]
+                   listing_availability: transaction[:availability],
+                   listing: transaction_model.listing,
+                   booking: transaction_model.booking
                  }
         }
       end
