@@ -51,6 +51,7 @@ class CSVImporter
         is_vendor: params['Profile Type'] == 'Business',
         website_url: params['Website URL'],
         phone_number: params['Phone'],
+        description: params['About Business']
       })
     email_address = params['Email'].downcase.strip
     allowed_and_available = @community.email_allowed?(email_address) && Email.email_available?(email_address, @community.id)
@@ -172,6 +173,7 @@ class CSVImporter
     "Profile Type" => "Business",
     "Website URL" => "http://google.com/",
     "Phone" => "212-555-44-44", 
+    "About Business" => "Some text about business",
     "Listing Type" => "Create Listing",
     "Listing Title" => "Import me!",
     "Price" => "123.45",
