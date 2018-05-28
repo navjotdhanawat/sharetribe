@@ -104,6 +104,7 @@ class CSVImporter
     listing.title = params["Listing Title"]
     listing.description = params["Description"]
     listing.price_cents = params["Price"].to_f * 100
+    listing.call_for_price = params["Price"].to_s.downcase.strip == "call for price" || params["Price"].to_s.downcase.strip == "call"
     listing.currency = @community.currency
     listing.author = author
     listing.category = find_category(params["Category"])
