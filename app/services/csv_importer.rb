@@ -48,7 +48,7 @@ class CSVImporter
         display_name: params['Business Name'],
         locale: 'en',
         password: params['Password'],
-        is_vendor: params['Profile Type'] == 'Business',
+        is_vendor: params['Seller Type'] == 'Business',
         website_url: params['Website URL'],
         phone_number: params['Phone'],
         description: params['About Business']
@@ -131,7 +131,7 @@ class CSVImporter
       end
     end
 
-    ['Activity Types','Condition','Pick-up/Drop-off Options'].each do |cf_name|
+    ['Activity Types','Condition','Pick-up/Drop-off Options', 'Seller Type', 'Charter Duration'].each do |cf_name|
       add_custom_field_options(listing, cf_name, params[cf_name], index)
     end
 
@@ -168,10 +168,10 @@ class CSVImporter
 
   IMPORT_SAMPLE_DATA = {
     "Business Name" => "ACME",
-    "Email" => "acme+03@mailinator.com",
-    "Username" => "acme03",
+    "Email" => "acme+05@mailinator.com",
+    "Username" => "acme05",
     "Password" => "123123",
-    "Profile Type" => "Business",
+    "Seller Type" => "Business",
     "Website URL" => "http://google.com/",
     "Phone" => "212-555-44-44", 
     "About Business" => "Some text about business",
@@ -184,6 +184,7 @@ class CSVImporter
     "Activity Types" => "Tours & Guides",
     "Condition" => "Excellent (New)|Fair",
     "Pick-up/Drop-off Options" => "Store/Business Location|Home Location",
+    "Charter Duration" => "Other",
     "Address" => "13705 NE 12th Ave North Miami FL 33161 USA",
     "Images" => "https://d2hxfhf337f2kp.cloudfront.net/ownoutdoors/ownOutDoors_category-Boating_BG.jpg"
   }
